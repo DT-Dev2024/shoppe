@@ -6,7 +6,9 @@ export default {
     'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   theme: {
-    colors: {},
+    colors: {
+      main: '#fb6445',
+    },
   },
   // eslint-disable-next-line no-undef
   plugins: [require('flowbite/plugin')],
