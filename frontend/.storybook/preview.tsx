@@ -2,19 +2,11 @@ import type { Preview } from "@storybook/react";
 import React from "react";
 import "../src/index.css";
 import { BrowserRouter } from "react-router-dom";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "../src/contexts/auth.context";
 import { CartProvider } from "../src/contexts/cart.context";
 import { withThemeByClassName } from "@storybook/addon-styling";
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 0,
-    },
-  },
-});
+
 /* TODO: update import to your tailwind styles file. If you're using Angular, inject this through your angular.json config instead */
 import "../src/index.css";
 const preview: Preview = {
@@ -33,24 +25,15 @@ const preview: Preview = {
     // NOTE: requires setting "darkMode" to "class" in your tailwind config
     (Story) => (
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <HelmetProvider>
-            <AuthProvider>
-              <CartProvider>
-                <Story />
-              </CartProvider>
-            </AuthProvider>
-          </HelmetProvider>
-        </QueryClientProvider>
+        <HelmetProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Story />
+            </CartProvider>
+          </AuthProvider>
+        </HelmetProvider>
       </BrowserRouter>
     ),
-    withThemeByClassName({
-      themes: {
-        light: "light",
-        dark: "dark",
-      },
-      defaultTheme: "light",
-    }),
   ],
 };
 

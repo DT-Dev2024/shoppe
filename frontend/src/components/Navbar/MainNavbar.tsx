@@ -1,10 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import authApi from "src/apis/auth.api";
 import purchaseAPI from "src/apis/purchase.api";
-import EmptyCartIcon from "src/assets/images/empty-cart.png";
+import EmptyCartIcon from "src/assets/img/empty-cart.png";
 import { path } from "src/constants/path.enum";
 import { purchasesStatus } from "src/constants/purchaseStatus.enum";
 import { AuthContext } from "src/contexts/auth.context";
@@ -16,6 +15,8 @@ import { generateSlug } from "src/utils/slugify";
 import { ArrowDownIcon, EarthIcon, ShopeeLogoIcon } from "../Icon";
 import ShopeeLogoIcon2 from "../Icon/ShopeeLogoIcon2";
 import Popover from "../Popover";
+import axios from "axios";
+import { TPurchase } from "src/types/purchase.type";
 
 type TMainNavbar = {
   bottomCropped?: boolean;
@@ -25,32 +26,41 @@ const MainNavbar = ({ bottomCropped = false }: TMainNavbar) => {
   const location = useLocation();
   const { handleSearch, register } = useSearchProducts();
   const { isAuthenticated, userProfile, setIsAuthenticated, setUserProfile } = useContext(AuthContext);
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const logOutAccountMutation = useMutation({
-    mutationFn: () => authApi.logoutAccount(),
-    onSuccess: () => {
+
+
+  const [purchasesInCartData, setPurchasesInCartData] = useState<TPurchase[]>([]);
+
+  const getPurchasesInCart = async () => {
+    try {
+      const response = await purchaseAPI.getCart({ status: purchasesStatus.inCart });
+      setPurchasesInCartData(response.data.data as TPurchase[]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getPurchasesInCart();
+    }
+  }, [isAuthenticated]);
+
+
+
+  const handleLogOut = async () => {
+    try {
+      await authApi.logoutAccount();
       toast.success("Đăng xuất thành công", {
         autoClose: 2000,
       });
-      queryClient.removeQueries({
-        queryKey: ["cart", { status: purchasesStatus.inCart }],
-      });
-    },
-  });
-  const { data: purchasesInCartData } = useQuery({
-    queryKey: ["cart", { status: purchasesStatus.inCart }],
-    queryFn: () => purchaseAPI.getCart({ status: purchasesStatus.inCart }),
-    enabled: isAuthenticated,
-  });
-  const purchasesInCart = purchasesInCartData?.data.data;
-  const handleLogOut = () => {
-    logOutAccountMutation.mutate();
-    setIsAuthenticated(false);
-    setUserProfile(null);
-
-    navigate("/login");
-  };
+      setIsAuthenticated(false);
+      setUserProfile(null);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div
@@ -173,11 +183,11 @@ const MainNavbar = ({ bottomCropped = false }: TMainNavbar) => {
               <Popover
                 renderPopover={
                   <div className="relative max-w-[380px] rounded-sm border border-gray-200 bg-white text-sm shadow-md sm:max-w-[400px]">
-                    {purchasesInCart && purchasesInCart.length > 0 ? (
+                    {purchasesInCartData && purchasesInCartData.length > 0 ? (
                       <>
                         <div className="m-2 capitalize text-gray-400">Sản phẩm mới thêm</div>
                         <div className="mt-5">
-                          {purchasesInCart.slice(0, MAX_PURCHASES_PER_CART).map((purchase) => (
+                          {purchasesInCartData.slice(0, MAX_PURCHASES_PER_CART).map((purchase) => (
                             <Link
                               className="flex py-3 px-2 hover:bg-gray-100"
                               key={purchase._id}
@@ -199,8 +209,8 @@ const MainNavbar = ({ bottomCropped = false }: TMainNavbar) => {
                             </Link>
                           ))}
                           <div className="mx-2 mb-2 mt-6 flex items-center justify-between">
-                            {purchasesInCart.length - MAX_PURCHASES_PER_CART > 0 && (
-                              <div>Còn {purchasesInCart.length - MAX_PURCHASES_PER_CART} sản phẩm trong giỏ</div>
+                            {purchasesInCartData.length - MAX_PURCHASES_PER_CART > 0 && (
+                              <div>Còn {purchasesInCartData.length - MAX_PURCHASES_PER_CART} sản phẩm trong giỏ</div>
                             )}
                             <button
                               className="rounded-sm bg-primary px-4 py-2 capitalize text-white hover:bg-opacity-90"
@@ -228,9 +238,9 @@ const MainNavbar = ({ bottomCropped = false }: TMainNavbar) => {
                   className="relative"
                   to={getDeviceType() === "mobile" || getDeviceType() === "tablet" ? location.pathname : path.cart}
                 >
-                  {purchasesInCart && purchasesInCart.length > 0 && (
+                  {purchasesInCartData && purchasesInCartData.length > 0 && (
                     <span className="absolute -top-3 -right-3 flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white px-3 py-4 text-primary">
-                      {purchasesInCart.length}
+                      {purchasesInCartData.length}
                     </span>
                   )}
 
