@@ -1,14 +1,21 @@
-import './App.css'
-import SideBar from './components/layout/SideBar'
-import Header from './components/layout/Header';
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import MainLayout from './layouts/MainLayout'
+import ProtectedRoute from './routes/ProtectedRoute'
+import { Home, NotFound } from './routes/routes'
+import Loading from '@components/Loading'
 
-function App() {
+export default function App() {
   return (
-    <>
-     <Header />
-     <SideBar />
-    </>
+    <React.Suspense fallback={<Loading />}>
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path={'/'} element={<Home />} />
+          </Route>
+        </Route>
+        <Route path={'*'} element={<NotFound />}></Route>
+      </Routes>
+    </React.Suspense>
   )
 }
-
-export default App
