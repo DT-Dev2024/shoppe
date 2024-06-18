@@ -6,7 +6,7 @@ services:
     ports:
       - '27016:27017'
     volumes:
-      - './docker/mongodb.conf:/data/configdb/mongod.conf:ro'
+      - './docker/mongo.conf:/data/configdb/mongod.conf:ro'
       - './data:/data/db'
       - 'log:/var/log/mongodb'
     command: ['/usr/bin/mongod', '-f', '/data/configdb/mongod.conf']
