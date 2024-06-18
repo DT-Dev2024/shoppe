@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  mongodb:
+    image: mongo:5.0.6
+    container_name: database_app
+    ports:
+      - '27016:27017'
+    volumes:
+      - './docker/mongodb.conf:/data/configdb/mongod.conf:ro'
+      - './data:/data/db'
+      - 'log:/var/log/mongodb'
+    command: ['/usr/bin/mongod', '-f', '/data/configdb/mongod.conf']
+    restart: always
+volumes:
+  log: null
