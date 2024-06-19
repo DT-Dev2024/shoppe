@@ -1,21 +1,18 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import MainLayout from './layouts/MainLayout'
-import ProtectedRoute from './routes/ProtectedRoute'
-import { Home, NotFound } from './routes/routes'
-import Loading from '@components/Loading'
-
-export default function App() {
-  return (
-    <React.Suspense fallback={<Loading />}>
-      <Routes>
-        <Route element={<ProtectedRoute />}>
-          <Route element={<MainLayout />}>
-            <Route path={'/'} element={<Home />} />
-          </Route>
-        </Route>
-        <Route path={'*'} element={<NotFound />}></Route>
-      </Routes>
-    </React.Suspense>
-  )
+import { useContext, useEffect } from "react";
+import { AuthContext } from "./contexts/auth.context";
+import useRoutesElement from "./routes/useRouteElements";
+import { LocalStorageEventTarget } from "./utils/auth";
+// eslint-disable-next-line import/no-unresolved
+function App() {
+  const routeElements = useRoutesElement();
+  const { clearAuthenFromProvider } = useContext(AuthContext);
+  useEffect(() => {
+    LocalStorageEventTarget.addEventListener("clearAuthen", clearAuthenFromProvider);
+    return () => {
+      LocalStorageEventTarget.removeEventListener("clearAuthen", clearAuthenFromProvider);
+    };
+  }, [clearAuthenFromProvider]);
+  return <>{routeElements}</>;
 }
+
+export default App;
