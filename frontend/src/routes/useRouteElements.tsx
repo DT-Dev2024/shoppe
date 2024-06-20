@@ -1,7 +1,10 @@
-import { useContext, lazy, Suspense } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useRoutes } from "react-router-dom";
+import { LoadingPage } from "src/components/Loading/Loading";
 import { path } from "src/constants/path.enum";
+import { IDataSource } from "src/contexts";
 import { AuthContext } from "src/contexts/auth.context";
+import { useDataSourceContext } from "src/hooks/hookHome";
 import AuthenticationLayout from "src/layouts/AuthenticationLayout";
 import CartLayout from "src/layouts/CartLayout";
 import MainLayout from "src/layouts/MainLayout";
@@ -12,11 +15,8 @@ const Login = lazy(() => import("src/pages/Login"));
 const Cart = lazy(() => import("src/pages/Cart"));
 const NotFound = lazy(() => import("src/pages/NotFound"));
 const ProductDetails = lazy(() => import("src/pages/ProductDetails"));
-const Register = lazy(() => import("src/pages/Register"));
-const ChangePassword = lazy(() => import("src/pages/User/pages/ChangePassword"));
 const OrderHistory = lazy(() => import("src/pages/User/pages/OrderHistory"));
 const Profile = lazy(() => import("src/pages/User/pages/Profile"));
-const ProductList = lazy(() => import("src/pages/ProductList"));
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -27,19 +27,38 @@ function RejectedRoute() {
   const { isAuthenticated } = useContext(AuthContext);
   return !isAuthenticated ? <Outlet></Outlet> : <Navigate to={path.home}></Navigate>;
 }
+function areAllArraysNotEmpty(dataSource: IDataSource): boolean {
+  return Object.values(dataSource).every((value) => !Array.isArray(value) || value.length > 0);
+}
+
+function LoadingHome() {
+  const [isReady, setIsReady] = useState(false);
+  const dataSourceContext = useDataSourceContext();
+  useEffect(() => {
+    if (dataSourceContext && areAllArraysNotEmpty(dataSourceContext)) {
+      setIsReady(true);
+    }
+  }, [dataSourceContext]);
+
+  return isReady ? <Home /> : <LoadingPage />;
+}
 
 export default function useRoutesElement() {
   const routeElements = useRoutes([
     {
       path: "",
-      element: <MainLayout></MainLayout>,
+      element: (
+        <Suspense>
+          <MainLayout />
+        </Suspense>
+      ),
       children: [
         {
           path: path.home,
           index: true,
           element: (
-            <Suspense>
-              <Home />
+            <Suspense fallback={<LoadingPage />}>
+              <LoadingHome />
             </Suspense>
           ),
         },
@@ -47,7 +66,7 @@ export default function useRoutesElement() {
           path: path.productDetail,
           element: (
             <Suspense>
-              <ProductDetails></ProductDetails>
+              <ProductDetails />
             </Suspense>
           ),
         },
@@ -55,7 +74,7 @@ export default function useRoutesElement() {
           path: "*",
           element: (
             <Suspense>
-              <NotFound></NotFound>
+              <NotFound />
             </Suspense>
           ),
         },
@@ -64,39 +83,27 @@ export default function useRoutesElement() {
 
     {
       path: "",
-      element: <ProtectedRoute></ProtectedRoute>,
+      element: <ProtectedRoute />,
       children: [
         {
           path: path.cart,
           element: (
             <CartLayout>
               <Suspense>
-                <Cart></Cart>
+                <Cart />
               </Suspense>
             </CartLayout>
           ),
         },
         {
           path: path.user,
-          element: (
-            <MainLayout>
-              <UserLayout></UserLayout>
-            </MainLayout>
-          ),
+          element: <UserLayout />,
           children: [
             {
               path: path.profile,
               element: (
                 <Suspense>
-                  <Profile></Profile>
-                </Suspense>
-              ),
-            },
-            {
-              path: path.changePassword,
-              element: (
-                <Suspense>
-                  <ChangePassword></ChangePassword>
+                  <Profile />
                 </Suspense>
               ),
             },
@@ -104,7 +111,7 @@ export default function useRoutesElement() {
               path: path.orderHistory,
               element: (
                 <Suspense>
-                  <OrderHistory></OrderHistory>
+                  <OrderHistory />
                 </Suspense>
               ),
             },
@@ -114,25 +121,17 @@ export default function useRoutesElement() {
     },
     {
       path: "",
-      element: <RejectedRoute></RejectedRoute>,
+      element: <RejectedRoute />,
       children: [
         {
           path: "",
-          element: <AuthenticationLayout></AuthenticationLayout>,
+          element: <AuthenticationLayout />,
           children: [
             {
               path: path.login,
               element: (
                 <Suspense>
-                  <Login></Login>
-                </Suspense>
-              ),
-            },
-            {
-              path: path.register,
-              element: (
-                <Suspense>
-                  <Register></Register>
+                  <Login />
                 </Suspense>
               ),
             },

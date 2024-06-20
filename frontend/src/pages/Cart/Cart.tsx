@@ -38,14 +38,13 @@ const Cart = () => {
 
   const [purchasesInCartData, setPurchasesInCartData] = useState<TPurchase[]>([]);
 
-
-  useEffect(() => {
-    const fetchPurchasesInCart = async () => {
-      const { data } = await purchaseAPI.getCart({ status: purchasesStatus.inCart });
-      setPurchasesInCartData(data.data);
-    };
-    fetchPurchasesInCart();
-  }, []);
+  // useEffect(() => {
+  //   const fetchPurchasesInCart = async () => {
+  //     const { data } = await purchaseAPI.getCart({ status: purchasesStatus.inCart });
+  //     setPurchasesInCartData(data.data);
+  //   };
+  //   fetchPurchasesInCart();
+  // }, []);
 
   // const updatePurchaseMutation = useMutation({
   //   mutationFn: purchaseAPI.updateCart,
@@ -53,63 +52,63 @@ const Cart = () => {
   //     purchaseInCartRefetch();
   //   },
   // });
-//use axiost
-  const updatePurchaseMutation = async (body: { product_id: string; buy_count: number }) => {
-    const { data } = await purchaseAPI.updateCart(body);
-    purchaseInCartRefetch();
-    toast.success(data.data.message);
-  };
+  //use axiost
+  // const updatePurchaseMutation = async (body: { product_id: string; buy_count: number }) => {
+  //   const { data } = await purchaseAPI.updateCart(body);
+  //   purchaseInCartRefetch();
+  //   toast.success(data.data.message);
+  // };
 
-  const deletePurchaseMutation = useMutation({
-    mutationFn: purchaseAPI.deletePurchaseFromCart,
-    onSuccess: (data) => {
-      purchaseInCartRefetch();
-      toast.success(data.data.message);
-    },
-  });
-  const buyProductsMutation = useMutation({
-    mutationFn: purchaseAPI.buyProducts,
-    onSuccess: () => {
-      purchaseInCartRefetch();
-    },
-  });
-  const purchasesInCart = purchasesInCartData?.data.data;
-  useEffect(() => {
-    setExtendedPurchases((prev) => {
-      const newExtendedPurchases = keyBy(prev, "_id");
-      return (
-        purchasesInCart?.map((purchase) => {
-          const chosenBuyNowPurchase = chosenBuyNowPurchaseId === purchase._id;
-          return {
-            ...purchase,
-            disabled: false,
-            checked: chosenBuyNowPurchase || Boolean(newExtendedPurchases[purchase._id]?.checked),
-          };
-        }) || []
-      );
-    });
-  }, [chosenBuyNowPurchaseId, purchasesInCart, setExtendedPurchases]);
-  useEffect(() => {
-    return () => {
-      history.replaceState(null, "");
-    };
-  }, []);
+  // const deletePurchaseMutation = useMutation({
+  //   mutationFn: purchaseAPI.deletePurchaseFromCart,
+  //   onSuccess: (data) => {
+  //     purchaseInCartRefetch();
+  //     toast.success(data.data.message);
+  //   },
+  // });
+  // const buyProductsMutation = useMutation({
+  //   mutationFn: purchaseAPI.buyProducts,
+  //   onSuccess: () => {
+  //     purchaseInCartRefetch();
+  //   },
+  // });
+  // const purchasesInCart = purchasesInCartData?.data.data;
+  // useEffect(() => {
+  //   setExtendedPurchases((prev) => {
+  //     const newExtendedPurchases = keyBy(prev, "_id");
+  //     return (
+  //       purchasesInCart?.map((purchase) => {
+  //         const chosenBuyNowPurchase = chosenBuyNowPurchaseId === purchase._id;
+  //         return {
+  //           ...purchase,
+  //           disabled: false,
+  //           checked: chosenBuyNowPurchase || Boolean(newExtendedPurchases[purchase._id]?.checked),
+  //         };
+  //       }) || []
+  //     );
+  //   });
+  // }, [chosenBuyNowPurchaseId, purchasesInCart, setExtendedPurchases]);
+  // useEffect(() => {
+  //   return () => {
+  //     history.replaceState(null, "");
+  //   };
+  // }, []);
 
-  const handlePurchase = () => {
-    if (checkedPurchases.length > 0) {
-      const body = checkedPurchases.map((checkedPurchase) => ({
-        product_id: checkedPurchase.product._id,
-        buy_count: checkedPurchase.buy_count,
-      }));
-      buyProductsMutation.mutate(body, {
-        onSuccess: (data) => {
-          toast.success(data.data.message);
-        },
-      });
-    } else {
-      toast.info("Vui lòng chọn sản phẩm muốn mua");
-    }
-  };
+  // const handlePurchase = () => {
+  //   if (checkedPurchases.length > 0) {
+  //     const body = checkedPurchases.map((checkedPurchase) => ({
+  //       product_id: checkedPurchase.product._id,
+  //       buy_count: checkedPurchase.buy_count,
+  //     }));
+  //     buyProductsMutation.mutate(body, {
+  //       onSuccess: (data) => {
+  //         toast.success(data.data.message);
+  //       },
+  //     });
+  //   } else {
+  //     toast.info("Vui lòng chọn sản phẩm muốn mua");
+  //   }
+  // };
 
   const handleSelectProduct = (productIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setExtendedPurchases(
@@ -137,7 +136,7 @@ const Cart = () => {
         }),
       );
     }
-    updatePurchaseMutation.mutate({ product_id: product.product._id, buy_count: value });
+    // updatePurchaseMutation.mutate({ product_id: product.product._id, buy_count: value });
   };
 
   const handleTypeQuantity = (productIndex: number) => (value: number) => {
@@ -149,12 +148,12 @@ const Cart = () => {
   };
   const handleDeleteAPurchase = (purchaseIndex: number) => () => {
     const purchaseId = extendedPurchases[purchaseIndex]._id;
-    deletePurchaseMutation.mutate([purchaseId]);
+    // deletePurchaseMutation.mutate([purchaseId]);
   };
 
   const handleDeleteMultiplePurchases = () => {
     const purchaseIds = checkedPurchases.map((purchase) => purchase._id);
-    deletePurchaseMutation.mutate(purchaseIds);
+    // deletePurchaseMutation.mutate(purchaseIds);
   };
   return (
     <div className="bg-neutral-100 py-16">
@@ -165,10 +164,10 @@ const Cart = () => {
           content={`Trang giỏ hàng của Shopee At Home`}
         />
       </Helmet>
-      <div className="container">
+      <div className="container mt-40">
         {extendedPurchases.length > 0 ? (
           <>
-            <div className="hidden grid-cols-12 rounded-sm bg-white py-5 px-9 text-sm capitalize text-gray-500 shadow lg:grid">
+            <div className="hidden grid-cols-12 rounded-sm bg-white px-9 py-5 text-sm capitalize text-gray-500 shadow lg:grid">
               <div className="col-span-6">
                 <div className="flex items-center">
                   <div className="flex flex-shrink-0 items-center justify-center pr-3">
@@ -196,7 +195,7 @@ const Cart = () => {
                 {extendedPurchases.map((purchase, index) => (
                   <div
                     key={purchase._id}
-                    className="mb-5 flex items-center justify-between rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500 first:mt-0 lg:grid lg:grid-cols-12"
+                    className="mb-5 flex items-center justify-between rounded-sm border border-gray-200 bg-white px-4 py-5 text-center text-sm text-gray-500 first:mt-0 lg:grid lg:grid-cols-12"
                   >
                     <div className="flex items-center gap-x-3 lg:col-span-6">
                       <div className="flex items-center justify-center gap-x-3">
@@ -226,7 +225,7 @@ const Cart = () => {
                             name: purchase.product.name,
                             id: purchase.product._id,
                           })}`}
-                          className="text-left line-clamp-1 lg:line-clamp-2"
+                          className="line-clamp-1 text-left lg:line-clamp-2"
                         >
                           {purchase.product.name}
                         </Link>
@@ -248,13 +247,13 @@ const Cart = () => {
                             onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
                             onDecrease={(value) => handleQuantity(index, value, value >= 1)}
                             onType={handleTypeQuantity(index)}
-                            onFocusOutside={(value) =>
-                              handleQuantity(
-                                index,
-                                value,
-                                value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
-                              )
-                            }
+                            // onFocusOutside={(value) =>
+                            //   handleQuantity(
+                            //     index,
+                            //     value,
+                            //     value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
+                            //   )
+                            // }
                             disabled={purchase.disabled}
                           />
                           <button
@@ -287,13 +286,13 @@ const Cart = () => {
                             onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
                             onDecrease={(value) => handleQuantity(index, value, value >= 1)}
                             onType={handleTypeQuantity(index)}
-                            onFocusOutside={(value) =>
-                              handleQuantity(
-                                index,
-                                value,
-                                value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
-                              )
-                            }
+                            // onFocusOutside={(value) =>
+                            //   handleQuantity(
+                            //     index,
+                            //     value,
+                            //     value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
+                            //   )
+                            // }
                             disabled={purchase.disabled}
                           />
                         </div>
@@ -326,7 +325,7 @@ const Cart = () => {
                     onChange={handleSelectAllProducts}
                   />
                 </div>
-                <button className="mx-3 border-none bg-none">Chọn tất cả ({purchasesInCart?.length})</button>
+                <button className="mx-3 border-none bg-none">Chọn tất cả </button>
                 <button
                   onClick={handleDeleteMultiplePurchases}
                   className="mx-3 border-none bg-none"
@@ -347,8 +346,8 @@ const Cart = () => {
                   </div>
                 </div>
                 <Button
-                  onClick={handlePurchase}
-                  isLoading={buyProductsMutation.isLoading}
+                  // onClick={handlePurchase}
+                  // isLoading={buyProductsMutation.isLoading}
                   className="mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 lg:ml-4 lg:mt-0"
                 >
                   Mua hàng

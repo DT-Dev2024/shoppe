@@ -79,7 +79,7 @@ const QuantityController = ({
         </svg>
       </button>
       <InputNumber
-        className="h-6 w-9 rounded-none border-t border-b border-gray-300 p-1 text-center outline-none sm:h-8 sm:w-14"
+        className="h-6 w-9 rounded-none border-b border-t border-gray-300 p-1 text-center outline-none sm:h-8 sm:w-14"
         errorClassName="hidden"
         value={value || localValue}
         onChange={handleChange}

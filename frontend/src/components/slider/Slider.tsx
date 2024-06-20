@@ -131,9 +131,7 @@ const Slider = () => {
                   src={item.src}
                   alt=""
                 />
-                <h4 className="slider__favourite-selections__link-text">
-                  {item.desc}
-                </h4>
+                <h4 className="slider__favourite-selections__link-text">{item.desc}</h4>
               </a>
             </div>
           ))}

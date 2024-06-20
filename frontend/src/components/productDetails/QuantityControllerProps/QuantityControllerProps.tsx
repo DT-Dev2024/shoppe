@@ -6,11 +6,7 @@ interface QuantityControllerProps {
   max?: number;
 }
 
-const QuantityController: React.FC<QuantityControllerProps> = ({
-  initialQuantity = 1,
-  min = 1,
-  max = 99,
-}) => {
+const QuantityController: React.FC<QuantityControllerProps> = ({ initialQuantity = 1, min = 1, max = 99 }) => {
   const [quantity, setQuantity] = useState<number>(initialQuantity);
 
   const handleDecrease = () => {
@@ -33,7 +29,7 @@ const QuantityController: React.FC<QuantityControllerProps> = ({
       <button
         type="button"
         onClick={handleDecrease}
-        className="px-4 py-2 bg-gray-200 border rounded-l-sm hover:bg-gray-300"
+        className="rounded-l-sm border bg-gray-200 px-2 py-1 hover:bg-gray-300"
       >
         –
       </button>
@@ -41,12 +37,12 @@ const QuantityController: React.FC<QuantityControllerProps> = ({
         type="text"
         value={quantity}
         onChange={handleChange}
-        className="h-12 text-2xl text-center border-t border-b border-gray-300 w-[50px] bg-gray-100"
+        className="h-11 w-[60px] border-b border-t border-gray-300 bg-gray-100 text-center text-[18px]"
       />
       <button
         type="button"
         onClick={handleIncrease}
-        className="px-4 py-2 bg-gray-200 border rounded-r-sm hover:bg-gray-300"
+        className="rounded-r-sm border bg-gray-200 px-2 py-1 hover:bg-gray-300"
       >
         +
       </button>

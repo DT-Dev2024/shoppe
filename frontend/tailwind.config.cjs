@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const plugin = require("tailwindcss/plugin");
+import LoginBG from "src/assets/img/login.png";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -19,7 +20,7 @@ module.exports = {
         "bottom-spread": "rgba(0, 0, 0, 0.35)0px 5px 15px;",
       },
       backgroundImage: {
-        "shopee-pattern": "url('https://cf.shopee.vn/file/5569eb9dc7e09e2dbed5315b8f2ea8ba')",
+        "shopee-pattern": `url('https://down-vn.img.susercontent.com/file/sg-11134004-7rd5q-lv8p5wbyoc8t57')`,
       },
     },
   },

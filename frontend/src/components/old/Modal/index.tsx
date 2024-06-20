@@ -7,14 +7,14 @@ import {
   HeaderGooglePlayIcon,
   HeaderQRCodeImage,
 } from "src/assets/img";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, MouseEvent } from "react";
 import useModalStatusContext from "src/hooks/hookHome/useModalStatusContext";
 import { $ } from "src/constants";
 import { FormSubmit, handleStopPropagation } from "src/helpers";
 
 function Modal() {
-  const giftBannerPopupRef = useRef();
-  const giftBannerPopupCloseBtnRef = useRef<HTMLButtonElement | undefined>();
+  const giftBannerPopupRef = useRef<HTMLDivElement | null>(null);
+  const giftBannerPopupCloseBtnRef = useRef<HTMLButtonElement | null>(null);
 
   let timerId: NodeJS.Timeout;
   const { setShowModal } = useModalStatusContext();
@@ -29,26 +29,22 @@ function Modal() {
       setShowModal(false);
 
       // enable scrolling
-      const bodyElement = $("body");
-      const appElement = $("#app");
-      if (bodyElement) {
+      const bodyElement = $("body") as HTMLElement;
+      if (bodyElement !== null) {
         bodyElement.style.overflow = "visible";
       }
-      if (appElement) {
+      const appElement = $("#app") as HTMLElement;
+      if (appElement !== null) {
         appElement.style.position = "absolute";
       }
     }, 100);
   };
 
-  const handleClickGiftBannerPopup = (event: FormSubmit) => {
-    handleStopPropagation(event);
-  };
-
-  const handleClickGiftBannerPopupCloseBtn = (event: FormSubmit) => {
+  const handleClickGiftBannerPopupCloseBtn = (event: any) => {
     handleStopPropagation(event);
 
     // Trigger event click
-    $("#modal").click();
+    // $("#modal").click();
   };
 
   useEffect(() => {
@@ -58,14 +54,14 @@ function Modal() {
   return (
     <div
       id="modal"
-      onClick={handleClickModal}
+      // onClick={handleClickModal}
     >
       <div className="modal__overlay"></div>
 
       <div className="modal__body">
         <div
           ref={giftBannerPopupRef}
-          onClick={(event) => handleClickGiftBannerPopup(event)}
+          // onClick={(event) => handleClickGiftBannerPopup(event)}
           style={{ display: "block" }}
           className="gift-banner__popup"
         >

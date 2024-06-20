@@ -25,7 +25,7 @@ const ProductRating = ({ rating, activeClassName, nonActiveClassName }: ProductR
             key={index}
           >
             <div
-              className="absolute top-0 left-0 h-full overflow-hidden"
+              className="absolute left-0 top-0 h-full overflow-hidden"
               style={{ width: handleStarWidth(index + 1) }}
             >
               <svg

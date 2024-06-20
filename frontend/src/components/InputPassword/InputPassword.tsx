@@ -49,7 +49,7 @@ const InputPassword = ({
         {showPassword ? (
           <span
             onClick={() => setShowPassword(false)}
-            className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+            className="absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer"
             aria-hidden={true}
           >
             <EyeOpenIcon
@@ -60,7 +60,7 @@ const InputPassword = ({
         ) : (
           <span
             onClick={() => setShowPassword(true)}
-            className="absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer"
+            className="absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer"
             aria-hidden={true}
           >
             <EyeCloseIcon

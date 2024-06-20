@@ -1,7 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import authApi from "src/apis/auth.api";
@@ -15,6 +14,7 @@ import { loginSchema, TLoginSchemaType } from "src/schemas/schema";
 import { Helmet } from "react-helmet-async";
 
 type FormData = TLoginSchemaType;
+
 const Login = () => {
   const {
     handleSubmit,
@@ -28,31 +28,30 @@ const Login = () => {
   });
   const navigate = useNavigate();
   const { setIsAuthenticated, setUserProfile } = useContext(AuthContext);
-  const loginAccountMutation = useMutation({
-    mutationFn: (body: FormData) => authApi.loginAccount(body),
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = handleSubmit((data) => {
-    loginAccountMutation.mutate(data, {
-      onSuccess: (data) => {
-        setIsAuthenticated(true);
-        setUserProfile(data.data.data.user);
-        navigate(path.home);
-      },
-      onError: (error) => {
-        if (
-          isAxiosError<TErrorApiResponse<FormData>>(error) &&
-          isAxiosUnprocessableEntity<TErrorApiResponse<FormData>>(error)
-        ) {
-          const formError = error.response?.data.data;
-          if (formError) {
-            Object.keys(formError).forEach((key) => {
-              setError(key as keyof FormData, { message: formError[key as keyof FormData], type: "server" });
-            });
-          }
+  const handleLogin = handleSubmit(async (data) => {
+    try {
+      setIsLoading(true);
+      const response = await authApi.loginAccount(data);
+      setIsAuthenticated(true);
+      setUserProfile(response.data.data.user);
+      navigate(path.home);
+    } catch (error) {
+      if (
+        isAxiosError<TErrorApiResponse<FormData>>(error) &&
+        isAxiosUnprocessableEntity<TErrorApiResponse<FormData>>(error)
+      ) {
+        const formError = error.response?.data.data;
+        if (formError) {
+          Object.keys(formError).forEach((key) => {
+            setError(key as keyof FormData, { message: formError[key as keyof FormData], type: "server" });
+          });
         }
-      },
-    });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return (
@@ -91,7 +90,7 @@ const Login = () => {
           <div className="mt-3">
             <Button
               type="submit"
-              isLoading={loginAccountMutation.isLoading}
+              isLoading={isLoading}
               containerClassName="mt-1"
             >
               Đăng nhập
@@ -101,7 +100,7 @@ const Login = () => {
             <span className="text-gray-400">Bạn chưa có tài khoản?</span>
             <Link
               className="ml-1 text-red-400"
-              to={path.register}
+              to={path.login}
             >
               Đăng ký
             </Link>

@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import classNames from "classnames";
-import { createSearchParams, Link } from "react-router-dom";
-import purchaseAPI from "src/apis/purchase.api";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { createSearchParams, Link } from "react-router-dom";
 import { path } from "src/constants/path.enum";
 import { purchasesStatus } from "src/constants/purchaseStatus.enum";
 import useQueryParams from "src/hooks/useQueryParams";
-import { TPurchaseListStatus } from "src/types/purchase.type";
 import { formatCurrency } from "src/utils/formatNumber";
 import { generateSlug } from "src/utils/slugify";
 
@@ -19,44 +18,52 @@ const purchaseTabs = [
   { status: purchasesStatus.cancelled, name: "Đã hủy" },
 ];
 
-export default function HistoryPurchase() {
+const HistoryPurchase = () => {
   const queryParams: { status?: string } = useQueryParams();
   const status: number = Number(queryParams.status) || purchasesStatus.all;
+  const [purchasesInCart, setPurchasesInCart] = useState<any[]>([]);
 
-  const { data: purchasesInCartData } = useQuery({
-    queryKey: ["purchases", { status }],
-    queryFn: () => purchaseAPI.getCart({ status: status as TPurchaseListStatus }),
-  });
+  // useEffect(() => {
+  //   fetchPurchases();
+  // }, [status]);
 
-  const purchasesInCart = purchasesInCartData?.data.data;
-  const purchaseTabsLink = purchaseTabs.map((tab) => (
-    <Link
-      key={tab.status}
-      to={{
-        pathname: path.orderHistory,
-        search: createSearchParams({
-          status: String(tab.status),
-        }).toString(),
-      }}
-      className={classNames("flex flex-1 items-center justify-center border-b-2 bg-white py-4 text-center", {
-        "border-b-primary text-primary": status === tab.status,
-        "border-b-black/10 text-gray-900": status !== tab.status,
-      })}
-    >
-      {tab.name}
-    </Link>
-  ));
+  // const fetchPurchases = async () => {
+  //   try {
+  //     const response = await axios.get(`/api/purchases?status=${status}`);
+  //     setPurchasesInCart(response.data.data);
+  //   } catch (error) {
+  //     console.error("Error fetching purchases:", error);
+  //   }
+  // };
+
+  // const purchaseTabsLink = purchaseTabs.map((tab) => (
+  //   <Link
+  //     key={tab.status}
+  //     to={{
+  //       pathname: path.orderHistory,
+  //       search: createSearchParams({
+  //         status: String(tab.status),
+  //       }).toString(),
+  //     }}
+  //     className={classNames("flex flex-1 items-center justify-center border-b-2 bg-white py-4 text-center", {
+  //       "border-b-primary text-primary": status === tab.status,
+  //       "border-b-black/10 text-gray-900": status !== tab.status,
+  //     })}
+  //   >
+  //     {tab.name}
+  //   </Link>
+  // ));
 
   return (
     <div>
       <Helmet>
         <title>Shopee At Home | Đơn mua</title>
       </Helmet>
-      <div className="overflow-x-auto">
+      <div className="mt-40 overflow-x-auto">
         <div className="min-w-[700px]">
-          <div className="sticky top-0 flex rounded-t-sm shadow-sm">{purchaseTabsLink}</div>
+          {/* <div className="sticky top-0 flex rounded-t-sm shadow-sm">{purchaseTabsLink}</div> */}
           <div>
-            {purchasesInCart?.map((purchase) => (
+            {purchasesInCart.map((purchase) => (
               <div
                 key={purchase._id}
                 className="mt-4 rounded-sm border-black/10 bg-white p-6 text-gray-800 shadow-sm"
@@ -98,4 +105,6 @@ export default function HistoryPurchase() {
       </div>
     </div>
   );
-}
+};
+
+export default HistoryPurchase;

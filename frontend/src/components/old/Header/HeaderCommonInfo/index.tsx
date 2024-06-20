@@ -266,7 +266,7 @@ function HeaderCommonInfo() {
 
         <div className="header__register">
           <a
-            href="/register"
+            href="/"
             className="header__register__btn"
           >
             <span>Đăng Ký</span>

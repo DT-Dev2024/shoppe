@@ -1,3 +1,3 @@
-import ProductDetails from "./ProductDetails";
+import ProductDetails from "src/components/productDetails/ProductDetails";
 
 export default ProductDetails;
