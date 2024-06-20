@@ -1,8 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
 import keyBy from "lodash/keyBy";
-import React, { useContext, useEffect, useMemo } from "react";
-import EmptyCartIcon from "src/assets/images/empty-cart.png";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import EmptyCartIcon from "src/assets/img/empty-cart.png";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import purchaseAPI from "src/apis/purchase.api";
@@ -36,16 +35,31 @@ const Cart = () => {
       ),
     [checkedPurchases],
   );
-  const { data: purchasesInCartData, refetch: purchaseInCartRefetch } = useQuery({
-    queryKey: ["purchases", { status: purchasesStatus.inCart }],
-    queryFn: () => purchaseAPI.getCart({ status: purchasesStatus.inCart }),
-  });
-  const updatePurchaseMutation = useMutation({
-    mutationFn: purchaseAPI.updateCart,
-    onSuccess: () => {
-      purchaseInCartRefetch();
-    },
-  });
+
+  const [purchasesInCartData, setPurchasesInCartData] = useState<TPurchase[]>([]);
+
+
+  useEffect(() => {
+    const fetchPurchasesInCart = async () => {
+      const { data } = await purchaseAPI.getCart({ status: purchasesStatus.inCart });
+      setPurchasesInCartData(data.data);
+    };
+    fetchPurchasesInCart();
+  }, []);
+
+  // const updatePurchaseMutation = useMutation({
+  //   mutationFn: purchaseAPI.updateCart,
+  //   onSuccess: () => {
+  //     purchaseInCartRefetch();
+  //   },
+  // });
+//use axiost
+  const updatePurchaseMutation = async (body: { product_id: string; buy_count: number }) => {
+    const { data } = await purchaseAPI.updateCart(body);
+    purchaseInCartRefetch();
+    toast.success(data.data.message);
+  };
+
   const deletePurchaseMutation = useMutation({
     mutationFn: purchaseAPI.deletePurchaseFromCart,
     onSuccess: (data) => {

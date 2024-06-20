@@ -1,39 +1,26 @@
-import { QueryClient } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
+import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "swiper/swiper.min.css";
-import { DataSourceContextProvider, ModalStatusContextProvider } from "./contexts";
+import App from "./App";
+import { AuthProvider } from "./contexts/auth.context";
+import { CartProvider } from "./contexts/cart.context";
 import "./index.css";
-import Home from "./pages/Home";
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 0,
-    },
-  },
-});
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    {/* <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <HelmetProvider>
-          <AuthProvider>
-            <CartProvider>
-
-              <Home />
-            </CartProvider>
-            <ToastContainer></ToastContainer>
-          </AuthProvider>
-        </HelmetProvider>
-        <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
-      </QueryClientProvider>
-    </BrowserRouter> */}
-    <DataSourceContextProvider>
-      <ModalStatusContextProvider>
-        <Home />
-      </ModalStatusContextProvider>
-    </DataSourceContextProvider>
+    <BrowserRouter>
+      <HelmetProvider>
+        <AuthProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+          <ToastContainer />
+        </AuthProvider>
+      </HelmetProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 );
