@@ -21,7 +21,7 @@ const UserSidebar = () => {
           />
         </NavLink>
         <div className="flex-grow pl-4">
-          <div className="mb-1 font-semibold text-gray-600 line-clamp-1">Trần Đăng Khôi</div>
+          <div className="mb-1 line-clamp-1 font-semibold text-gray-600">Trần Đăng Khôi</div>
           <NavLink
             to={path.profile}
             className="flex items-center capitalize text-gray-500"
@@ -59,20 +59,7 @@ const UserSidebar = () => {
           </div>
           Tài khoản của tôi
         </NavLink>
-        <NavLink
-          to={path.changePassword}
-          className={({ isActive }) =>
-            `mt-2 flex items-center gap-x-3 capitalize transition-colors ${isActive ? "text-primary" : "text-gray-600"}`
-          }
-        >
-          <div className="h-[22px] w-[22px]">
-            <LockIcon
-              className="h-[22px] w-[22px]"
-              fill="#0E4FB2"
-            ></LockIcon>
-          </div>
-          Đổi mật khẩu
-        </NavLink>
+
         <NavLink
           to={path.orderHistory}
           className={({ isActive }) =>

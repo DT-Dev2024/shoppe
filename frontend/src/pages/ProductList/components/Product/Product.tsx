@@ -16,11 +16,11 @@ const Product = ({ product }: ProductProps) => {
           <img
             src={product.image}
             alt={product.name}
-            className="absolute top-0 left-0 h-full w-full bg-white object-cover"
+            className="absolute left-0 top-0 h-full w-full bg-white object-cover"
           />
         </div>
         <div className="overflow-hidden p-2">
-          <div className="min-h-[2rem] text-xs line-clamp-2">{product.name}</div>
+          <div className="line-clamp-2 min-h-[2rem] text-xs">{product.name}</div>
           <div className="mt-3 flex items-center gap-x-1">
             <div className="max-w-[50%] truncate text-gray-500 line-through">
               <span className="text-xs">₫</span>

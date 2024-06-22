@@ -255,7 +255,6 @@ function DataSourceContextProvider({ children }: { children: React.ReactNode }) 
     };
     fetchData();
   }, []);
-  console.log(dataSource.footerTextATagsInfo);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return <DataSourceContext.Provider value={dataSource!}>{children}</DataSourceContext.Provider>;

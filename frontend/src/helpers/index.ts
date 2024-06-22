@@ -14,7 +14,7 @@ export const scrollToTop = () => {
 export const handlePreventDefault = (event: React.MouseEvent<HTMLButtonElement>) => {
   event.preventDefault();
 };
-export const handleStopPropagation = (event: FormSubmit) => {
+export const handleStopPropagation = (event: MouseEvent<HTMLButtonElement, MouseEvent>) => {
   event.stopPropagation();
 };
 

@@ -73,9 +73,9 @@ const Popover = ({
               transition={{ duration: 0.2 }}
               {...getFloatingProps()}
             >
-              <div className="absolute top-0 left-0 h-5 w-full -translate-y-full"></div>
+              <div className="absolute left-0 top-0 h-5 w-full -translate-y-full"></div>
               <span
-                className="absolute -translate-y-[98%] border-[11px] border-x-transparent border-t-transparent border-b-white"
+                className="absolute -translate-y-[98%] border-[11px] border-x-transparent border-b-white border-t-transparent"
                 ref={arrowRef}
                 style={{
                   left: middlewareData.arrow?.x,

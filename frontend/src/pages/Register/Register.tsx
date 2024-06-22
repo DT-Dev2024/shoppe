@@ -3,12 +3,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "src/components/Input";
 import { registerSchema, TRegisterSchema } from "src/schemas/schema";
-import { useMutation } from "@tanstack/react-query";
 import authApi from "src/apis/auth.api";
 import omit from "lodash/omit";
 import { isAxiosError, isAxiosUnprocessableEntity } from "src/utils/isAxiosError";
 import { TErrorApiResponse } from "src/types/utils.types";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "src/contexts/auth.context";
 import Button from "src/components/Button";
 import { path } from "src/constants/path.enum";
@@ -28,34 +27,34 @@ const Register = () => {
   });
   const navigate = useNavigate();
   const { setIsAuthenticated, setUserProfile } = useContext(AuthContext);
-  const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<FormData, "confirm_password">) => authApi.registerAccount(body),
-  });
-  const handleSignUp = handleSubmit((data) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignUp = handleSubmit(async (data) => {
     const body = omit(data, ["confirm_password"]);
-    registerAccountMutation.mutate(body, {
-      onSuccess: (data) => {
-        setIsAuthenticated(true);
-        setUserProfile(data.data.data.user);
-        navigate(path.home);
-      },
-      onError: (error) => {
-        if (
-          isAxiosError<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error) &&
-          isAxiosUnprocessableEntity<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error)
-        ) {
-          const formError = error.response?.data.data;
-          if (formError) {
-            Object.keys(formError).forEach((key) => {
-              setError(key as keyof Omit<FormData, "confirm_password">, {
-                message: formError[key as keyof Omit<FormData, "confirm_password">],
-                type: "server",
-              });
+    try {
+      setIsLoading(true);
+      const response = await authApi.registerAccount(body);
+      setIsAuthenticated(true);
+      setUserProfile(response.data.data.user);
+      navigate(path.home);
+    } catch (error) {
+      if (
+        isAxiosError<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error) &&
+        isAxiosUnprocessableEntity<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error)
+      ) {
+        const formError = error.response?.data.data;
+        if (formError) {
+          Object.keys(formError).forEach((key) => {
+            setError(key as keyof Omit<FormData, "confirm_password">, {
+              message: formError[key as keyof Omit<FormData, "confirm_password">],
+              type: "server",
             });
-          }
+          });
         }
-      },
-    });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return (
@@ -101,7 +100,7 @@ const Register = () => {
           ></Input>
           <Button
             type="submit"
-            isLoading={registerAccountMutation.isLoading}
+            isLoading={isLoading}
             containerClassName="mt-1"
           >
             Đăng ký

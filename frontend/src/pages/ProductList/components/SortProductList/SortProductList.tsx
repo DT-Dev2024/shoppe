@@ -43,7 +43,7 @@ const SortProductList = ({ pageSize, queryConfig }: SortProductListProps) => {
     return sort_by === sortByValue;
   };
   return (
-    <div className="bg-gray-300/40 py-4 px-3">
+    <div className="bg-gray-300/40 px-3 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <div>Sắp xếp theo</div>
@@ -131,7 +131,7 @@ const SortProductList = ({ pageSize, queryConfig }: SortProductListProps) => {
           </div>
           <div className="flex items-center justify-center">
             {page === 1 ? (
-              <button className="h-8 cursor-not-allowed rounded-tl-sm rounded-bl-sm bg-white/60 px-3 shadow hover:bg-slate-100">
+              <button className="h-8 cursor-not-allowed rounded-bl-sm rounded-tl-sm bg-white/60 px-3 shadow hover:bg-slate-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -156,7 +156,7 @@ const SortProductList = ({ pageSize, queryConfig }: SortProductListProps) => {
                     page: (page - 1).toString(),
                   }).toString(),
                 }}
-                className="flex h-8 items-center justify-center rounded-tl-sm rounded-bl-sm bg-white px-3 shadow hover:bg-slate-100"
+                className="flex h-8 items-center justify-center rounded-bl-sm rounded-tl-sm bg-white px-3 shadow hover:bg-slate-100"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +175,7 @@ const SortProductList = ({ pageSize, queryConfig }: SortProductListProps) => {
               </Link>
             )}
             {page === pageSize ? (
-              <button className="flex h-8 cursor-not-allowed items-center justify-center rounded-tr-sm rounded-br-sm bg-white/60 px-3 shadow hover:bg-slate-100">
+              <button className="flex h-8 cursor-not-allowed items-center justify-center rounded-br-sm rounded-tr-sm bg-white/60 px-3 shadow hover:bg-slate-100">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -200,7 +200,7 @@ const SortProductList = ({ pageSize, queryConfig }: SortProductListProps) => {
                     page: (page + 1).toString(),
                   }).toString(),
                 }}
-                className="flex h-8 items-center justify-center rounded-tr-sm rounded-br-sm bg-white px-3 shadow hover:bg-slate-100"
+                className="flex h-8 items-center justify-center rounded-br-sm rounded-tr-sm bg-white px-3 shadow hover:bg-slate-100"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -1,51 +1,79 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import DOMPurify from "dompurify";
-import React, { useState } from "react";
 import { convert } from "html-to-text";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import productApi from "src/apis/product.api";
-import purchaseAPI from "src/apis/purchase.api";
 import ProductRating from "src/components/ProductRating";
 import QuantityController from "src/components/QuantityController";
 import { path } from "src/constants/path.enum";
-import { purchasesStatus } from "src/constants/purchaseStatus.enum";
 import { calculateSalePercent, formatCurrency, formatNumberToSocialStyle } from "src/utils/formatNumber";
 import { getIdFromSlug } from "src/utils/slugify";
 import { FreeMode, Navigation, Thumbs } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper } from "swiper/react";
 // eslint-disable-next-line import/no-unresolved
 import { Swiper as SwiperType } from "swiper/types";
-import Product from "../ProductList/components/Product";
-import { isAxiosError } from "axios";
 
 const ProductDetails = () => {
   const [thumbSwiper, setThumbSwiper] = useState<SwiperType | null>(null);
   const [currentImageState, setCurrentImageState] = useState<HTMLImageElement | null>(null);
   const [currentQuantity, setCurrentQuantity] = useState<number>(1);
+  const [product, setProduct] = useState<any>(null);
+  const [relevantProductListData, setRelevantProductListData] = useState<any>(null);
   const navigate = useNavigate();
   const { slug } = useParams();
   const id = getIdFromSlug(slug as string);
-  const queryClient = useQueryClient();
-  const { data: productDetailData } = useQuery({
-    queryKey: ["product", id],
-    queryFn: () => productApi.getProductById(id as string),
-    staleTime: 3 * 60 * 1000,
-  });
-  const product = productDetailData?.data.data;
-  const { data: relevantProductListData } = useQuery({
-    queryKey: ["relevantProducts", product?.category._id],
-    queryFn: () =>
-      productApi.getProducts({ category: product?.category._id, sort_by: "sold", order: "desc", limit: "12" }),
-    staleTime: 3 * 60 * 1000,
-    enabled: Boolean(product),
-  });
 
-  const addToCartMutation = useMutation({
-    mutationFn: () => purchaseAPI.addToCart({ buy_count: currentQuantity, product_id: product?._id as string }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart", { status: purchasesStatus.inCart }] });
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await axios.get(`/api/products/${id}`);
+        setProduct(response.data.data);
+      } catch (error) {
+        console.error("Lấy thông tin sản phẩm thất bại:", error);
+      }
+    };
+
+    const fetchRelevantProducts = async () => {
+      if (product?.category?._id) {
+        try {
+          const response = await axios.get("/api/products", {
+            params: {
+              category: product.category._id,
+              sort_by: "sold",
+              order: "desc",
+              limit: 12,
+            },
+          });
+          setRelevantProductListData(response.data.data);
+        } catch (error) {
+          console.error("Lấy danh sách sản phẩm liên quan thất bại:", error);
+        }
+      }
+    };
+
+    fetchProductDetails();
+    fetchRelevantProducts();
+  }, [id, product?.category?._id]);
+
+  const addToCart = async (data: { buy_count: number; product_id: string }) => {
+    try {
+      const response = await axios.post("/api/add-to-cart", data);
+      return response.data;
+    } catch (error) {
+      console.error("Thêm vào giỏ hàng thất bại:", error);
+      throw error;
+    }
+  };
+
+  const handleCurrentQuantity = (value: number) => {
+    setCurrentQuantity(value);
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCart({ buy_count: currentQuantity, product_id: product?._id });
       toast.dismiss();
       toast.success("Thêm vào giỏ hàng thành công", {
         hideProgressBar: true,
@@ -55,50 +83,42 @@ const ProductDetails = () => {
         className: "add-to-cart-successfully-toast",
         closeOnClick: false,
       });
-    },
-    onError: () => {
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error("Vui lòng đăng nhập!");
-    },
-  });
-  const handleCurrentQuantity = (value: number) => {
-    setCurrentQuantity(value);
-  };
-
-  const handleAddToCart = () => {
-    addToCartMutation.mutate();
+    }
   };
 
   const handleBuyNow = async () => {
-    const res = await addToCartMutation.mutateAsync();
-    const purchase = res.data.data;
-    navigate(path.cart, {
-      state: {
-        purchaseId: purchase._id,
-      },
-    });
-  };
-
-  const handleEnterZoomMode = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    setCurrentImageState(e.currentTarget);
-  };
-
-  const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    if (currentImageState) {
-      const image = currentImageState as HTMLImageElement;
-      const { naturalHeight, naturalWidth } = image;
-      const offsetX = event.pageX - (rect.x + window.scrollX);
-      const offsetY = event.pageY - (rect.y + window.scrollY);
-
-      const top = offsetY * (1 - naturalHeight / rect.height);
-      const left = offsetX * (1 - naturalWidth / rect.width);
-      image.style.width = naturalWidth + "px";
-      image.style.height = naturalHeight + "px";
-      image.style.maxWidth = "unset";
-      image.style.top = top + "px";
-      image.style.left = left + "px";
+    try {
+      await addToCart({ buy_count: currentQuantity, product_id: product?._id });
+      navigate(path.cart);
+    } catch (error) {
+      console.error("Lỗi khi mua hàng:", error);
     }
   };
+
+  // const handleEnterZoomMode = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+  //   setCurrentImageState(e.currentTarget);
+  // };
+
+  // const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //   const rect = event.currentTarget.getBoundingClientRect();
+  //   if (currentImageState) {
+  //     const image = currentImageState as HTMLImageElement;
+  //     const { naturalHeight, naturalWidth } = image;
+  //     const offsetX = event.pageX - (rect.x + window.scrollX);
+  //     const offsetY = event.pageY - (rect.y + window.scrollY);
+
+  //     const top = offsetY * (1 - naturalHeight / rect.height);
+  //     const left = offsetX * (1 - naturalWidth / rect.width);
+  //     image.style.width = naturalWidth + "px";
+  //     image.style.height = naturalHeight + "px";
+  //     image.style.maxWidth = "unset";
+  //     image.style.top = top + "px";
+  //     image.style.left = left + "px";
+  //   }
+  // };
 
   const handleRemoveZoom = () => {
     const image = currentImageState as HTMLImageElement;
@@ -131,7 +151,7 @@ const ProductDetails = () => {
                 modules={[Thumbs]}
                 className="transition-all duration-200 hover:shadow-bottom-spread active:pointer-events-none"
               >
-                {product.images.map((image) => {
+                {/* {product.images.map((image) => {
                   return (
                     <SwiperSlide key={image}>
                       <div
@@ -144,12 +164,12 @@ const ProductDetails = () => {
                           alt={product.name}
                           onMouseEnter={handleEnterZoomMode}
                           aria-hidden={true}
-                          className="absolute top-0 left-0 h-full w-full cursor-zoom-in bg-white object-cover"
+                          className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-zoom-in"
                         />
                       </div>
                     </SwiperSlide>
                   );
-                })}
+                })} */}
               </Swiper>
               <Swiper
                 onSwiper={setThumbSwiper}
@@ -169,19 +189,19 @@ const ProductDetails = () => {
                 navigation={true}
                 modules={[Navigation, Thumbs, FreeMode]}
               >
-                {product.images.map((image) => {
+                {/* {product.images.map((image) => {
                   return (
                     <SwiperSlide key={image}>
                       <div className="relative w-full pt-[100%]">
                         <img
                           src={image}
                           alt={product.name}
-                          className="absolute top-0 left-0 h-full w-full cursor-pointer bg-white object-cover"
+                          className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-pointer"
                         />
                       </div>
                     </SwiperSlide>
                   );
-                })}
+                })} */}
               </Swiper>
             </div>
             <div className="mt-5 block lg:col-span-7">
@@ -291,7 +311,7 @@ const ProductDetails = () => {
       <div className="mt-8 bg-white p-4 shadow">
         <div className="container">
           <div className="rounded bg-gray-50 p-4 text-lg capitalize text-slate-700">Mô tả sản phẩm</div>
-          <div className="mx-4 mt-12 mb-4 text-sm leading-loose">
+          <div className="mx-4 mb-4 mt-12 text-sm leading-loose">
             <div
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(product.description),
@@ -303,7 +323,7 @@ const ProductDetails = () => {
       <div className="container">
         <h2 className="mt-5 uppercase">Các sản phẩm liên quan khác</h2>
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
-          {relevantProductListData &&
+          {/* {relevantProductListData &&
             relevantProductListData.data.data.products.map((product) => (
               <div
                 className="col-span-1"
@@ -311,7 +331,7 @@ const ProductDetails = () => {
               >
                 <Product product={product}></Product>
               </div>
-            ))}
+            ))} */}
         </div>
       </div>
     </div>

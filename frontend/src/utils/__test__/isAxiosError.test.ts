@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosError, isAxiosError } from "axios";
 import { HttpStatusCode } from "src/constants/httpStatusCode.enum";
 import { describe, it, expect } from "vitest";

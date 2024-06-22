@@ -1,120 +1,118 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation } from "@tanstack/react-query";
-import omit from "lodash/omit";
-import { useContext } from "react";
-import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import userApi from "src/apis/user.api";
-import Button from "src/components/Button";
-import InputPassword from "src/components/InputPassword";
-import { AuthContext } from "src/contexts/auth.context";
-import { TUserSchema, userSchema } from "src/schemas/userSchema";
-import { TErrorApiResponse } from "src/types/utils.types";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Link, useNavigate } from "react-router-dom";
+import { Input } from "src/components/Input";
+import { registerSchema, TRegisterSchema } from "src/schemas/schema";
+import authApi from "src/apis/auth.api";
+import omit from "lodash/omit";
 import { isAxiosError, isAxiosUnprocessableEntity } from "src/utils/isAxiosError";
+import { TErrorApiResponse } from "src/types/utils.types";
+import { useContext, useState } from "react";
+import { AuthContext } from "src/contexts/auth.context";
+import Button from "src/components/Button";
+import { path } from "src/constants/path.enum";
+import { Helmet } from "react-helmet-async";
 
-type TFormData = Pick<TUserSchema, "password" | "new_password" | "confirm_password">;
-const changePasswordSchema = userSchema.pick(["password", "new_password", "confirm_password"]);
-const ChangePassword = () => {
-  const { userProfile } = useContext(AuthContext);
+type FormData = TRegisterSchema;
+
+const Register = () => {
   const {
     handleSubmit,
-    reset,
     register,
     setError,
     formState: { errors },
-  } = useForm<TFormData>({
-    mode: "onSubmit",
+  } = useForm<FormData>({
     reValidateMode: "onBlur",
-    resolver: yupResolver(changePasswordSchema),
+    resolver: yupResolver(registerSchema),
   });
-  const updateProfileMutation = useMutation(userApi.updateProfile);
+  const navigate = useNavigate();
+  const { setIsAuthenticated, setUserProfile } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChangePassword = handleSubmit(async (data) => {
+  const handleSignUp = handleSubmit(async (data) => {
+    const body = omit(data, ["confirm_password"]);
     try {
-      const res = await updateProfileMutation.mutateAsync(omit(data, "confirm_password"));
-      toast.success(res.data.message);
-      reset();
+      setIsLoading(true);
+      const response = await authApi.registerAccount(body);
+      setIsAuthenticated(true);
+      setUserProfile(response.data.data.user);
+      navigate(path.home);
     } catch (error) {
       if (
-        isAxiosError<TErrorApiResponse<Omit<TFormData, "confirm_password">>>(error) &&
-        isAxiosUnprocessableEntity<TErrorApiResponse<Omit<TFormData, "confirm_password">>>(error)
+        isAxiosError<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error) &&
+        isAxiosUnprocessableEntity<TErrorApiResponse<Omit<FormData, "confirm_password">>>(error)
       ) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
-            setError(key as keyof Omit<TFormData, "confirm_password">, {
-              message: formError[key as keyof Omit<TFormData, "confirm_password">],
+            setError(key as keyof Omit<FormData, "confirm_password">, {
+              message: formError[key as keyof Omit<FormData, "confirm_password">],
               type: "server",
             });
           });
         }
       }
-      console.log(error);
-      return error;
+    } finally {
+      setIsLoading(false);
     }
   });
+
   return (
-    <div className="rounded-sm bg-white px-2 pb-10 shadow md:px-7 md:pb-20">
+    <div className="grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-24 lg:pr-10">
       <Helmet>
-        <title>Shopee At Home | Thay đổi mật khẩu</title>
+        <title>Shopee At Home | Đăng ký</title>
         <meta
           name="description"
-          content={`Đổi mật khẩu tài khoản ${userProfile?.email}`}
+          content={`Trang đăng ký của Shopee At Home`}
         />
       </Helmet>
-      <div className="border-b border-b-gray-200 py-6">
-        <h1 className="text-lg font-medium capitalize text-gray-900">Đổi mật khẩu</h1>
-        <div className="mt-1 text-sm text-gray-700">
-          Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác
-        </div>
-      </div>
-      <div className="mt-8 mr-auto max-w-[800px]">
+      <div className="lg:col-span-2 lg:col-start-4">
         <form
-          onSubmit={handleChangePassword}
-          className="mt-6 flex-grow md:mt-0 md:pr-12"
+          onSubmit={handleSignUp}
+          className="rounded bg-white p-10 shadow-sm"
+          noValidate
+          autoComplete="on"
         >
-          <div className="mt-2 flex flex-col flex-wrap sm:flex-row">
-            <div className="truncate capitalize sm:w-[20%] sm:pt-3 sm:text-right">Mật khẩu cũ</div>
-            <div className="sm:w-[80%] sm:pl-5">
-              <InputPassword
-                register={register}
-                name="password"
-                placeholder="Mật khẩu cũ"
-                errorMsg={errors.password?.message}
-                className="w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="mt-2 flex flex-col flex-wrap sm:flex-row">
-            <div className="truncate capitalize sm:w-[20%] sm:pt-3 sm:text-right">Mật khẩu mới</div>
-            <div className="sm:w-[80%] sm:pl-5">
-              <InputPassword
-                register={register}
-                name="new_password"
-                placeholder="Mật khẩu mới"
-                errorMsg={errors.new_password?.message}
-                className="w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="mt-2 flex flex-col flex-wrap sm:flex-row">
-            <div className="capitalize sm:w-[20%] sm:pt-3 sm:text-right">Nhập lại mật khẩu mới</div>
-            <div className="sm:w-[80%] sm:pl-5">
-              <InputPassword
-                register={register}
-                name="confirm_password"
-                placeholder="Xác nhận mật khẩu mới"
-                errorMsg={errors.confirm_password?.message}
-                className="w-full rounded-sm border border-gray-300 px-3 py-2 outline-none focus:border-gray-500 focus:shadow-sm"
-              />
-            </div>
-          </div>
-          <div className="mt-2 flex flex-col flex-wrap sm:flex-row">
-            <div className="truncate capitalize sm:w-[20%] sm:pt-3 sm:text-right"></div>
-            <div className="sm:w-[80%] sm:pl-5">
-              <Button className="rounded-sm">Cập nhật mật khẩu</Button>
-            </div>
+          <div className="text-2xl">Đăng ký tài khoản</div>
+          <Input
+            type="email"
+            name="email"
+            register={register}
+            containerClassName="mt-8"
+            placeholder="Địa chỉ e-mail"
+            errorMsg={errors.email?.message}
+          ></Input>
+          <Input
+            type="password"
+            name="password"
+            register={register}
+            containerClassName="mt-1"
+            placeholder="Nhập mật khẩu của bạn"
+            errorMsg={errors.password?.message}
+          ></Input>
+          <Input
+            type="password"
+            name="confirm_password"
+            register={register}
+            containerClassName="mt-1"
+            placeholder="Nhập lại mật khẩu của bạn"
+            errorMsg={errors.confirm_password?.message}
+          ></Input>
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            containerClassName="mt-1"
+          >
+            Đăng ký
+          </Button>
+          <div className="mt-8 flex items-center justify-center">
+            <span className="text-gray-400">Bạn đã có tài khoản?</span>
+            <Link
+              className="ml-1 text-red-400"
+              to={path.login}
+            >
+              Đăng nhập
+            </Link>
           </div>
         </form>
       </div>
@@ -122,4 +120,4 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+export default Register;

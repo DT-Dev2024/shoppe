@@ -1,4 +1,3 @@
-import MainNavbar from "./MainNavbar";
 import AuthenticationNavbar from "./AuthenticationNavbar";
-import CartNavbar from "./CartNavbar";
-export { MainNavbar, AuthenticationNavbar, CartNavbar };
+import Header from "src/components/old/Header";
+export { Header, AuthenticationNavbar };

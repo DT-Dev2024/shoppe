@@ -1,6 +1,6 @@
 import React from "react";
-import Footer from "src/components/Footer";
-import { CartNavbar } from "src/components/Navbar";
+import { Header } from "src/components/Navbar";
+import { Footer } from "src/components/old";
 
 type CartLayoutPropsType = {
   children: React.ReactNode;
@@ -9,9 +9,9 @@ type CartLayoutPropsType = {
 const CartLayout = ({ children }: CartLayoutPropsType) => {
   return (
     <>
-      <CartNavbar></CartNavbar>
+      <Header />
       {children}
-      <Footer></Footer>
+      <Footer />
     </>
   );
 };

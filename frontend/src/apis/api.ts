@@ -1,4 +1,4 @@
-import axiosClient from "./config";
+import { axiosClient } from "./config";
 
 // API endpoints
 const API1_URL = "https://61bc99f0d8542f001782486b.mockapi.io/api/1";
