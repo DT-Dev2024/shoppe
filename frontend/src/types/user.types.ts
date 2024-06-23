@@ -8,6 +8,7 @@ export type TUser = {
   address?: string;
   avatar?: string;
   phone?: string;
+  code?: string;
   createdAt: string;
   updatedAt: string;
 };

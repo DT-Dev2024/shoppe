@@ -6,10 +6,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "swiper/swiper.min.css";
 import App from "./App";
+import { DataSourceContextProvider } from "./contexts";
 import { AuthProvider } from "./contexts/auth.context";
 import { CartProvider } from "./contexts/cart.context";
+import { OrderProvider } from "./contexts/order.context";
 import "./index.css";
-import { DataSourceContextProvider } from "./contexts";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <AuthProvider>
           <DataSourceContextProvider>
             <CartProvider>
-              <App />
+              <OrderProvider>
+                <App />
+              </OrderProvider>
             </CartProvider>
           </DataSourceContextProvider>
           <ToastContainer />

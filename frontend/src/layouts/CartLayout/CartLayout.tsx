@@ -5,7 +5,7 @@ import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
 
 type CartLayoutPropsType = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 const CartLayout = ({ children }: CartLayoutPropsType) => {

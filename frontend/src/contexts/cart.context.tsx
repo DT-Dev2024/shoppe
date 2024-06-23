@@ -11,7 +11,7 @@ const initialAuthContext: AuthContextInterface = {
   setExtendedPurchases: () => null,
 };
 
-const orders: TExtendedPurchases[] = [
+export const orders: TExtendedPurchases[] = [
   {
     disabled: false,
     checked: false,

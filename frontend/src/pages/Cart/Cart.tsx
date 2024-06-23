@@ -7,7 +7,7 @@ import { BsExclamationCircle } from "react-icons/bs";
 import React, { useContext, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { FaMinus, FaPlus } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import EmptyCartIcon from "src/assets/img/empty-cart.png";
 import Voucher from "src/assets/img/voucher.png";
@@ -17,6 +17,8 @@ import { CartContext } from "src/contexts/cart.context";
 import { TPurchase, TVoucher } from "src/types/purchase.type";
 import { formatCurrency } from "src/utils/formatNumber";
 import { CiCircleQuestion } from "react-icons/ci";
+import { FormSubmit } from "src/helpers";
+import { OrderContext } from "src/contexts/order.context";
 type Quantity = Record<string, { quantity: number | string }>;
 interface CartProps {
   pricesAll: string;
@@ -139,7 +141,7 @@ const voucherMock: TVoucher[] = [
 
 const Cart = () => {
   const { state } = useLocation();
-  const chosenBuyNowPurchaseId = (state as { purchaseId: string | null })?.purchaseId;
+  const navigate = useNavigate();
   const { extendedPurchases, setExtendedPurchases } = useContext(CartContext);
   // Đại diện cho những purchase được checked
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases]);
@@ -148,7 +150,6 @@ const Cart = () => {
     () => checkedPurchases.reduce((prev, current) => prev + current.product.price * current.buy_count, 0),
     [checkedPurchases],
   );
-  console.log(totalCheckedPurchasesPrice);
   const totalSavedPrice = useMemo(
     () =>
       checkedPurchases.reduce(
@@ -157,17 +158,12 @@ const Cart = () => {
       ),
     [checkedPurchases],
   );
-  console.log(totalSavedPrice);
 
   const totalPriceBeforeDiscount = useMemo(
     () => checkedPurchases.reduce((prev, current) => prev + current.price_before_discount * current.buy_count, 0),
     [checkedPurchases],
   );
-  console.log(totalPriceBeforeDiscount);
-  const [total, setTotal] = useState(0);
   const [quantities, setQuantities] = useState<Quantity>({});
-
-  const [purchasesInCartData, setPurchasesInCartData] = useState<TPurchase[]>([]);
 
   const handleSelectProduct = (productIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setExtendedPurchases(
@@ -188,20 +184,6 @@ const Cart = () => {
       }),
     );
   };
-  const handleQuantity = (productIndex: number, value: number, enable: boolean) => {
-    const product = extendedPurchases[productIndex];
-    console.log(product);
-    if (enable) {
-      setExtendedPurchases(
-        produce((draft) => {
-          draft[productIndex].disabled === true;
-        }),
-      );
-    }
-    // updatePurchaseMutation.mutate({ product_id: product.product._id, buy_count: value });
-  };
-
-  const handleSubmit = (id: string) => {};
 
   const handleChangeQuantity = (increment: number, id: string, item: TPurchase) => {
     const newQuantity = (parseInt(quantities[id]?.quantity as string) || item.buy_count) + increment;
@@ -237,7 +219,6 @@ const Cart = () => {
     } else {
       setIsModalDeleteCartVisible(true);
     }
-    // deletePurchaseMutation.mutate(purchaseIds);
   };
 
   const EmptySelectModal = () => {
@@ -256,17 +237,14 @@ const Cart = () => {
     const expiryDate = new Date(utcDateString);
     const currentDate = new Date();
 
-    // Format date to day.mm.yyyy
     const formattedDate = `${expiryDate.getDate().toString().padStart(2, "0")}.${(expiryDate.getMonth() + 1)
       .toString()
       .padStart(2, "0")}.${expiryDate.getFullYear()}`;
 
-    // Check if the expiry date is today, past, or future
     const isToday = expiryDate.toDateString() === currentDate.toDateString();
     const isPast = expiryDate < currentDate;
 
     if (isToday) {
-      // Calculate difference in hours
       const hoursUntilExpiry = Math.round((expiryDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60));
       if (hoursUntilExpiry > 0) {
         return `Sắp hết hạn. Còn ${hoursUntilExpiry} giờ.`;
@@ -274,7 +252,6 @@ const Cart = () => {
         return `Đã hết hạn. Hãy chọn mã khác.`;
       }
     } else if (isPast) {
-      // return `Expired on: ${formattedDate}`;
       return `HSD: ${formattedDate}`;
     }
   };
@@ -351,21 +328,6 @@ const Cart = () => {
   };
   const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
   const listRef = useRef(null);
-
-  const handleVoucherSelect = (voucher) => {
-    // Step 1: Capture the current scroll position
-    const currentScrollPosition = listRef.current?.scrollTop;
-
-    // Step 2: Set the selected voucher
-    setSelectedVoucher(voucher);
-
-    // Step 3: Restore the scroll position (after a slight delay to ensure the DOM has updated)
-    setTimeout(() => {
-      if (listRef.current) {
-        listRef.current.scrollTop = currentScrollPosition;
-      }
-    }, 0); // Using setTimeout with 0 delay to push this operation to the end of the event queue
-  };
 
   const ModalVoucher = () => {
     return (
@@ -468,14 +430,21 @@ const Cart = () => {
       </div>
     );
   };
+  const { order, setOrder } = useContext(OrderContext);
 
   const handlePurchase = () => {
     if (checkedPurchasesCount === 0) {
       setIsModalPurchaseEmptyVisible(true);
       return;
     }
-    // buyProductsMutation.mutate(checkedPurchases.map((purchase) => purchase._id));
+
+    setOrder(checkedPurchases);
+
+    if (order) {
+      navigate(path.checkout);
+    }
   };
+
   return (
     <div className="">
       <Helmet>
