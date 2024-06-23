@@ -7,4 +7,5 @@ export enum path {
   logout = "/logout",
   productDetail = "/productDetails",
   cart = "/cart",
+  checkout = "/checkout",
 }
