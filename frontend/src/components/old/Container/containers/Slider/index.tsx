@@ -20,6 +20,18 @@ import icon8 from "src/assets/img/container/slider/favourite-selections/icon8.pn
 import icon9 from "src/assets/img/container/slider/favourite-selections/icon9.gif";
 import icon10 from "src/assets/img/container/slider/favourite-selections/icon10.png";
 
+import banner1 from "src/assets/img/container/slider/main/motion/banner1.png";
+import banner2 from "src/assets/img/container/slider/main/motion/banner2.png";
+import banner3 from "src/assets/img/container/slider/main/motion/banner3.png";
+import banner4 from "src/assets/img/container/slider/main/motion/banner4.png";
+import banner5 from "src/assets/img/container/slider/main/motion/banner5.png";
+import banner6 from "src/assets/img/container/slider/main/motion/banner6.png";
+import banner7 from "src/assets/img/container/slider/main/motion/banner7.png";
+import banner8 from "src/assets/img/container/slider/main/motion/banner8.png";
+import banner9 from "src/assets/img/container/slider/main/motion/banner9.png";
+import banner10 from "src/assets/img/container/slider/main/motion/banner10.png";
+import banner11 from "src/assets/img/container/slider/main/motion/banner11.png";
+import banner12 from "src/assets/img/container/slider/main/motion/banner12.png";
 interface IData {
   href: string;
   image: string;
@@ -37,6 +49,20 @@ function Slider() {
   const motionPartImageRef = useRef<HTMLImageElement | null>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   const previousButtonRef = useRef<HTMLButtonElement>(null);
+  const banners = [
+    banner1,
+    banner2,
+    banner3,
+    banner4,
+    banner5,
+    banner6,
+    banner7,
+    banner8,
+    banner9,
+    banner10,
+    banner11,
+    banner12,
+  ];
 
   const { sliderFavouriteSelectionsInfo: favouriteSelectionsInfo, sliderMainMotionPartLinkInfo: motionPartLinkInfo } =
     useDataSourceContext() as IDataSource;
@@ -89,8 +115,9 @@ function Slider() {
   const updateMotionPartImageLinkProps = (index: number) => {
     if (motionPartLinkInfo && motionPartLinkInfo?.length > 0) {
       const { image, href } = motionPartLinkInfo[index];
+      const img = banners[index];
       if (motionPartImageRef.current) {
-        motionPartImageRef.current.src = image;
+        motionPartImageRef.current.src = img;
       }
       if (motionPartLinkRef.current) {
         motionPartLinkRef.current.href = href;

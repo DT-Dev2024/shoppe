@@ -75,8 +75,8 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
           </div>
         </div>
         <div className="text-xl">
-          <span className="text-gray-500 line-through">đ{currencyFormat(order.priceOriginal)}</span>
-          <span className="font-bold text-orange-600"> đ{currencyFormat(order.priceDiscount)}</span>
+          <span className="text-gray-500 line-through">₫{currencyFormat(order.priceOriginal)}</span>
+          <span className="font-bold text-orange-600"> ₫{currencyFormat(order.priceDiscount)}</span>
         </div>
       </div>
       <div className="mt-4 flex justify-end text-[14px]">
@@ -102,7 +102,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
               fill="#fff"
             />
           </svg>
-          Thành tiền: <span className="ml-2 text-orange-600">đ{currencyFormat(order.priceOriginal)}</span>
+          Thành tiền: <span className="ml-2 text-orange-600">₫{currencyFormat(order.priceOriginal)}</span>
         </span>
       </div>
 

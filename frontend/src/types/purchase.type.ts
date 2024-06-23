@@ -18,3 +18,20 @@ export type TExtendedPurchases = {
   disabled: boolean;
   checked: boolean;
 } & TPurchase;
+
+export type TVoucherType = "SHOP" | "USER";
+export type TDiscountType = "PERCENTAGE" | "FIXED";
+
+export type TVoucher = {
+  _id: string;
+  type: TVoucherType;
+  code: string;
+  discount: number;
+  discount_type: TDiscountType;
+  minium_price: number;
+  maxium_discount?: number;
+  expire: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+};

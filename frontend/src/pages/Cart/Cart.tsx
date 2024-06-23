@@ -1,19 +1,141 @@
 import { produce } from "immer";
-import keyBy from "lodash/keyBy";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import EmptyCartIcon from "src/assets/img/empty-cart.png";
+
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { VscTriangleDown } from "react-icons/vsc";
+import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
+import { BsExclamationCircle } from "react-icons/bs";
+import React, { useContext, useMemo, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import purchaseAPI from "src/apis/purchase.api";
+import EmptyCartIcon from "src/assets/img/empty-cart.png";
+import Voucher from "src/assets/img/voucher.png";
 import Button from "src/components/Button";
-import QuantityController from "src/components/QuantityController";
 import { path } from "src/constants/path.enum";
-import { purchasesStatus } from "src/constants/purchaseStatus.enum";
 import { CartContext } from "src/contexts/cart.context";
-import { TPurchase } from "src/types/purchase.type";
+import { TPurchase, TVoucher } from "src/types/purchase.type";
 import { formatCurrency } from "src/utils/formatNumber";
-import { generateSlug } from "src/utils/slugify";
-import { Helmet } from "react-helmet-async";
+import { CiCircleQuestion } from "react-icons/ci";
+type Quantity = Record<string, { quantity: number | string }>;
+interface CartProps {
+  pricesAll: string;
+  priceDiscount: string;
+  finalPrice: string;
+}
+
+const voucherMock: TVoucher[] = [
+  {
+    _id: "1",
+    type: "SHOP",
+    code: "SHOPEE",
+    discount: 300000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 0,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "2",
+    type: "USER",
+    code: "USER",
+    discount: 500000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 1000000,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "3",
+    type: "SHOP",
+    code: "SHOPEE",
+    discount: 300000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 0,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "4",
+    type: "USER",
+    code: "USER",
+    discount: 500000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 1000000,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "5",
+    type: "SHOP",
+    code: "SHOPEE",
+    discount: 300000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 0,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "6",
+    type: "USER",
+    code: "USER",
+    discount: 500000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 1000000,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "7",
+    type: "SHOP",
+    code: "SHOPEE",
+    discount: 300000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 0,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "8",
+    type: "USER",
+    code: "USER",
+    discount: 500000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 1000000,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "9",
+    type: "SHOP",
+    code: "SHOPEE",
+    discount: 300000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 0,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+  {
+    _id: "10",
+    type: "USER",
+    code: "USER",
+    discount: 500000,
+    discount_type: "FIXED",
+    expire: "2021-09-07T07:54:15.000Z",
+    minium_price: 1000000,
+    createdAt: "2021-09-07T07:54:15.000Z",
+    updatedAt: "2021-09-07T07:54:15.000Z",
+  },
+];
 
 const Cart = () => {
   const { state } = useLocation();
@@ -26,7 +148,7 @@ const Cart = () => {
     () => checkedPurchases.reduce((prev, current) => prev + current.product.price * current.buy_count, 0),
     [checkedPurchases],
   );
-  const isAllChecked = useMemo(() => extendedPurchases.every((purchase) => purchase.checked), [extendedPurchases]);
+  console.log(totalCheckedPurchasesPrice);
   const totalSavedPrice = useMemo(
     () =>
       checkedPurchases.reduce(
@@ -35,80 +157,17 @@ const Cart = () => {
       ),
     [checkedPurchases],
   );
+  console.log(totalSavedPrice);
+
+  const totalPriceBeforeDiscount = useMemo(
+    () => checkedPurchases.reduce((prev, current) => prev + current.price_before_discount * current.buy_count, 0),
+    [checkedPurchases],
+  );
+  console.log(totalPriceBeforeDiscount);
+  const [total, setTotal] = useState(0);
+  const [quantities, setQuantities] = useState<Quantity>({});
 
   const [purchasesInCartData, setPurchasesInCartData] = useState<TPurchase[]>([]);
-
-  // useEffect(() => {
-  //   const fetchPurchasesInCart = async () => {
-  //     const { data } = await purchaseAPI.getCart({ status: purchasesStatus.inCart });
-  //     setPurchasesInCartData(data.data);
-  //   };
-  //   fetchPurchasesInCart();
-  // }, []);
-
-  // const updatePurchaseMutation = useMutation({
-  //   mutationFn: purchaseAPI.updateCart,
-  //   onSuccess: () => {
-  //     purchaseInCartRefetch();
-  //   },
-  // });
-  //use axiost
-  // const updatePurchaseMutation = async (body: { product_id: string; buy_count: number }) => {
-  //   const { data } = await purchaseAPI.updateCart(body);
-  //   purchaseInCartRefetch();
-  //   toast.success(data.data.message);
-  // };
-
-  // const deletePurchaseMutation = useMutation({
-  //   mutationFn: purchaseAPI.deletePurchaseFromCart,
-  //   onSuccess: (data) => {
-  //     purchaseInCartRefetch();
-  //     toast.success(data.data.message);
-  //   },
-  // });
-  // const buyProductsMutation = useMutation({
-  //   mutationFn: purchaseAPI.buyProducts,
-  //   onSuccess: () => {
-  //     purchaseInCartRefetch();
-  //   },
-  // });
-  // const purchasesInCart = purchasesInCartData?.data.data;
-  // useEffect(() => {
-  //   setExtendedPurchases((prev) => {
-  //     const newExtendedPurchases = keyBy(prev, "_id");
-  //     return (
-  //       purchasesInCart?.map((purchase) => {
-  //         const chosenBuyNowPurchase = chosenBuyNowPurchaseId === purchase._id;
-  //         return {
-  //           ...purchase,
-  //           disabled: false,
-  //           checked: chosenBuyNowPurchase || Boolean(newExtendedPurchases[purchase._id]?.checked),
-  //         };
-  //       }) || []
-  //     );
-  //   });
-  // }, [chosenBuyNowPurchaseId, purchasesInCart, setExtendedPurchases]);
-  // useEffect(() => {
-  //   return () => {
-  //     history.replaceState(null, "");
-  //   };
-  // }, []);
-
-  // const handlePurchase = () => {
-  //   if (checkedPurchases.length > 0) {
-  //     const body = checkedPurchases.map((checkedPurchase) => ({
-  //       product_id: checkedPurchase.product._id,
-  //       buy_count: checkedPurchase.buy_count,
-  //     }));
-  //     buyProductsMutation.mutate(body, {
-  //       onSuccess: (data) => {
-  //         toast.success(data.data.message);
-  //       },
-  //     });
-  //   } else {
-  //     toast.info("Vui lòng chọn sản phẩm muốn mua");
-  //   }
-  // };
 
   const handleSelectProduct = (productIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setExtendedPurchases(
@@ -117,6 +176,9 @@ const Cart = () => {
       }),
     );
   };
+
+  const isAllChecked = useMemo(() => extendedPurchases.every((purchase) => purchase.checked), [extendedPurchases]);
+
   const handleSelectAllProducts = () => {
     setExtendedPurchases(
       produce((draft) => {
@@ -126,9 +188,9 @@ const Cart = () => {
       }),
     );
   };
-
   const handleQuantity = (productIndex: number, value: number, enable: boolean) => {
     const product = extendedPurchases[productIndex];
+    console.log(product);
     if (enable) {
       setExtendedPurchases(
         produce((draft) => {
@@ -139,46 +201,326 @@ const Cart = () => {
     // updatePurchaseMutation.mutate({ product_id: product.product._id, buy_count: value });
   };
 
-  const handleTypeQuantity = (productIndex: number) => (value: number) => {
+  const handleSubmit = (id: string) => {};
+
+  const handleChangeQuantity = (increment: number, id: string, item: TPurchase) => {
+    const newQuantity = (parseInt(quantities[id]?.quantity as string) || item.buy_count) + increment;
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [id]: {
+        quantity: newQuantity,
+      },
+    }));
+
     setExtendedPurchases(
       produce((draft) => {
-        draft[productIndex].buy_count = value;
+        const index = draft.findIndex((purchase) => purchase._id === id);
+        if (index !== -1) {
+          // Ensure the purchase is checked before updating
+          draft[index].buy_count = newQuantity;
+        }
       }),
     );
   };
-  const handleDeleteAPurchase = (purchaseIndex: number) => () => {
-    const purchaseId = extendedPurchases[purchaseIndex]._id;
-    // deletePurchaseMutation.mutate([purchaseId]);
-  };
+  const [isModalEmptyVisible, setIsModalEmptyVisible] = useState(false);
+  const [isModalDeleteCartVisible, setIsModalDeleteCartVisible] = useState(false);
+  const [isModalDetailVisible, setIsModalDetailVisible] = useState(false);
+  const [isModalPurchaseEmptyVisible, setIsModalPurchaseEmptyVisible] = useState(false);
+  const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
 
   const handleDeleteMultiplePurchases = () => {
-    const purchaseIds = checkedPurchases.map((purchase) => purchase._id);
+    if (checkedPurchases.length === 0) {
+      setIsModalEmptyVisible(true);
+      setTimeout(() => {
+        setIsModalEmptyVisible(false);
+      }, 2000); // Close modal after 2 seconds
+    } else {
+      setIsModalDeleteCartVisible(true);
+    }
     // deletePurchaseMutation.mutate(purchaseIds);
   };
+
+  const EmptySelectModal = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center ">
+        <div className="rounded-lg bg-black bg-opacity-70 p-10 text-white">
+          <p className="flex justify-center text-6xl ">
+            <BsExclamationCircle />
+          </p>
+          <h1 className="text-2xl">Vui lòng chọn sản phẩm</h1>
+        </div>
+      </div>
+    );
+  };
+  const transformAndCheckExpiry = (utcDateString: string) => {
+    const expiryDate = new Date(utcDateString);
+    const currentDate = new Date();
+
+    // Format date to day.mm.yyyy
+    const formattedDate = `${expiryDate.getDate().toString().padStart(2, "0")}.${(expiryDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}.${expiryDate.getFullYear()}`;
+
+    // Check if the expiry date is today, past, or future
+    const isToday = expiryDate.toDateString() === currentDate.toDateString();
+    const isPast = expiryDate < currentDate;
+
+    if (isToday) {
+      // Calculate difference in hours
+      const hoursUntilExpiry = Math.round((expiryDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60));
+      if (hoursUntilExpiry > 0) {
+        return `Sắp hết hạn. Còn ${hoursUntilExpiry} giờ.`;
+      } else {
+        return `Đã hết hạn. Hãy chọn mã khác.`;
+      }
+    } else if (isPast) {
+      // return `Expired on: ${formattedDate}`;
+      return `HSD: ${formattedDate}`;
+    }
+  };
+
+  const DetailPurchase = (cart: CartProps) => {
+    const { pricesAll, priceDiscount, finalPrice } = cart;
+    return (
+      <div className="absolute  bottom-[120%] right-full w-[60rem] rounded border bg-white p-5 text-2xl shadow-lg">
+        <h1 className="border-b border-gray-300 py-7">Chi tiết khuyến mãi</h1>
+        <div className="flex justify-between border-b border-gray-300 py-6">
+          <span>Tổng tiền hàng</span>
+          <span>₫{pricesAll}</span>
+        </div>
+        <div className="flex justify-between border-b border-gray-300 py-6">
+          <span>Giảm giá sản phẩm</span>
+          <span>₫{priceDiscount}</span>
+        </div>
+
+        <div className="my-2 mt-4 flex justify-between">
+          <span>Tiết kiệm</span>
+          <span className="text-main">-₫{priceDiscount}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Tổng số tiền</span>
+          <span>₫{finalPrice}</span>
+        </div>
+        <p className="text-right text-gray-500">Số tiền cuối cùng thanh toán</p>
+        <VscTriangleDown className="absolute -bottom-6 right-1/4 text-4xl text-white shadow-lg" />
+      </div>
+    );
+  };
+
+  const ModalRemoveCart = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="w-[500px] rounded-lg bg-white px-[40px] pb-[24px] pt-[44px] text-black">
+          <h1 className="text-3xl">Bạn có xóa bỏ {checkedPurchasesCount} sản phẩm?</h1>
+          <div className="mt-12 flex justify-end">
+            <button
+              onClick={() => setIsModalDeleteCartVisible(false)}
+              className="mr-2 rounded bg-main  px-10 py-4 text-3xl text-white"
+            >
+              Trở lại
+            </button>
+            <button
+              onClick={() => {
+                // delete to server
+              }}
+              className="mx-7 bg-white px-10 py-4 text-3xl "
+            >
+              Có
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const ModalPurchaseEmpty = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="w-[530px] rounded-lg bg-white px-[30px] pb-[24px] pt-[44px] text-black">
+          <h1 className="mb-60 text-3xl">Bạn vẫn chưa chọn sản phẩm nào để mua.</h1>
+
+          <button
+            className="w-full bg-main py-4 text-2xl text-white"
+            onClick={() => setIsModalPurchaseEmptyVisible(false)}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    );
+  };
+  const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
+  const listRef = useRef(null);
+
+  const handleVoucherSelect = (voucher) => {
+    // Step 1: Capture the current scroll position
+    const currentScrollPosition = listRef.current?.scrollTop;
+
+    // Step 2: Set the selected voucher
+    setSelectedVoucher(voucher);
+
+    // Step 3: Restore the scroll position (after a slight delay to ensure the DOM has updated)
+    setTimeout(() => {
+      if (listRef.current) {
+        listRef.current.scrollTop = currentScrollPosition;
+      }
+    }, 0); // Using setTimeout with 0 delay to push this operation to the end of the event queue
+  };
+
+  const ModalVoucher = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="max-h-[640px] w-[616px] rounded-lg bg-white  text-black">
+          <div className="p-10 pb-0">
+            <div className="flex justify-between">
+              <h1 className="text-3xl">Chọn Shopee Voucher</h1>
+              <p className="flex items-center text-2xl text-gray-500">
+                Hỗ trợ
+                <CiCircleQuestion />
+              </p>
+            </div>
+            <form
+              action=""
+              className="mb-6 mt-5  flex items-center gap-3 bg-[#f8f8f8] p-4 text-xl"
+            >
+              <label
+                htmlFor="voucher"
+                className="w-60 text-2xl"
+              >
+                Mã Voucher
+              </label>
+              <input
+                id="voucher"
+                type="text"
+                placeholder="Mã Shoppe Voucher"
+                className="w-full border border-gray-300 p-4"
+              />
+              <button className="w-60 border p-4 text-2xl text-[#ccc] ">Áp dụng</button>
+            </form>
+            <p className="text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
+            <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
+
+            <ul
+              ref={listRef}
+              className="
+                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
+                grid
+                max-h-[330px]
+                grid-cols-1 gap-4 overflow-y-auto
+              "
+            >
+              {voucherMock.map((voucher) => (
+                <li
+                  key={voucher._id}
+                  className={`border-b  border-gray-300 p-4 shadow-md`}
+                >
+                  <div className="relative flex cursor-not-allowed items-center">
+                    <div className="absolute left-0 top-0 h-full w-full bg-gray-100 bg-opacity-50"></div>
+                    <div className="h-40 w-40 bg-green-600">
+                      <img
+                        src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1 pl-3">
+                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                    </div>
+                    <input
+                      type="radio"
+                      name="selectedVoucher"
+                      checked={selectedVoucher?._id === voucher._id}
+                      onChange={(e) => {
+                        e.preventDefault(); // Prevent the default action
+                      }}
+                      className="ml-4"
+                    />
+                  </div>
+                  <p className="mt-2 flex items-center text-[14px] text-main">
+                    <AiOutlineExclamationCircle className="mr-1" />
+                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex h-[64px] items-center justify-end border-t">
+            <button
+              onClick={() => setIsModalVoucherVisible(false)}
+              className="mr-2 rounded  border-2 px-12 py-3 text-3xl text-[#b6b6b6] "
+            >
+              Trở lại
+            </button>
+            <button
+              onClick={() => {
+                // delete to server
+              }}
+              className="mx-7 rounded border bg-main px-20 py-3 text-3xl text-white"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handlePurchase = () => {
+    if (checkedPurchasesCount === 0) {
+      setIsModalPurchaseEmptyVisible(true);
+      return;
+    }
+    // buyProductsMutation.mutate(checkedPurchases.map((purchase) => purchase._id));
+  };
   return (
-    <div className="bg-neutral-100 py-16">
+    <div className="">
       <Helmet>
-        <title>Shopee At Home | Giỏ hàng</title>
+        <title>Giỏ hàng</title>
         <meta
           name="description"
           content={`Trang giỏ hàng của Shopee At Home`}
         />
       </Helmet>
-      <div className="container mt-40">
+
+      <div className="">
+        {isModalEmptyVisible && <EmptySelectModal />}
+        {isModalDeleteCartVisible && <ModalRemoveCart />}
+        {isModalPurchaseEmptyVisible && <ModalPurchaseEmpty />}
+        {isModalVoucherVisible && <ModalVoucher />}
         {extendedPurchases.length > 0 ? (
           <>
-            <div className="hidden grid-cols-12 rounded-sm bg-white px-9 py-5 text-sm capitalize text-gray-500 shadow lg:grid">
+            <div className="mb-4 flex items-center space-x-3 rounded-sm border border-yellow-300 bg-white p-3 px-6 shadow">
+              <img
+                src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
+                alt=""
+                width={30}
+              />
+              <span className=" text-[14px]">
+                Nhấn vào mục Mã giảm giá ở cuối trang để hưởng miễn phí vận chuyển bạn nhé!
+              </span>
+            </div>
+            <div className="hidden grid-cols-12 rounded-sm bg-white px-16 py-5 text-2xl capitalize text-gray-500 shadow lg:grid">
               <div className="col-span-6">
                 <div className="flex items-center">
                   <div className="flex flex-shrink-0 items-center justify-center pr-3">
                     <input
+                      id="selectAllProducts"
                       type="checkbox"
-                      className="h-5 w-5 accent-primary"
+                      className="h-6 w-6 accent-primary"
                       checked={isAllChecked}
                       onChange={handleSelectAllProducts}
                     />
+                    <label
+                      htmlFor="selectAllProducts"
+                      className="ml-2 cursor-pointer text-2xl text-black"
+                    >
+                      Sản phẩm
+                    </label>
                   </div>
-                  <div className="text-black">Sản phẩm</div>
                 </div>
               </div>
               <div className="col-span-6">
@@ -191,84 +533,55 @@ const Cart = () => {
               </div>
             </div>
             {extendedPurchases.length > 0 && (
-              <div className="my-3 rounded-sm bg-white shadow sm:p-5">
+              <div className="my-3 rounded-sm  shadow ">
                 {extendedPurchases.map((purchase, index) => (
                   <div
                     key={purchase._id}
-                    className="mb-5 flex items-center justify-between rounded-sm border border-gray-200 bg-white px-4 py-5 text-center text-sm text-gray-500 first:mt-0 lg:grid lg:grid-cols-12"
+                    className="mb-5  rounded-sm bg-white text-center text-2xl first:mt-0"
                   >
-                    <div className="flex items-center gap-x-3 lg:col-span-6">
-                      <div className="flex items-center justify-center gap-x-3">
+                    <div className="flex items-center justify-between border-b px-16 py-5">
+                      <h5 className="flex space-x-2 text-3xl font-bold">
+                        <span>{purchase.product.category.name}</span>
+                        <svg
+                          viewBox="0 0 16 16"
+                          className="w-6"
+                        >
+                          <g
+                            fillRule="evenodd"
+                            fill="#f94f2f"
+                          >
+                            <path d="M15 4a1 1 0 01.993.883L16 5v9.932a.5.5 0 01-.82.385l-2.061-1.718-8.199.001a1 1 0 01-.98-.8l-.016-.117-.108-1.284 8.058.001a2 2 0 001.976-1.692l.018-.155L14.293 4H15zm-2.48-4a1 1 0 011 1l-.003.077-.646 8.4a1 1 0 01-.997.923l-8.994-.001-2.06 1.718a.5.5 0 01-.233.108l-.087.007a.5.5 0 01-.492-.41L0 11.732V1a1 1 0 011-1h11.52zM3.646 4.246a.5.5 0 000 .708c.305.304.694.526 1.146.682A4.936 4.936 0 006.4 5.9c.464 0 1.02-.062 1.608-.264.452-.156.841-.378 1.146-.682a.5.5 0 10-.708-.708c-.185.186-.445.335-.764.444a4.004 4.004 0 01-2.564 0c-.319-.11-.579-.258-.764-.444a.5.5 0 00-.708 0z" />
+                          </g>
+                        </svg>
+                      </h5>
+                      <p className="mr-8 text-xl font-bold text-orange-600">Trạng thái</p>
+                    </div>
+                    <div className="mt-3 grid grid-cols-12 px-16 py-10">
+                      <div className="col-span-6 flex items-center  gap-x-3">
                         <input
                           type="checkbox"
-                          className="h-5 w-5 accent-primary"
+                          className="h-6 w-6 accent-primary"
                           checked={purchase.checked}
                           onChange={handleSelectProduct(index)}
                         />
-                        <Link
-                          className="h-14 w-14 flex-shrink-0 sm:h-20 sm:w-20"
-                          to={`${path.home}${generateSlug({
-                            name: purchase.product.name,
-                            id: purchase.product._id,
-                          })}`}
-                        >
+
+                        <div className="flex max-w-[40rem] space-x-2 text-left">
                           <img
                             alt={purchase.product.name}
                             src={purchase.product.image}
                             className="h-14 w-14 object-cover sm:h-20 sm:w-20"
                           />
-                        </Link>
-                      </div>
-                      <div className="flex flex-col items-start gap-y-1 lg:flex-row lg:gap-y-0">
-                        <Link
-                          to={`${path.home}${generateSlug({
-                            name: purchase.product.name,
-                            id: purchase.product._id,
-                          })}`}
-                          className="line-clamp-1 text-left lg:line-clamp-2"
-                        >
-                          {purchase.product.name}
-                        </Link>
-
-                        <div className="flex items-center gap-x-3 lg:hidden">
-                          <span className="text-gray-300 line-through">
-                            ₫{formatCurrency(purchase.product.price_before_discount)}
-                          </span>
-                          <span className="hidden lg:block">₫{formatCurrency(purchase.product.price)}</span>
-                          <span className="block text-primary lg:hidden">
-                            ₫{formatCurrency(purchase.product.price)}
-                          </span>
-                        </div>
-                        <div className="flex gap-x-3 lg:hidden">
-                          <QuantityController
-                            max={purchase.product.quantity}
-                            value={purchase.buy_count}
-                            containerClassName="flex items-center"
-                            onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
-                            onDecrease={(value) => handleQuantity(index, value, value >= 1)}
-                            onType={handleTypeQuantity(index)}
-                            // onFocusOutside={(value) =>
-                            //   handleQuantity(
-                            //     index,
-                            //     value,
-                            //     value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
-                            //   )
-                            // }
-                            disabled={purchase.disabled}
-                          />
-                          <button
-                            onClick={handleDeleteAPurchase(index)}
-                            className="bg-none text-primary"
-                          >
-                            Xóa khỏi giỏ
-                          </button>
+                          <div>
+                            <p>{purchase.product.name}</p>
+                            <span className="border border-main p-2 text-base font-thin text-main">
+                              Đổi ý miễn phí 15 ngày
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="col-span-6">
-                      <div className="grid grid-cols-5 items-center">
-                        <div className="col-span-2">
-                          <div className="hidden items-center justify-center gap-x-3 lg:flex">
+                      <div className="col-span-6">
+                        <div className=" grid grid-cols-5 items-center">
+                          <div className="col-span-2 hidden items-center justify-center gap-x-3 lg:flex">
                             <span className="text-gray-300 line-through">
                               ₫{formatCurrency(purchase.product.price_before_discount)}
                             </span>
@@ -277,81 +590,154 @@ const Cart = () => {
                               ₫{formatCurrency(purchase.product.price)}
                             </span>
                           </div>
-                        </div>
-                        <div className="col-span-1 hidden lg:block">
-                          <QuantityController
-                            max={purchase.product.quantity}
-                            value={purchase.buy_count}
-                            containerClassName="flex items-center"
-                            onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
-                            onDecrease={(value) => handleQuantity(index, value, value >= 1)}
-                            onType={handleTypeQuantity(index)}
-                            // onFocusOutside={(value) =>
-                            //   handleQuantity(
-                            //     index,
-                            //     value,
-                            //     value >= 1 && value <= (purchasesInCart as TPurchase[])[index].buy_count,
-                            //   )
-                            // }
-                            disabled={purchase.disabled}
-                          />
-                        </div>
-                        <div className="col-span-1 hidden lg:block">
-                          <span className="text-primary">
-                            ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
-                          </span>
-                        </div>
-                        <div className="col-span-1 hidden lg:block">
-                          <button
-                            onClick={handleDeleteAPurchase(index)}
-                            className="bg-none text-black transition-all hover:text-primary"
-                          >
-                            Xóa
-                          </button>
+
+                          <div className="flex items-center">
+                            <button
+                              type="button"
+                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                              onClick={() => {
+                                handleChangeQuantity(-1, purchase.product._id, purchase);
+                              }}
+                            >
+                              <FaMinus />
+                            </button>
+                            <input
+                              className="mx-1 w-10 shrink-0  border bg-transparent text-center  font-medium text-gray-900 focus:outline-none focus:ring-0"
+                              value={quantities[purchase.product._id]?.quantity || purchase.buy_count}
+                              onChange={(e) => {
+                                if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
+                                  toast.error("Please enter a number");
+                                  return;
+                                }
+                                const newQuantity = e.target.value ? parseInt(e.target.value) : "";
+                                setQuantities((prevQuantities) => ({
+                                  ...prevQuantities,
+                                  [purchase.product._id]: {
+                                    quantity: newQuantity,
+                                  },
+                                }));
+                              }}
+                            />
+                            <button
+                              type="button"
+                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                              onClick={() => {
+                                handleChangeQuantity(1, purchase.product._id, purchase);
+                              }}
+                            >
+                              <FaPlus />
+                            </button>
+                          </div>
+                          <div className="col-span-1 hidden lg:block">
+                            <span className="text-primary">
+                              ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
+                            </span>
+                          </div>
+                          <div className="col-span-1 mr-6 hidden lg:block">
+                            <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
+                          </div>
                         </div>
                       </div>
+                    </div>
+                    <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-16 py-8 shadow">
+                      <img
+                        src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
+                        alt=""
+                        width={30}
+                      />
+                      <span className=" text-[14px]">
+                        Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu
+                        ₫1.000.000
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-            <div className="sticky bottom-0 z-10 mt-8 flex flex-col rounded-sm border border-gray-100 bg-white p-5 shadow lg:flex-row lg:items-center">
-              <div className="flex items-center">
-                <div className="flex flex-shrink-0 items-center justify-center pr-3">
-                  <input
-                    type="checkbox"
-                    className="h-5 w-5 accent-primary"
-                    checked={isAllChecked}
-                    onChange={handleSelectAllProducts}
-                  />
+            <div className="sticky bottom-0 z-10 mt-8  rounded-sm border border-gray-100 bg-white p-5 pt-0 text-3xl shadow-lg lg:flex-row lg:items-center">
+              <div className="grid grid-cols-2 border-b border-gray-300 py-4">
+                <span></span>
+                <div className="flex justify-between">
+                  <div className="flex items-center text-[16px]">
+                    <img
+                      src={Voucher}
+                      alt=""
+                    />
+                    <span>Shopee Voucher</span>
+                  </div>
+                  <button
+                    onClick={() => setIsModalVoucherVisible(true)}
+                    className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[14px]  text-blue-600"
+                  >
+                    Chọn hoặc nhập mã
+                  </button>
                 </div>
-                <button className="mx-3 border-none bg-none">Chọn tất cả </button>
-                <button
-                  onClick={handleDeleteMultiplePurchases}
-                  className="mx-3 border-none bg-none"
-                >
-                  Xóa
-                </button>
               </div>
-
-              <div className="mt-5 flex flex-col lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
-                <div>
-                  <div className="flex items-center lg:justify-end">
-                    <div>Tổng thanh toán ({checkedPurchasesCount} sản phẩm):</div>
-                    <div className="ml-2 text-2xl text-primary">₫{formatCurrency(totalCheckedPurchasesPrice)}</div>
+              <div className="flex pt-4">
+                <div className="flex items-center ">
+                  <div className="flex flex-shrink-0 items-center justify-center pr-3">
+                    <input
+                      type="checkbox"
+                      id="selectAllProducts"
+                      className="h-6 w-6 accent-primary"
+                      checked={isAllChecked}
+                      onChange={handleSelectAllProducts}
+                    />
                   </div>
-                  <div className="flex items-center text-sm lg:justify-end">
-                    <div className="text-gray-500">Tiết kiệm</div>
-                    <div className="ml-6 text-primary">₫{formatCurrency(totalSavedPrice)}</div>
-                  </div>
+                  <label
+                    htmlFor="selectAllProducts"
+                    className="mx-3 cursor-pointer border-none bg-none p-3 pl-0"
+                  >
+                    Chọn tất cả{" "}
+                  </label>
+                  <button
+                    onClick={handleDeleteMultiplePurchases}
+                    className="mx-3 border-none bg-none p-3"
+                  >
+                    Xóa
+                  </button>
                 </div>
-                <Button
-                  // onClick={handlePurchase}
-                  // isLoading={buyProductsMutation.isLoading}
-                  className="mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 lg:ml-4 lg:mt-0"
-                >
-                  Mua hàng
-                </Button>
+
+                <div className=" mt-5 flex flex-col lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
+                  <div
+                    className="flex"
+                    onMouseEnter={() => setIsModalDetailVisible(true)}
+                    onMouseLeave={() => setIsModalDetailVisible(false)}
+                  >
+                    <span className="text-[16px]">Tổng thanh toán ({checkedPurchasesCount} sản phẩm):</span>
+
+                    <div className="flex flex-col items-start justify-center text-2xl lg:justify-end">
+                      <div className="ml-2 flex w-full justify-between text-primary">
+                        <span className="text-5xl">₫{formatCurrency(totalCheckedPurchasesPrice)}</span>
+                        {checkedPurchasesCount > 0 && (
+                          <span className="relative flex cursor-pointer items-center text-3xl text-gray-500">
+                            {isModalDetailVisible ? <IoIosArrowDown /> : <IoIosArrowUp />}
+                            {isModalDetailVisible && (
+                              <DetailPurchase
+                                pricesAll={formatCurrency(totalPriceBeforeDiscount)}
+                                priceDiscount={formatCurrency(totalSavedPrice)}
+                                finalPrice={formatCurrency(totalCheckedPurchasesPrice)}
+                              />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                      {checkedPurchasesCount > 0 && (
+                        <div>
+                          <span className="text-gray-500">Tiết kiệm</span>
+                          <span className="ml-6 text-left text-primary">₫{formatCurrency(totalSavedPrice)}k</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    onClick={handlePurchase}
+                    // isLoading={buyProductsMutation.isLoading}
+                    className="mt-5 flex  w-80 items-center justify-center bg-main py-3 text-[14px] uppercase text-white hover:bg-orange-600 lg:ml-4 lg:mt-0"
+                  >
+                    Mua hàng
+                  </Button>
+                </div>
               </div>
             </div>
           </>
@@ -362,10 +748,10 @@ const Cart = () => {
               alt="Empty"
               className="h-20 w-20 sm:h-40 sm:w-40"
             />
-            <span className="text-sm sm:text-base">Giỏ hàng còn trống</span>
+            <span className="my-2 text-[14px]">Giỏ hàng còn trống</span>
             <Link
               to={path.home}
-              className="w-full bg-primary px-2 py-3 text-center uppercase text-white"
+              className="w-full bg-primary px-2 py-3 text-center text-[16px] uppercase text-white"
             >
               Mua ngay
             </Link>

@@ -3,7 +3,7 @@ import "./FlashSale.css";
 import { useRef } from "react";
 import { IDataSource } from "src/contexts";
 import { FlashSaleHeaderImage, FlashSaleHotIcon, FlashSaleSelledBarImage } from "src/assets/img";
-import { MdOutlineArrowForwardIos } from "react-icons/md";
+import { MdOutlineArrowBackIos, MdOutlineArrowForwardIos } from "react-icons/md";
 interface IData {
   href: string;
   bubbleImage: string;
@@ -21,9 +21,9 @@ function FlashSale() {
   let currentListIndex = 1;
   const { flashSaleMainListInfo: mainListInfo } = useDataSourceContext() as IDataSource;
 
-  console.log(mainListInfo);
-  const renderMainList = (datas: IData[]) =>
-    datas.map((data, index) => {
+  const renderMainList = (datas: IData[]) => {
+    console.log(datas);
+    return datas.map((data, index) => {
       const { href, bubbleImage, frameImage, price, selledStatus, selledPartWidthPercent, saleOffPercent } = data;
 
       return (
@@ -72,17 +72,20 @@ function FlashSale() {
         </a>
       );
     });
+  };
 
   const handleClickNextButton = () => {
     // If first list
     if (currentListIndex === 1) {
       currentListIndex = 2;
       if (previousButtonRef.current) {
-        previousButtonRef.current.style.display = "block";
+        previousButtonRef.current.style.display = "flex";
+        previousButtonRef.current.style.justifyContent = "center";
       }
 
       if (nextButtonRef.current) {
-        nextButtonRef.current.style.display = "block";
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
       }
 
       if (mainListRef.current) {
@@ -94,11 +97,13 @@ function FlashSale() {
       if (currentListIndex === 2) {
         currentListIndex = 3;
         if (previousButtonRef.current) {
-          previousButtonRef.current.style.display = "block";
+          previousButtonRef.current.style.display = "flex";
+          previousButtonRef.current.style.justifyContent = "center";
         }
 
         if (nextButtonRef.current) {
-          nextButtonRef.current.style.display = "none";
+          nextButtonRef.current.style.display = "flex";
+          nextButtonRef.current.style.justifyContent = "center";
         }
 
         if (mainListRef.current) {
@@ -117,7 +122,8 @@ function FlashSale() {
         previousButtonRef.current.style.display = "none";
       }
       if (nextButtonRef.current) {
-        nextButtonRef.current.style.display = "block";
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
       }
 
       if (mainListRef.current) {
@@ -129,10 +135,12 @@ function FlashSale() {
       if (currentListIndex === 3) {
         currentListIndex = 2;
         if (previousButtonRef.current) {
-          previousButtonRef.current.style.display = "block";
+          previousButtonRef.current.style.display = "flex";
+          previousButtonRef.current.style.justifyContent = "center";
         }
         if (nextButtonRef.current) {
-          nextButtonRef.current.style.display = "block";
+          nextButtonRef.current.style.display = "flex";
+          nextButtonRef.current.style.justifyContent = "center";
         }
 
         if (mainListRef.current) {
@@ -153,7 +161,7 @@ function FlashSale() {
         />
         <a
           href="/"
-          className="flash-sale__heading__btn flash-sale__heading__view-all-btn"
+          className="flash-sale__heading__btn flash-sale__heading__view-all-btn flex"
         >
           Xem tất cả
           <MdOutlineArrowForwardIos />
@@ -164,7 +172,7 @@ function FlashSale() {
         <div className="flash-sale__main__part">
           <div
             ref={mainListRef}
-            className="flash-sale__main__list"
+            className="flash-sale__main__list "
           >
             {mainListInfo && renderMainList(mainListInfo)}
           </div>
@@ -175,14 +183,14 @@ function FlashSale() {
           onClick={handleClickPreviousButton}
           className="navigation-btn navigation-btn__previous flash-sale__main__previous-btn"
         >
-          <i className="fas fa-chevron-left navigation-btn__icon"></i>
+          <MdOutlineArrowBackIos className="fas fa-chevron-left navigation-btn__icon" />
         </button>
         <button
           ref={nextButtonRef}
           onClick={handleClickNextButton}
           className="navigation-btn navigation-btn__next flash-sale__main__next-btn"
         >
-          <i className="fas fa-chevron-right navigation-btn__icon"></i>
+          <MdOutlineArrowForwardIos className="fas fa-chevron-right navigation-btn__icon" />
         </button>
       </div>
     </div>

@@ -12,13 +12,14 @@ import { IDataSource } from "src/contexts";
 import facebook from "src/assets/img/footer/link/facebook.png";
 import linkedin from "src/assets/img/footer/link/linkedin.png";
 import instagram from "src/assets/img/footer/link/instagram.png";
+import { FaRegCopyright } from "react-icons/fa";
 
 interface AboutSocialData {
   href: string;
   image: string;
   text: string;
 }
-function FooterLink() {
+function FooterLink({ bg }: { bg?: string }) {
   const {
     footerLinkAboutTextCSKHInfo,
     footerLinkAboutTextVeShopeeInfo,
@@ -100,7 +101,7 @@ function FooterLink() {
     });
 
   return (
-    <div className="footer__link">
+    <div className={`footer__link ${bg}`}>
       <div className="footer__link__about">
         <div className="footer__link__about__part">
           <div className="footer__link__about__item">
@@ -185,8 +186,8 @@ function FooterLink() {
       </div>
 
       <div className="footer__link__copyright">
-        <div className="footer__link__copyright__text">
-          <i className="far fa-copyright"></i>
+        <div className="footer__link__copyright__text flex items-center">
+          <FaRegCopyright />
           2021 Shopee. Tất cả các quyền được bảo lưu.
         </div>
         <div className="footer__link__copyright__country-and-area">

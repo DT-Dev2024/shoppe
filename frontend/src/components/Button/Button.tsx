@@ -16,7 +16,7 @@ const Button = ({ type = "submit", containerClassName, className, children, isLo
       <button
         type={type}
         className={classNames(
-          "w-full bg-primary px-2 py-3 text-center text-sm uppercase text-white hover:bg-red-600",
+          "w-full bg-primary px-2 py-3 text-center  uppercase text-white hover:bg-red-600",
           { "pointer-events-none cursor-not-allowed select-none bg-opacity-50 hover:bg-opacity-50": isLoading },
           `${className}`,
         )}

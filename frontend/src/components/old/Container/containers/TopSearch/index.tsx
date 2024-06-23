@@ -3,6 +3,7 @@ import { TopSearchTopLabelIcon } from "src/assets/img";
 import { IDataSource } from "src/contexts";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import "./TopSearch.css";
+import { MdOutlineArrowBackIos, MdOutlineArrowForwardIos } from "react-icons/md";
 interface ITopSearch {
   href: string;
   productImage: string;
@@ -57,9 +58,15 @@ function TopSearch() {
   const handleClickNextButton = () => {
     if (listIndexCurrent === 1) {
       listIndexCurrent = 2;
-      if (nextButtonRef.current) nextButtonRef.current.style.display = "block";
+      if (nextButtonRef.current) {
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
+      }
 
-      if (previousButtonRef.current) previousButtonRef.current.style.display = "block";
+      if (previousButtonRef.current) {
+        previousButtonRef.current.style.display = "flex";
+        previousButtonRef.current.style.justifyContent = "center";
+      }
 
       if (mainListRef.current) {
         mainListRef.current.style.transform = "translate(-120rem, 0)";
@@ -68,8 +75,14 @@ function TopSearch() {
     } else {
       if (listIndexCurrent === 2) {
         listIndexCurrent = 3;
-        if (nextButtonRef.current) nextButtonRef.current.style.display = "block";
-        if (previousButtonRef.current) previousButtonRef.current.style.display = "block";
+        if (nextButtonRef.current) {
+          nextButtonRef.current.style.display = "flex";
+          nextButtonRef.current.style.justifyContent = "center";
+        }
+        if (previousButtonRef.current) {
+          previousButtonRef.current.style.display = "flex";
+          previousButtonRef.current.style.justifyContent = "center";
+        }
         if (mainListRef.current) {
           mainListRef.current.style.transform = "translate(-240rem, 0)";
           mainListRef.current.style.transition = "all 500ms ease 0s";
@@ -77,8 +90,13 @@ function TopSearch() {
       } else {
         if (listIndexCurrent === 3) {
           listIndexCurrent = 4;
-          if (nextButtonRef.current) nextButtonRef.current.style.display = "none";
-          if (previousButtonRef.current) previousButtonRef.current.style.display = "block";
+          if (nextButtonRef.current) {
+            nextButtonRef.current.style.display = "none";
+          }
+          if (previousButtonRef.current) {
+            previousButtonRef.current.style.display = "flex";
+            previousButtonRef.current.style.justifyContent = "center";
+          }
           if (mainListRef.current) {
             mainListRef.current.style.transform = "translate(-360rem, 0)";
             mainListRef.current.style.transition = "all 500ms ease 0s";
@@ -91,8 +109,13 @@ function TopSearch() {
   const handleClickPreviousButton = () => {
     if (listIndexCurrent === 2) {
       listIndexCurrent = 1;
-      if (previousButtonRef.current) previousButtonRef.current.style.display = "none";
-      if (nextButtonRef.current) nextButtonRef.current.style.display = "block";
+      if (previousButtonRef.current) {
+        previousButtonRef.current.style.display = "none";
+      }
+      if (nextButtonRef.current) {
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
+      }
       if (mainListRef.current) {
         mainListRef.current.style.transform = "translate(0, 0)";
         mainListRef.current.style.transition = "all 500ms ease 0s";
@@ -100,8 +123,14 @@ function TopSearch() {
     } else {
       if (listIndexCurrent === 3) {
         listIndexCurrent = 2;
-        if (previousButtonRef.current) previousButtonRef.current.style.display = "block";
-        if (nextButtonRef.current) nextButtonRef.current.style.display = "block";
+        if (previousButtonRef.current) {
+          previousButtonRef.current.style.display = "flex";
+          previousButtonRef.current.style.justifyContent = "center";
+        }
+        if (nextButtonRef.current) {
+          nextButtonRef.current.style.display = "flex";
+          nextButtonRef.current.style.justifyContent = "center";
+        }
 
         if (mainListRef.current) {
           mainListRef.current.style.transform = "translate(-120rem, 0)";
@@ -110,8 +139,14 @@ function TopSearch() {
       } else {
         if (listIndexCurrent === 4) {
           listIndexCurrent = 3;
-          if (previousButtonRef.current) previousButtonRef.current.style.display = "block";
-          if (nextButtonRef.current) nextButtonRef.current.style.display = "block";
+          if (previousButtonRef.current) {
+            previousButtonRef.current.style.display = "flex";
+            previousButtonRef.current.style.justifyContent = "center";
+          }
+          if (nextButtonRef.current) {
+            nextButtonRef.current.style.display = "flex";
+            nextButtonRef.current.style.justifyContent = "center";
+          }
 
           if (mainListRef.current) {
             mainListRef.current.style.transform = "translate(-240rem, 0)";
@@ -131,7 +166,7 @@ function TopSearch() {
           className="top-search__heading__view-all-btn"
         >
           Xem tất cả
-          <i className="fas fa-chevron-right"></i>
+          <MdOutlineArrowForwardIos />
         </a>
       </div>
 
@@ -150,14 +185,14 @@ function TopSearch() {
           onClick={handleClickPreviousButton}
           className="navigation-btn navigation-btn__previous top-search__main__previous-btn"
         >
-          <i className="fas fa-chevron-left navigation-btn__icon"></i>
+          <MdOutlineArrowBackIos className="fas fa-chevron-right navigation-btn__icon" />
         </button>
         <button
           ref={nextButtonRef}
           onClick={handleClickNextButton}
           className="navigation-btn navigation-btn__next top-search__main__next-btn"
         >
-          <i className="fas fa-chevron-right navigation-btn__icon"></i>
+          <MdOutlineArrowForwardIos className="fas fa-chevron-right navigation-btn__icon" />
         </button>
       </div>
     </div>

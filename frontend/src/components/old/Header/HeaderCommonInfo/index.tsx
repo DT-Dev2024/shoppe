@@ -10,6 +10,7 @@ import {
 import { useState, useRef } from "react";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import { IDataSource } from "src/contexts";
+import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
 interface IData {
   href: string;
   itemImage: string;
@@ -72,17 +73,6 @@ function HeaderCommonInfo() {
           </a>
         </div>
 
-        <div className="header__links-become-a-shopee-seller">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://shopee.vn/m/sell-on-shopee"
-            className="header__links-become-a-shopee-seller__link"
-          >
-            Trở Thành Người Bán Shopee
-          </a>
-        </div>
-
         <div className="header__links-app-download">
           <a
             target="_blank"
@@ -135,7 +125,7 @@ function HeaderCommonInfo() {
             className="header__links-socials__facebook"
             title="Kết nối Facebook"
           >
-            <i className="fab fa-facebook"></i>
+            <FaFacebook className="text-2xl" />
           </a>
           <a
             target="_blank"
@@ -144,7 +134,7 @@ function HeaderCommonInfo() {
             className="header__links-socials__instagram"
             title="Kết nối Instagram"
           >
-            <i className="fab fa-instagram-square"></i>
+            <FaInstagramSquare className="text-2xl" />
           </a>
         </div>
       </div>

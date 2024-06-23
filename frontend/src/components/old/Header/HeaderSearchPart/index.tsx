@@ -6,6 +6,8 @@ import { IDataSource } from "src/contexts";
 import { handlePreventDefault, scrollToTop } from "src/helpers";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import "./HeaderSearchPart.css";
+import { FaSearch, FaShoppingCart } from "react-icons/fa";
+import { path } from "src/constants/path.enum";
 
 interface IData {
   href: string;
@@ -149,7 +151,7 @@ function HeaderSearchPart() {
             className="header__search-frame__btn"
             href="https://shopee.vn/m/khung-gio-san-sale"
           >
-            <i className="fas fa-search"></i>
+            <FaSearch className="text-2xl text-white" />
           </a>
           <div
             ref={historyRef}
@@ -167,10 +169,10 @@ function HeaderSearchPart() {
 
       <div className="header__cart">
         <a
-          href="https://shopee.vn/cart"
+          href={path.cart}
           className="header__cart__link"
         >
-          <i className="fas fa-shopping-cart"></i>
+          <FaShoppingCart className="text-5xl" />
         </a>
         <div className="header__cart-popup header__cart-popup--no-goods">
           <div>

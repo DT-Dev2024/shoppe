@@ -39,7 +39,7 @@ const ProductList = () => {
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>Shopee At Home | Trang chủ</title>
+        <title>Trang chủ</title>
         <meta
           name="description"
           content="A shopee clone edition used for studying purposes"
