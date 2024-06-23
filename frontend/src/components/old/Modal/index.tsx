@@ -11,6 +11,7 @@ import { useRef, useEffect, MouseEvent } from "react";
 import useModalStatusContext from "src/hooks/hookHome/useModalStatusContext";
 import { $ } from "src/constants";
 import { FormSubmit, handleStopPropagation } from "src/helpers";
+import { FaTimes } from "react-icons/fa";
 
 function Modal() {
   const giftBannerPopupRef = useRef<HTMLDivElement | null>(null);
@@ -75,7 +76,7 @@ function Modal() {
             onClick={(event) => handleClickGiftBannerPopupCloseBtn(event)}
             className="gift-banner__popup__close-btn"
           >
-            <i className="fas fa-times"></i>
+            <FaTimes />
           </button>
 
           <div className="gift-banner__popup__main">

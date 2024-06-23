@@ -57,7 +57,7 @@ const Login = () => {
   return (
     <div className="grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10">
       <Helmet>
-        <title>Shopee At Home | Đăng nhập</title>
+        <title>Đăng nhập</title>
         <meta
           name="description"
           content="Trang đăng nhập của Shopee At Home"

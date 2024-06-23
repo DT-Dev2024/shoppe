@@ -57,7 +57,7 @@ const HistoryPurchase = () => {
   return (
     <div>
       <Helmet>
-        <title>Shopee At Home | Đơn mua</title>
+        <title>Đơn mua</title>
       </Helmet>
       <div className="mt-40 overflow-x-auto">
         <div className="min-w-[700px]">

@@ -15,6 +15,7 @@ module.exports = {
       },
       colors: {
         primary: "#ee4d2d",
+        main: "#f94f2f",
       },
       boxShadow: {
         "bottom-spread": "rgba(0, 0, 0, 0.35)0px 5px 15px;",

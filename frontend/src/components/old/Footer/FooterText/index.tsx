@@ -31,7 +31,9 @@ function FooterText() {
   return (
     <div className="footer__text">
       <div className="footer__text__item">
-        <h1 className="footer__text__item__title">SHOPEE - GÌ CŨNG CÓ, MUA HẾT Ở SHOPEE</h1>
+        <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
+          SHOPEE - GÌ CŨNG CÓ, MUA HẾT Ở SHOPEE
+        </h1>
         <span className="footer__text__item__description">
           Shopee - ứng dụng mua sắm trực tuyến thú vị, tin cậy, an toàn và miễn phí! Shopee là nền tảng giao dịch trực
           tuyến hàng đầu ở Đông Nam Á, Việt Nam, <a href="/"></a>, <a href="/"></a>, <a href="/"></a>, <a href="/"></a>,{" "}
@@ -41,7 +43,9 @@ function FooterText() {
       </div>
 
       <div className="footer__text__item">
-        <h1 className="footer__text__item__title">MUA SẮM VÀ BÁN HÀNG ONLINE ĐƠN GIẢN, NHANH CHÓNG VÀ AN TOÀN</h1>
+        <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
+          MUA SẮM VÀ BÁN HÀNG ONLINE ĐƠN GIẢN, NHANH CHÓNG VÀ AN TOÀN
+        </h1>
         <span className="footer__text__item__description">
           Nếu bạn đang tìm kiếm một trang web để mua và bán hàng trực tuyến thì Shopee.vn là một sự lựa chọn tuyệt vời
           dành cho bạn. Bản chất của Shopee là một social E-commerce platform - nền tảng trang web{" "}
@@ -63,7 +67,9 @@ function FooterText() {
       </div>
 
       <div className="footer__text__item">
-        <h1 className="footer__text__item__title">TẢI ỨNG DỤNG SHOPEE NGAY ĐỂ MUA BÁN ONLINE MỌI LÚC, MỌI NƠI</h1>
+        <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
+          TẢI ỨNG DỤNG SHOPEE NGAY ĐỂ MUA BÁN ONLINE MỌI LÚC, MỌI NƠI
+        </h1>
         <span className="footer__text__item__description">
           Ưu điểm của ứng dụng Shopee là cho phép bạn mua và bán hàng mọi lúc, mọi nơi. Bạn có thể tải ứng dụng Shopee
           cũng như đăng sản phẩm bán hàng một cách nhanh chóng và tiện lợi. Ngoài ra, ứng dụng Shopee còn có những ưu
@@ -79,7 +85,9 @@ function FooterText() {
       </div>
 
       <div className="footer__text__item">
-        <h1 className="footer__text__item__title">MUA HÀNG HIỆU CAO CẤP GIÁ TỐT TẠI SHOPEE</h1>
+        <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
+          MUA HÀNG HIỆU CAO CẤP GIÁ TỐT TẠI SHOPEE
+        </h1>
         <span className="footer__text__item__description">
           Bên cạnh <a href="/"></a>, Shopee còn có rất nhiều khuyến mãi khủng cho <a href="/"></a>. Cộng với mã giao
           hàng miễn phí, Shopee cũng có các mã giảm giá được phân phối mỗi tháng từ rất nhiều gian hàng chính hãng tham
@@ -92,7 +100,9 @@ function FooterText() {
       </div>
 
       <div className="footer__text__item">
-        <h1 className="footer__text__item__title">MUA HÀNG CHÍNH HÃNG TỪ CÁC THƯƠNG HIỆU LỚN VỚI SHOPEE</h1>
+        <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
+          MUA HÀNG CHÍNH HÃNG TỪ CÁC THƯƠNG HIỆU LỚN VỚI SHOPEE
+        </h1>
         <span className="footer__text__item__description">
           Mua hàng trên Shopee luôn là một trải nghiệm ấn tượng. Dù bạn đang có nhu cầu mua bất kỳ mặt hàng{" "}
           <a href="/"></a>, thời trang nữ, <a href="/"></a>, điện thoại, <a href="/"></a> hay <a href="/"></a> thì

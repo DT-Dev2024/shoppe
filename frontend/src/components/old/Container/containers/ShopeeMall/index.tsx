@@ -8,6 +8,7 @@ import "./ShopeeMall.css";
 import BACK from "src/assets/img/container/shopee-mall/heading/back.png";
 import QUANTITY from "src/assets/img/container/shopee-mall/heading/quality.png";
 import SHIPPING from "src/assets/img/container/shopee-mall/heading/shipping.png";
+import { MdOutlineArrowBackIos, MdOutlineArrowForwardIos } from "react-icons/md";
 
 interface HeadingText {
   image: string;
@@ -108,7 +109,7 @@ function ShopeeMall() {
               >
                 Xem tất cả
                 <div>
-                  <i className="fas fa-chevron-right"></i>
+                  <MdOutlineArrowForwardIos />
                 </div>
               </a>
             </div>
@@ -150,10 +151,12 @@ function ShopeeMall() {
     if (currentListIndex === 1) {
       currentListIndex = 2;
       if (previousButtonRef.current) {
-        previousButtonRef.current.style.display = "block";
+        previousButtonRef.current.style.display = "flex";
+        previousButtonRef.current.style.justifyContent = "center";
       }
       if (nextButtonRef.current) {
-        nextButtonRef.current.style.display = "block";
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
       }
 
       if (mainProductListRef.current) {
@@ -165,7 +168,8 @@ function ShopeeMall() {
       if (currentListIndex === 2) {
         currentListIndex = 3;
         if (previousButtonRef.current) {
-          previousButtonRef.current.style.display = "block";
+          previousButtonRef.current.style.display = "flex";
+          previousButtonRef.current.style.justifyContent = "center";
         }
         if (nextButtonRef.current) {
           nextButtonRef.current.style.display = "none";
@@ -181,13 +185,15 @@ function ShopeeMall() {
 
   const handleClickPreviousButton = () => {
     // If second list
+    console.log(currentListIndex);
     if (currentListIndex === 2) {
       currentListIndex = 1;
       if (previousButtonRef.current) {
         previousButtonRef.current.style.display = "none";
       }
       if (nextButtonRef.current) {
-        nextButtonRef.current.style.display = "block";
+        nextButtonRef.current.style.display = "flex";
+        nextButtonRef.current.style.justifyContent = "center";
       }
 
       if (mainProductListRef.current) {
@@ -212,23 +218,6 @@ function ShopeeMall() {
     updateMotionImageLinkProps(queueItemCurrentIndex);
   };
 
-  const handleClickQueueItem = (event: MouseEvent<HTMLDivElement, MouseEvent> | KeyboardEvent<HTMLDivElement>) => {
-    const parent = (event.target as HTMLElement).parentElement;
-
-    if (parent) {
-      // Get index of this element in parent element
-      const index = Array.prototype.indexOf.call(Array.from(parent.childNodes), event.target);
-
-      queueItems[queueItemCurrentIndex].classList.remove(QUEUE_ITEM_CURRENT_CLASS);
-      queueItems[index].classList.add(QUEUE_ITEM_CURRENT_CLASS);
-
-      updateMotionImageLinkProps(index);
-
-      queueItemCurrentIndex = index;
-    }
-  };
-
-  // Get queueItems NodeList, convert to array and update state
   useEffect(() => {
     const queueItemsArray = Array.from($$(`.${QUEUE_ITEM_CLASS}`));
     setQueueItems(queueItemsArray);
@@ -260,11 +249,11 @@ function ShopeeMall() {
 
         <a
           href="https://shopee.vn/mall"
-          className="shopee-mall__heading__view-all-btn"
+          className="shopee-mall__heading__view-all-btn "
         >
           <span>Xem tất cả</span>
-          <div>
-            <i className="fas fa-chevron-right"></i>
+          <div className="flex items-center justify-center">
+            <MdOutlineArrowForwardIos className="text-white" />
           </div>
         </a>
       </div>
@@ -301,14 +290,14 @@ function ShopeeMall() {
             onClick={handleClickPreviousButton}
             className="navigation-btn navigation-btn__previous shopee-mall__main__product__previous-btn"
           >
-            <i className="fas fa-chevron-left navigation-btn__icon"></i>
+            <MdOutlineArrowBackIos className="fas fa-chevron-left navigation-btn__icon" />
           </button>
           <button
             ref={nextButtonRef}
             onClick={handleClickNextButton}
             className="navigation-btn navigation-btn__next shopee-mall__main__product__next-btn"
           >
-            <i className="fas fa-chevron-right navigation-btn__icon"></i>
+            <MdOutlineArrowForwardIos className="fas fa-chevron-right navigation-btn__icon" />
           </button>
         </div>
       </div>
