@@ -1,1 +1,2 @@
-export * as UserApis from "./user";
+export * from "./config";
+export * from "./api";
