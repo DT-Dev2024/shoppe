@@ -15,7 +15,6 @@ const Login = lazy(() => import("src/pages/Login"));
 const Cart = lazy(() => import("src/pages/Cart"));
 const NotFound = lazy(() => import("src/pages/NotFound"));
 const ProductDetails = lazy(() => import("src/pages/ProductDetails"));
-const OrderHistory = lazy(() => import("src/pages/User/pages/OrderHistory"));
 const Profile = lazy(() => import("src/pages/User/pages/Profile"));
 const Checkout = lazy(() => import("src/pages/Checkout"));
 
@@ -115,14 +114,6 @@ export default function useRoutesElement() {
               element: (
                 <Suspense>
                   <Profile />
-                </Suspense>
-              ),
-            },
-            {
-              path: path.orderHistory,
-              element: (
-                <Suspense>
-                  <OrderHistory />
                 </Suspense>
               ),
             },

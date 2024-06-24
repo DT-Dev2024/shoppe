@@ -22,7 +22,6 @@ function FlashSale() {
   const { flashSaleMainListInfo: mainListInfo } = useDataSourceContext() as IDataSource;
 
   const renderMainList = (datas: IData[]) => {
-    console.log(datas);
     return datas.map((data, index) => {
       const { href, bubbleImage, frameImage, price, selledStatus, selledPartWidthPercent, saleOffPercent } = data;
 

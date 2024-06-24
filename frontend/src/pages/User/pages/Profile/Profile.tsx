@@ -1,82 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-
-// Define the types
-interface Order {
-  id: number;
-  shop: string;
-  image: string;
-  name: string;
-  type: string;
-  priceOriginal: number;
-  priceDiscount: number;
-  finalPrice: number;
-  quantity?: number;
-}
-
-interface OrderItemProps {
-  order: Order;
-}
-
-// Sample data
-const orders: Order[] = [
-  {
-    id: 1,
-    shop: "GENNY GIFT",
-    image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ll86dohx6hmefa_tn",
-    name: "Set quà tặng Valentine dành cho bạn gái, quà sinh nhật nước hoa, son tone hồng đáng yêu",
-    type: "Hộp TN mã 5",
-    priceOriginal: 240000,
-    priceDiscount: 173000,
-    finalPrice: 184000,
-    quantity: 2,
-  },
-  {
-    id: 2,
-    shop: "Tinh dầu Noison",
-    image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ll86dohx6hmefa_tn",
-    name: "Nước hoa Nữ Rosalise by Noison EDP | Hương thơm hoa diên vĩ và hoa nhài, quý phái sang trọng",
-    type: "12ml",
-    priceOriginal: 358000,
-    priceDiscount: 179000,
-    finalPrice: 179000,
-    quantity: 1,
-  },
+import { ordersStatus, TOrderHisotry } from "src/types/order.type";
+import { formatCurrency } from "src/utils/formatNumber";
+const tabs: string[] = [
+  "Tất cả",
+  "Chờ thanh toán",
+  "Vận chuyển",
+  "Chờ giao hàng",
+  "Hoàn thành",
+  "Đã hủy",
+  "Trả hàng/Hoàn tiền",
 ];
 
-//function convert to vietnamese currency
-function currencyFormat(num: number) {
-  return new Intl.NumberFormat("vi-VN", {
-    currency: "VND",
-  }).format(num);
-}
-
-const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
+const OrderItem = ({ order }: { order: TOrderHisotry }) => {
   //convert to vietnamese currency
+  const { product } = order;
 
   return (
     <div className="mb-4 rounded-lg border bg-white p-4 shadow-md">
       <div className="flex items-center justify-between border-b pb-2">
-        <h5 className="text-2xl font-bold">{order.shop}</h5>
-        <p className="text-xl font-bold text-orange-600">Trạng thái</p>
+        <h5 className="text-2xl font-bold">{product.category.name}</h5>
+        <p className="text-xl font-bold uppercase text-orange-600">{tabs[order.status]}</p>
       </div>
 
       <div className="mt-3 flex items-center justify-between border-b pb-10">
         <div className="flex">
           <img
             className="h-40 w-32 rounded-lg object-cover"
-            src={order.image}
-            alt={order.name}
+            src={product.image}
+            alt={product.name}
           />
           <div className="space-y-4 p-2 text-[16px] text-gray-600">
-            <p>{order.name}</p>
-            <p>Phân loại: {order.type}</p>
-            <p>x{order.quantity}</p>
+            <p>{product.name}</p>
+            <p>Phân loại: </p>
+            <p>x{order.buy_count}</p>
           </div>
         </div>
         <div className="text-xl">
-          <span className="text-gray-500 line-through">₫{currencyFormat(order.priceOriginal)}</span>
-          <span className="font-bold text-orange-600"> ₫{currencyFormat(order.priceDiscount)}</span>
+          <span className="text-gray-500 line-through">₫{formatCurrency(product.price)}</span>
+          <span className="font-bold text-orange-600"> ₫{formatCurrency(product.price_before_discount)}</span>
         </div>
       </div>
       <div className="mt-4 flex justify-end text-[14px]">
@@ -102,7 +64,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
               fill="#fff"
             />
           </svg>
-          Thành tiền: <span className="ml-2 text-orange-600">₫{currencyFormat(order.priceOriginal)}</span>
+          Thành tiền: <span className="ml-2 text-orange-600">₫{formatCurrency(product.price_before_discount)}</span>
         </span>
       </div>
 
@@ -115,15 +77,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
 };
 
 const OrderList: React.FC = () => {
-  const tabs: string[] = [
-    "Tất cả",
-    "Chờ thanh toán",
-    "Vận chuyển",
-    "Chờ giao hàng",
-    "Hoàn thành",
-    "Đã hủy",
-    "Trả hàng/Hoàn tiền",
-  ];
+  const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(ordersStatus);
 
   const [activeTab, setActiveTab] = React.useState<string>(tabs[0]);
   const [onSearch, setOnSearch] = React.useState<boolean>(false);
@@ -131,10 +85,17 @@ const OrderList: React.FC = () => {
     <div>
       <div className="flex justify-center">
         <div className="grid w-full grid-cols-7">
-          {tabs.map((tab) => (
+          {tabs.map((tab, index) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                if (index === 0) {
+                  setOrderFilter(ordersStatus);
+                } else {
+                  setOrderFilter(ordersStatus.filter((order) => order.status === index));
+                }
+              }}
               className={`${
                 activeTab === tab ? "border-b border-b-orange-600 text-orange-600" : ""
               } bg-white py-4 text-[16px]`}
@@ -159,12 +120,23 @@ const OrderList: React.FC = () => {
         />
       </form>
       <div className="mt-4">
-        {orders.map((order) => (
-          <OrderItem
-            key={order.id}
-            order={order}
-          />
-        ))}
+        {orderFilter.length > 0 ? (
+          orderFilter.map((order) => (
+            <OrderItem
+              key={order._id}
+              order={order}
+            />
+          ))
+        ) : (
+          <div className="flex h-[600px] w-full flex-col items-center justify-center rounded bg-white">
+            <img
+              src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"
+              alt=""
+              width={140}
+            />
+            <span className="mt-4 text-[18px]">Chưa có đơn hàng</span>
+          </div>
+        )}
       </div>
     </div>
   );
