@@ -18,7 +18,8 @@ const imageFileFilter = (_req, file, callback) => {
     callback(null, true);
 };
 const imageFileName = (_req, file, callback) => {
-    const filename = Date.now() + path.parse(file.originalname).name.replace(/\s/g, '');
+    const filename =
+        Date.now() + path.parse(file.originalname).name.replace(/\s/g, '');
     const extension = path.parse(file.originalname).ext;
     callback(null, `${filename}${extension}`);
 };
