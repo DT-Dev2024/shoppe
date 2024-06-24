@@ -190,3 +190,115 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+@media screen and (min-width: 360px) and (max-width: 374.98px) {
+  .outstanding {
+    width: 100%;
+    background-color: transparent;
+  }
+  .outstanding__hot-brands__info {
+    display: none;
+  }
+  .outstanding__hot-selling-products__info,
+  .outstanding__hot-brands__info {
+    justify-content: flex-start;
+    gap: 60px;
+  }
+
+  .outstanding__hot-brands__list {
+    display: none;
+  }
+  .outstanding__hot-selling-products__list {
+    gap: 6px;
+    height: 18rem;
+  }
+  .outstanding__hot-selling-products__item {
+    width: 100%;
+  }
+  .outstanding__hot-selling-products__img {
+    height: 11.5rem;
+  }
+}
+@media screen and (min-width: 375px) and (max-width: 389.98px) {
+  .outstanding {
+    width: 100%;
+    background-color: transparent;
+  }
+  .outstanding__hot-brands__info {
+    display: none;
+  }
+  .outstanding__hot-selling-products__info,
+  .outstanding__hot-brands__info {
+    justify-content: flex-start;
+    gap: 60px;
+  }
+
+  .outstanding__hot-brands__list {
+    display: none;
+  }
+  .outstanding__hot-selling-products__list {
+    gap: 6px;
+    height: 18rem;
+  }
+  .outstanding__hot-selling-products__item {
+    width: 100%;
+  }
+  .outstanding__hot-selling-products__img {
+    height: 11.5rem;
+  }
+}
+@media screen and (min-width: 390px) and (max-width: 411.98px) {
+  .outstanding {
+    width: 100%;
+    background-color: transparent;
+  }
+  .outstanding__hot-brands__info {
+    display: none;
+  }
+  .outstanding__hot-selling-products__info,
+  .outstanding__hot-brands__info {
+    justify-content: flex-start;
+    gap: 60px;
+  }
+
+  .outstanding__hot-brands__list {
+    display: none;
+  }
+  .outstanding__hot-selling-products__list {
+    gap: 6px;
+    height: 18rem;
+  }
+  .outstanding__hot-selling-products__item {
+    width: 100%;
+  }
+  .outstanding__hot-selling-products__img {
+    height: 11.5rem;
+  }
+}
+@media screen and (min-width: 412px) and (max-width: 413.98px) {
+  .outstanding {
+    width: 100%;
+    background-color: transparent;
+  }
+  .outstanding__hot-brands__info {
+    display: none;
+  }
+  .outstanding__hot-selling-products__info,
+  .outstanding__hot-brands__info {
+    justify-content: flex-start;
+    gap: 60px;
+  }
+
+  .outstanding__hot-brands__list {
+    display: none;
+  }
+  .outstanding__hot-selling-products__list {
+    gap: 6px;
+    height: 18rem;
+  }
+  .outstanding__hot-selling-products__item {
+    width: 100%;
+  }
+  .outstanding__hot-selling-products__img {
+    height: 11.5rem;
+  }
+}

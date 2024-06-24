@@ -8,6 +8,7 @@ import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import "./HeaderSearchPart.css";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { path } from "src/constants/path.enum";
+import { useNavigate } from "react-router-dom";
 
 interface IData {
   href: string;
@@ -75,11 +76,7 @@ function HeaderSearchPart() {
           })}
     </div>
   );
-
-  const handleClickLogo = (event: React.MouseEvent<HTMLButtonElement>) => {
-    handlePreventDefault(event);
-    scrollToTop();
-  };
+  const navigate = useNavigate();
 
   const handleClickFrameBtn = () => {
     if (frameInputRef.current && frameInputRef.current.value !== "") {
@@ -122,7 +119,7 @@ function HeaderSearchPart() {
   return (
     <div className="header__search-part">
       <button
-        onClick={(event) => handleClickLogo(event)}
+        onClick={() => navigate(path.home)}
         className="header__shopee-logo"
       >
         <svg

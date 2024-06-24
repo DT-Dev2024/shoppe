@@ -210,3 +210,94 @@
   font-size: 2rem;
   font-weight: 600;
 }
+@media screen and (min-width: 360px) and (max-width: 374.98px) {
+  .flash-sale {
+    width: 100%;
+  }
+  .flash-sale__heading {
+    justify-content: flex-start;
+    gap: 112px;
+  }
+  .flash-sale__main__previous-btn,
+  .flash-sale__main__next-btn {
+    display: none;
+  }
+  .flash-sale__main__list {
+    display: grid;
+    width: 360px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .flash-sale__main__link {
+    width: 96%;
+  }
+}
+@media screen and (min-width: 375px) and (max-width: 389.98px) {
+  .flash-sale {
+    width: 100%;
+  }
+  .flash-sale__heading {
+    justify-content: flex-start;
+    gap: 112px;
+  }
+  .flash-sale__main__previous-btn,
+  .flash-sale__main__next-btn {
+    display: none;
+  }
+  .flash-sale__main__list {
+    display: grid;
+    width: 360px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .flash-sale__main__link {
+    width: 100%;
+    margin-left: 6px;
+  }
+}
+@media screen and (min-width: 390px) and (max-width: 411.98px) {
+  .flash-sale {
+    width: 100%;
+  }
+  .flash-sale__heading {
+    justify-content: flex-start;
+    gap: 112px;
+  }
+  .flash-sale__main__previous-btn,
+  .flash-sale__main__next-btn {
+    display: none;
+  }
+  .flash-sale__main__list {
+    display: grid;
+    width: 360px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .flash-sale__main__link {
+    width: 100%;
+    margin-left: 16px;
+  }
+}
+@media screen and (min-width: 412px) and (max-width: 413.98px) {
+  .flash-sale {
+    width: 100%;
+  }
+  .flash-sale__heading {
+    justify-content: flex-start;
+    gap: 112px;
+  }
+  .flash-sale__main__previous-btn,
+  .flash-sale__main__next-btn {
+    display: none;
+  }
+  .flash-sale__main__list {
+    display: grid;
+    width: 360px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .flash-sale__main__link {
+    width: 100%;
+    margin-left: 24px;
+  }
+}

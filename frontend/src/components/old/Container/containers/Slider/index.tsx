@@ -213,7 +213,7 @@ function Slider() {
                 alt=""
               />
             </a>
-            <button
+            {/* <button
               ref={previousButtonRef}
               onClick={handleClickPreviousButton}
               className="slider__main__motion-part__btn slider__main__motion-part__previous-btn"
@@ -226,11 +226,11 @@ function Slider() {
               className="slider__main__motion-part__btn slider__main__motion-part__next-btn"
             >
               <MdOutlineArrowForwardIos />
-            </button>
+            </button> */}
 
-            <div className="slider__main__motion-part__queue">
+            {/* <div className="slider__main__motion-part__queue">
               {motionPartLinkInfo && renderQueueItems(motionPartLinkInfo)}
-            </div>
+            </div> */}
           </div>
 
           <div className="slider__main__no-motion-part">

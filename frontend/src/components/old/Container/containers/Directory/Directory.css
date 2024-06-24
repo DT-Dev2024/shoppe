@@ -113,3 +113,74 @@
   font-size: 2rem;
   font-weight: 600;
 }
+@media screen and (min-width: 360px) and (max-width: 374.98px) {
+  .directory {
+    margin-top: -110px;
+    width: 100%;
+  }
+  .directory__main__list {
+    margin-top: -10px;
+    justify-content: flex-start;
+  }
+  .directory__main__item:nth-last-child(-n + 10) {
+    display: none;
+  }
+  .directory__main__previous-btn,
+  .directory__main__next-btn {
+    display: none;
+  }
+}
+@media screen and (min-width: 375px) and (max-width: 389.98px) {
+  .directory {
+    margin-top: -110px;
+    width: 100%;
+  }
+  .directory__main__list {
+    margin-top: -12px;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+  .directory__main__item:nth-last-child(-n + 10) {
+    display: none;
+  }
+  .directory__main__previous-btn,
+  .directory__main__next-btn {
+    display: none;
+  }
+}
+@media screen and (min-width: 390px) and (max-width: 411.98px) {
+  .directory {
+    margin-top: -110px;
+    width: 100%;
+  }
+  .directory__main__list {
+    margin-top: -14px;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+  .directory__main__item:nth-last-child(-n + 10) {
+    display: none;
+  }
+  .directory__main__previous-btn,
+  .directory__main__next-btn {
+    display: none;
+  }
+}
+@media screen and (min-width: 412px) and (max-width: 413.98px) {
+  .directory {
+    margin-top: -110px;
+    width: 100%;
+  }
+  .directory__main__list {
+    margin-top: -18px;
+    gap: 25px;
+    justify-content: flex-start;
+  }
+  .directory__main__item:nth-last-child(-n + 10) {
+    display: none;
+  }
+  .directory__main__previous-btn,
+  .directory__main__next-btn {
+    display: none;
+  }
+}
