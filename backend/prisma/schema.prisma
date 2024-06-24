@@ -75,7 +75,7 @@ model products {
 
 model product_feeback {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  star       Int
+  star       Float
   comment    Int
   sold       Int
   product    products? @relation(fields: [productId], references: [id])

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, Min, Max } from 'class-validator';
+import { IsInt, Min, Max, IsNumber } from 'class-validator';
 
 export class ProductFeedbackDTO {
-  @IsInt()
+  @IsNumber()
   @Min(1)
   @Max(5)
   @ApiProperty()
