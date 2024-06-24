@@ -1,18 +1,53 @@
+const path = require("path");
 module.exports = {
-  root: true,
-  env: { browser: true, es2020: true },
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "eslint-config-prettier",
+    "prettier",
+    "plugin:storybook/recommended",
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ["prettier"],
+  settings: {
+    react: {
+      version: "detect",
+    },
+    "import/resolver": {
+      node: {
+        paths: [path.resolve(__dirname, "")],
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
+  env: {
+    node: true,
+  },
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
+    "@typescript-eslint/no-explicit-any": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "react/jsx-no-target-blank": "warn",
+    "prettier/prettier": [
+      "warn",
+      {
+        arrowParens: "always",
+        semi: true,
+        trailingComma: "all",
+        tabWidth: 2,
+        endOfLine: "auto",
+        useTabs: false,
+        singleQuote: false,
+        printWidth: 120,
+        jsxSingleQuote: false,
+        singleAttributePerLine: true,
+      },
     ],
   },
-}
+};
