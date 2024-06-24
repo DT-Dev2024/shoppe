@@ -19,7 +19,7 @@ interface AboutSocialData {
   image: string;
   text: string;
 }
-function FooterLink({ bg }: { bg?: string }) {
+function FooterLink({ bg, p }: { bg?: string; p?: string }) {
   const {
     footerLinkAboutTextCSKHInfo,
     footerLinkAboutTextVeShopeeInfo,
@@ -101,7 +101,7 @@ function FooterLink({ bg }: { bg?: string }) {
     });
 
   return (
-    <div className={`footer__link ${bg}`}>
+    <div className={`footer__link ${bg} ${p}`}>
       <div className="footer__link__about">
         <div className="footer__link__about__part">
           <div className="footer__link__about__item">

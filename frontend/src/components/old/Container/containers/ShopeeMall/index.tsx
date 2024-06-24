@@ -184,8 +184,6 @@ function ShopeeMall() {
   };
 
   const handleClickPreviousButton = () => {
-    // If second list
-    console.log(currentListIndex);
     if (currentListIndex === 2) {
       currentListIndex = 1;
       if (previousButtonRef.current) {
