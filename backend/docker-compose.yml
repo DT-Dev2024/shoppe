@@ -1,15 +1,50 @@
 version: '3.9'
 services:
-  mongodb:
+  # backend:
+  #   container_name: backend_app
+  #   build: .
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - mongo1
+  #     - mongo2
+  #     - mongo3
+  
+  mongo1:
     image: mongo:5.0.6
-    container_name: database_app
+    container_name: mongo1
     ports:
       - '27016:27017'
     volumes:
-      - './docker/mongo.conf:/data/configdb/mongod.conf:ro'
-      - './data:/data/db'
-      - 'log:/var/log/mongodb'
-    command: ['/usr/bin/mongod', '-f', '/data/configdb/mongod.conf']
+      - './docker/mongo.conf:/etc/mongo/mongo.conf:ro'
+      - './data/mongo1:/data/db'
+      - './mongodb-keyfile:/etc/mongodb-keyfile:ro'
+    command: ['mongod', '-f', '/etc/mongo/mongo.conf']
     restart: always
-volumes:
-  log: null
+
+  mongo2:
+    image: mongo:5.0.6
+    container_name: mongo2
+    ports:
+      - '27018:27017'
+    volumes:
+      - './docker/mongo.conf:/etc/mongo/mongo.conf:ro'
+      - './data/mongo2:/data/db'
+      - './mongodb-keyfile:/etc/mongodb-keyfile:ro'
+    command: ['mongod', '-f', '/etc/mongo/mongo.conf']
+    restart: always
+
+  mongo3:
+    image: mongo:5.0.6
+    container_name: mongo3
+    ports:
+      - '27019:27017'
+    volumes:
+      - './docker/mongo.conf:/etc/mongo/mongo.conf:ro'
+      - './data/mongo3:/data/db'
+      - './mongodb-keyfile:/etc/mongodb-keyfile:ro'
+    command: ['mongod', '-f', '/etc/mongo/mongo.conf']
+    restart: always
+
