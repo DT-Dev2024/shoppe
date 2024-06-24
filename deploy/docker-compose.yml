@@ -1,9 +1,22 @@
 version: "3.8"
 
 services:
+  backend:
+    container_name: backend_app
+    build: ../backend
+    env_file:
+      - ../backend/.env
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
   mongo1:
     image: mongo:5
     container_name: mongo1
+    volumes:
+      - ./data/mongo1:/data/db
     command: mongod --replSet myReplicaSet --bind_ip localhost,mongo1 --port 27017
     ports:
       - "27016:27017"
@@ -14,6 +27,8 @@ services:
   mongo2:
     image: mongo:5
     container_name: mongo2
+    volumes:
+      - ./data/mongo2:/data/db
     command: mongod --replSet myReplicaSet --bind_ip localhost,mongo2 --port 27017
     ports:
       - "27018:27017"
@@ -24,6 +39,8 @@ services:
   mongo3:
     image: mongo:5
     container_name: mongo3
+    volumes:
+      - ./data/mongo3:/data/db
     command: mongod --replSet myReplicaSet --bind_ip localhost,mongo3 --port 27017
     ports:
       - "27019:27017"
@@ -34,3 +51,8 @@ services:
 networks:
   mongoCluster:
     driver: bridge
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
