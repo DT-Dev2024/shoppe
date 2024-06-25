@@ -70,36 +70,29 @@ const Login = () => {
           noValidate
           autoComplete="on"
         >
-          <div className="text-2xl">Đăng nhập tài khoản</div>
+          <div className="text-2xl lg:text-3xl">Đăng nhập tài khoản</div>
           <Input
-            type="email"
-            errorMsg={errors.email?.message}
-            name="email"
+            type="text"
+            errorMsg={errors.phone?.message}
+            name="phone"
             register={register}
-            placeholder="Địa chỉ e-mail"
-            containerClassName="mt-8"
+            placeholder="Số điện thoại"
+            containerClassName="mt-6"
           ></Input>
-          <Input
-            type="password"
-            errorMsg={errors.password?.message}
-            name="password"
-            register={register}
-            placeholder="Mật khẩu của bạn"
-            containerClassName="mt-1"
-          ></Input>
+
           <div className="mt-3">
             <Button
               type="submit"
               isLoading={isLoading}
-              containerClassName="mt-1"
+              containerClassName="mt-1  lg:text-xl "
             >
               Đăng nhập
             </Button>
           </div>
           <div className="mt-8 flex items-center justify-center">
-            <span className="text-gray-400">Bạn chưa có tài khoản?</span>
+            <span className="text-gray-400 lg:text-xl ">Bạn chưa có tài khoản?</span>
             <Link
-              className="ml-1 text-red-400"
+              className="ml-4 text-red-400 lg:text-xl "
               to={path.login}
             >
               Đăng ký
