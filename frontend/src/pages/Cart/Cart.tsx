@@ -224,7 +224,7 @@ const Cart = () => {
   const EmptySelectModal = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center ">
-        <div className="rounded-lg bg-black bg-opacity-70 p-10 text-white">
+        <div className="p-10 text-white bg-black rounded-lg bg-opacity-70">
           <p className="flex justify-center text-6xl ">
             <BsExclamationCircle />
           </p>
@@ -259,18 +259,18 @@ const Cart = () => {
   const DetailPurchase = (cart: CartProps) => {
     const { pricesAll, priceDiscount, finalPrice } = cart;
     return (
-      <div className="absolute  bottom-[120%] right-full w-[60rem] rounded border bg-white p-5 text-2xl shadow-lg">
+      <div className="absolute  bottom-[120%] right-full lg:w-[60rem] w-[20rem]  rounded border bg-white p-5 lg:text-2xl text-xl shadow-lg">
         <h1 className="border-b border-gray-300 py-7">Chi tiết khuyến mãi</h1>
-        <div className="flex justify-between border-b border-gray-300 py-6">
+        <div className="flex justify-between py-6 border-b border-gray-300">
           <span>Tổng tiền hàng</span>
           <span>₫{pricesAll}</span>
         </div>
-        <div className="flex justify-between border-b border-gray-300 py-6">
+        <div className="flex justify-between py-6 border-b border-gray-300">
           <span>Giảm giá sản phẩm</span>
           <span>₫{priceDiscount}</span>
         </div>
 
-        <div className="my-2 mt-4 flex justify-between">
+        <div className="flex justify-between my-2 mt-4">
           <span>Tiết kiệm</span>
           <span className="text-main">-₫{priceDiscount}</span>
         </div>
@@ -279,7 +279,7 @@ const Cart = () => {
           <span>₫{finalPrice}</span>
         </div>
         <p className="text-right text-gray-500">Số tiền cuối cùng thanh toán</p>
-        <VscTriangleDown className="absolute -bottom-6 right-1/4 text-4xl text-white shadow-lg" />
+        <VscTriangleDown className="absolute text-4xl text-white shadow-lg -bottom-6 right-1/4" />
       </div>
     );
   };
@@ -289,10 +289,10 @@ const Cart = () => {
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[500px] rounded-lg bg-white px-[40px] pb-[24px] pt-[44px] text-black">
           <h1 className="text-3xl">Bạn có xóa bỏ {checkedPurchasesCount} sản phẩm?</h1>
-          <div className="mt-12 flex justify-end">
+          <div className="flex justify-end mt-12">
             <button
               onClick={() => setIsModalDeleteCartVisible(false)}
-              className="mr-2 rounded bg-main  px-10 py-4 text-3xl text-white"
+              className="px-10 py-4 mr-2 text-3xl text-white rounded bg-main"
             >
               Trở lại
             </button>
@@ -300,7 +300,7 @@ const Cart = () => {
               onClick={() => {
                 // delete to server
               }}
-              className="mx-7 bg-white px-10 py-4 text-3xl "
+              className="px-10 py-4 text-3xl bg-white mx-7 "
             >
               Có
             </button>
@@ -314,10 +314,10 @@ const Cart = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[530px] rounded-lg bg-white px-[30px] pb-[24px] pt-[44px] text-black">
-          <h1 className="mb-60 text-3xl">Bạn vẫn chưa chọn sản phẩm nào để mua.</h1>
+          <h1 className="text-3xl mb-60">Bạn vẫn chưa chọn sản phẩm nào để mua.</h1>
 
           <button
-            className="w-full bg-main py-4 text-2xl text-white"
+            className="w-full py-4 text-2xl text-white bg-main"
             onClick={() => setIsModalPurchaseEmptyVisible(false)}
           >
             OK
@@ -332,11 +332,11 @@ const Cart = () => {
   const ModalVoucher = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="max-h-[640px] w-[616px] rounded-lg bg-white  text-black">
-          <div className="p-10 pb-0">
+        <div className="lg:max-h-[640px] w-[316px]  lg:w-[616px] rounded-lg bg-white  text-black">
+          <div className="p-3 lg:p-10 lg:pb-4">
             <div className="flex justify-between">
-              <h1 className="text-3xl">Chọn Shopee Voucher</h1>
-              <p className="flex items-center text-2xl text-gray-500">
+              <h1 className="text-2xl">Chọn Shopee Voucher</h1>
+              <p className="flex items-center text-xl text-gray-500">
                 Hỗ trợ
                 <CiCircleQuestion />
               </p>
@@ -347,7 +347,7 @@ const Cart = () => {
             >
               <label
                 htmlFor="voucher"
-                className="w-60 text-2xl"
+                className="text-2xl w-60"
               >
                 Mã Voucher
               </label>
@@ -355,11 +355,11 @@ const Cart = () => {
                 id="voucher"
                 type="text"
                 placeholder="Mã Shoppe Voucher"
-                className="w-full border border-gray-300 p-4"
+                className="w-full p-4 border border-gray-300"
               />
-              <button className="w-60 border p-4 text-2xl text-[#ccc] ">Áp dụng</button>
+              <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
             </form>
-            <p className="text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
+            <p className="text-[13px] text-[#bbb] mb-2">Mã Miễn Phí Vận Chuyển</p>
             <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
 
             <ul
@@ -376,13 +376,13 @@ const Cart = () => {
                   key={voucher._id}
                   className={`border-b  border-gray-300 p-4 shadow-md`}
                 >
-                  <div className="relative flex cursor-not-allowed items-center">
-                    <div className="absolute left-0 top-0 h-full w-full bg-gray-100 bg-opacity-50"></div>
-                    <div className="h-40 w-40 bg-green-600">
+                  <div className="relative flex items-center cursor-not-allowed">
+                    <div className="absolute top-0 left-0 w-full h-full bg-gray-100 bg-opacity-50"></div>
+                    <div className="w-40 h-40 bg-green-600">
                       <img
                         src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
                         alt=""
-                        className="h-full w-full object-cover"
+                        className="object-cover w-full h-full"
                       />
                     </div>
 
@@ -401,8 +401,8 @@ const Cart = () => {
                       className="ml-4"
                     />
                   </div>
-                  <p className="mt-2 flex items-center text-[14px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1" />
+                  <p className="mt-4 flex items-center text-[13px] text-main">
+                    <AiOutlineExclamationCircle className="mr-1 " />
                     Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
                   </p>
                 </li>
@@ -413,7 +413,7 @@ const Cart = () => {
           <div className="flex h-[64px] items-center justify-end border-t">
             <button
               onClick={() => setIsModalVoucherVisible(false)}
-              className="mr-2 rounded  border-2 px-12 py-3 text-3xl text-[#b6b6b6] "
+              className="mr-2 rounded  border-2 px-12 py-3 text-xl text-[#b6b6b6] "
             >
               Trở lại
             </button>
@@ -421,7 +421,7 @@ const Cart = () => {
               onClick={() => {
                 // delete to server
               }}
-              className="mx-7 rounded border bg-main px-20 py-3 text-3xl text-white"
+              className="px-20 py-3 text-xl text-white border rounded mx-7 bg-main"
             >
               OK
             </button>
@@ -462,7 +462,7 @@ const Cart = () => {
         {isModalVoucherVisible && <ModalVoucher />}
         {extendedPurchases.length > 0 ? (
           <>
-            <div className="mb-4 flex items-center space-x-3 rounded-sm border border-yellow-300 bg-white p-3 px-6 shadow">
+            <div className="flex items-center p-3 px-6 mb-4 space-x-3 bg-white border border-yellow-300 rounded-sm shadow">
               <img
                 src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
                 alt=""
@@ -472,20 +472,20 @@ const Cart = () => {
                 Nhấn vào mục Mã giảm giá ở cuối trang để hưởng miễn phí vận chuyển bạn nhé!
               </span>
             </div>
-            <div className="hidden grid-cols-12 rounded-sm bg-white px-16 py-5 text-2xl capitalize text-gray-500 shadow lg:grid">
+            <div className="hidden grid-cols-12 px-16 py-5 text-2xl text-gray-500 capitalize bg-white rounded-sm shadow lg:grid">
               <div className="col-span-6">
                 <div className="flex items-center">
-                  <div className="flex flex-shrink-0 items-center justify-center pr-3">
+                  <div className="flex items-center justify-center flex-shrink-0 pr-3">
                     <input
                       id="selectAllProducts"
                       type="checkbox"
-                      className="h-6 w-6 accent-primary"
+                      className="w-6 h-6 accent-primary"
                       checked={isAllChecked}
                       onChange={handleSelectAllProducts}
                     />
                     <label
                       htmlFor="selectAllProducts"
-                      className="ml-2 cursor-pointer text-2xl text-black"
+                      className="ml-2 text-2xl text-black cursor-pointer"
                     >
                       Sản phẩm
                     </label>
@@ -502,13 +502,13 @@ const Cart = () => {
               </div>
             </div>
             {extendedPurchases.length > 0 && (
-              <div className="my-3 rounded-sm  shadow ">
+              <div className="my-3 rounded-sm shadow ">
                 {extendedPurchases.map((purchase, index) => (
                   <div
                     key={purchase._id}
-                    className="mb-5  rounded-sm bg-white text-center text-2xl first:mt-0"
+                    className="mb-5 text-2xl text-center bg-white rounded-sm first:mt-0"
                   >
-                    <div className="flex items-center justify-between border-b px-16 py-5">
+                    <div className="flex items-center justify-between px-16 py-5 border-b">
                       <h5 className="flex space-x-2 text-3xl font-bold">
                         <span>{purchase.product.category.name}</span>
                         <svg
@@ -525,32 +525,32 @@ const Cart = () => {
                       </h5>
                       <p className="mr-8 text-xl font-bold text-orange-600">Trạng thái</p>
                     </div>
-                    <div className="mt-3 grid grid-cols-12 px-16 py-10">
-                      <div className="col-span-6 flex items-center  gap-x-3">
+                    <div className="grid px-6 py-6 mt-3 lg:px-16 lg:py-10 lg:grid-cols-12">
+                      <div className="flex items-center lg:col-span-6 gap-x-3">
                         <input
                           type="checkbox"
-                          className="h-6 w-6 accent-primary"
+                          className="w-6 h-6 accent-primary"
                           checked={purchase.checked}
                           onChange={handleSelectProduct(index)}
                         />
 
-                        <div className="flex max-w-[40rem] space-x-2 text-left">
+                        <div className="flex lg:max-w-[40rem]  space-x-2 text-left items-center">
                           <img
                             alt={purchase.product.name}
                             src={purchase.product.image}
-                            className="h-14 w-14 object-cover sm:h-20 sm:w-20"
+                            className="object-cover w-24 mb-8 lg:mb-0 lg:h-36 lg:w-36 "
                           />
-                          <div>
-                            <p>{purchase.product.name}</p>
-                            <span className="border border-main p-2 text-base font-thin text-main">
+                          <div className="mb-6 lg:mb-0">
+                            <p className="mb-2 ml-4 text-xl lg:ml-0 lg:mb-4 lg:text-2xl ">{purchase.product.name}</p>
+                            <span className="p-2 ml-4 text-base font-thin border lg:ml-0 border-main text-main">
                               Đổi ý miễn phí 15 ngày
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="col-span-6">
-                        <div className=" grid grid-cols-5 items-center">
-                          <div className="col-span-2 hidden items-center justify-center gap-x-3 lg:flex">
+                      <div className="col-span-6 lg:col-span-6">
+                        <div className="grid items-center grid-cols-1 col-span-1 grid-rows-1 gap-y-4 lg:grid-cols-5 lg:grid-rows-1 ">
+                          <div className="flex items-center justify-start col-span-2 ml-10 lg:ml-0 gap-x-3 lg:flex">
                             <span className="text-gray-300 line-through">
                               ₫{formatCurrency(purchase.product.price_before_discount)}
                             </span>
@@ -560,10 +560,10 @@ const Cart = () => {
                             </span>
                           </div>
 
-                          <div className="flex items-center">
+                          <div className="ld:mr-0 mr-[180px] lg:flex  ">
                             <button
                               type="button"
-                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                              className="inline-flex items-center justify-center p-1 border border-gray-300 rounded shrink-0"
                               onClick={() => {
                                 handleChangeQuantity(-1, purchase.product._id, purchase);
                               }}
@@ -571,7 +571,7 @@ const Cart = () => {
                               <FaMinus />
                             </button>
                             <input
-                              className="mx-1 w-10 shrink-0  border bg-transparent text-center  font-medium text-gray-900 focus:outline-none focus:ring-0"
+                              className="w-10 mx-1 font-medium text-center text-gray-900 bg-transparent border shrink-0 focus:outline-none focus:ring-0"
                               value={quantities[purchase.product._id]?.quantity || purchase.buy_count}
                               onChange={(e) => {
                                 if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
@@ -589,7 +589,7 @@ const Cart = () => {
                             />
                             <button
                               type="button"
-                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                              className="inline-flex items-center justify-center p-1 border border-gray-300 rounded shrink-0"
                               onClick={() => {
                                 handleChangeQuantity(1, purchase.product._id, purchase);
                               }}
@@ -597,24 +597,24 @@ const Cart = () => {
                               <FaPlus />
                             </button>
                           </div>
-                          <div className="col-span-1 hidden lg:block">
+                          <div className="col-span-1 lg:block">
                             <span className="text-primary">
                               ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
                             </span>
                           </div>
-                          <div className="col-span-1 mr-6 hidden lg:block">
-                            <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
+                          <div className="col-span-1 mr-6 mr-[220px] lg:ml-0 lg:block">
+                            <button className="text-black transition-all bg-none hover:text-primary">Xóa</button>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-16 py-8 shadow">
+                    <div className="flex items-center p-3 px-6 py-6 mb-4 space-x-3 bg-white border border-t rounded-sm shadow lg:px-16 lg:py-8">
                       <img
                         src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
                         alt=""
                         width={30}
                       />
-                      <span className=" text-[14px]">
+                      <span className=" lg:text-[14px] text-[12px] text-left">
                         Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu
                         ₫1.000.000
                       </span>
@@ -623,8 +623,8 @@ const Cart = () => {
                 ))}
               </div>
             )}
-            <div className="sticky bottom-0 z-10 mt-8  rounded-sm border border-gray-100 bg-white p-5 pt-0 text-3xl shadow-lg lg:flex-row lg:items-center">
-              <div className="grid grid-cols-2 border-b border-gray-300 py-4">
+            <div className="sticky bottom-0 z-10 p-5 pt-0 mt-8 text-3xl bg-white border border-gray-100 rounded-sm shadow-lg lg:flex-row lg:items-center">
+              <div className="grid grid-cols-1 py-4 border-b border-gray-300 lg:grid-cols-2">
                 <span></span>
                 <div className="flex justify-between">
                   <div className="flex items-center text-[16px]">
@@ -632,7 +632,7 @@ const Cart = () => {
                       src={Voucher}
                       alt=""
                     />
-                    <span>Shopee Voucher</span>
+                    <span className="ml-2 lg:text-[14px]  ">Shopee Voucher</span>
                   </div>
                   <button
                     onClick={() => setIsModalVoucherVisible(true)}
@@ -644,42 +644,43 @@ const Cart = () => {
               </div>
               <div className="flex pt-4">
                 <div className="flex items-center ">
-                  <div className="flex flex-shrink-0 items-center justify-center pr-3">
+                  <div className="flex items-center justify-center flex-shrink-0 pr-3">
                     <input
                       type="checkbox"
                       id="selectAllProducts"
-                      className="h-6 w-6 accent-primary"
+                      className="w-6 h-6 accent-primary"
                       checked={isAllChecked}
                       onChange={handleSelectAllProducts}
                     />
                   </div>
                   <label
                     htmlFor="selectAllProducts"
-                    className="mx-3 cursor-pointer border-none bg-none p-3 pl-0"
+                    className="p-3 pl-0 mx-3 border-none text-[13px] cursor-pointer lg:text-[16px] bg-none"
                   >
                     Chọn tất cả{" "}
                   </label>
                   <button
                     onClick={handleDeleteMultiplePurchases}
-                    className="mx-3 border-none bg-none p-3"
+                    className="lg:text-[16px] text-[13px] p-3 mx-3 border-none bg-none"
                   >
                     Xóa
                   </button>
                 </div>
 
-                <div className=" mt-5 flex flex-col lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
+                <div className="flex flex-col mt-5 lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
                   <div
                     className="flex"
                     onMouseEnter={() => setIsModalDetailVisible(true)}
                     onMouseLeave={() => setIsModalDetailVisible(false)}
                   >
-                    <span className="text-[16px]">Tổng thanh toán ({checkedPurchasesCount} sản phẩm):</span>
+                    <span className="text-[13px] lg:text-[16px]">Tổng thanh toán
+                      <br />({checkedPurchasesCount} sản phẩm):</span>
 
                     <div className="flex flex-col items-start justify-center text-2xl lg:justify-end">
-                      <div className="ml-2 flex w-full justify-between text-primary">
-                        <span className="text-5xl">₫{formatCurrency(totalCheckedPurchasesPrice)}</span>
+                      <div className="flex justify-start gap-4 ml-4 w-ful text-primary">
+                        <span className="text-2xl lg:text-3xl">₫{formatCurrency(totalCheckedPurchasesPrice)}</span>
                         {checkedPurchasesCount > 0 && (
-                          <span className="relative flex cursor-pointer items-center text-3xl text-gray-500">
+                          <span className="relative flex items-center text-2xl text-gray-500 cursor-pointer">
                             {isModalDetailVisible ? <IoIosArrowDown /> : <IoIosArrowUp />}
                             {isModalDetailVisible && (
                               <DetailPurchase
@@ -692,8 +693,8 @@ const Cart = () => {
                         )}
                       </div>
                       {checkedPurchasesCount > 0 && (
-                        <div>
-                          <span className="text-gray-500">Tiết kiệm</span>
+                        <div className="mt-1 ml-1">
+                          <span className="text-gray-500 lg:text-[16px] text-[12px]">Tiết kiệm</span>
                           <span className="ml-6 text-left text-primary">₫{formatCurrency(totalSavedPrice)}k</span>
                         </div>
                       )}
@@ -715,7 +716,7 @@ const Cart = () => {
             <img
               src={EmptyCartIcon}
               alt="Empty"
-              className="h-20 w-20 sm:h-40 sm:w-40"
+              className="w-20 h-20 sm:h-40 sm:w-40"
             />
             <span className="my-2 text-[14px]">Giỏ hàng còn trống</span>
             <Link
