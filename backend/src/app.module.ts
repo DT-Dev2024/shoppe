@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ProductModule } from './modules/product/product.module';
 import { UploadModule } from './upload/upload.module';
 import { SharedModule } from './shared/shared.module';
+import { UiModule } from './modules/ui/ui.module';
 import { WinstonModule as LoggerModule } from 'nest-winston';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as winston from 'winston';
@@ -65,6 +66,7 @@ import 'winston-daily-rotate-file';
     ProductModule,
     UploadModule,
     SharedModule,
+    UiModule
   ],
   controllers: [AppController],
   providers: [AppService],

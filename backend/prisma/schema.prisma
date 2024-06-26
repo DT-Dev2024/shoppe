@@ -111,46 +111,12 @@ model users {
 }
 
 model ui_home_data_source {
-  id                                          String   @id @default(auto()) @map("_id") @db.ObjectId
-  directoryMainItemListInfo                   String[]
-  footerTextATagsInfo                         String[]
-  footerPolicyTermsPartTitleInfo              String[]
-  footerPolicyTermsPartCertificateInfo        String[]
-  footerPolicyTermsPartCompanyInfoInfo        String[]
-  headerNotificationPopupWhenLoggedInListInfo String[]
-  headerSearchHistoryListInfo                 String[]
-  headerSearchHistoryKeywordsListInfo         String[]
-  flashSaleMainListInfo                       String[]
-  outstandingHotSellingProductsInfo String{ info: { heading: "" }, list: [] },
-  outstandingHotBrandsInfo: { info: { heading: "" }, list: [] },
-  searchTrendingMainListInfo: [],
-  shopeeMallHeadingTextInfo: [],
-  shopeeMallMainProductListInfo: [],
-  shopeeMallMainMotionLinkInfo: [],
-  sliderFavouriteSelectionsInfo: [],
-  sliderMainMotionPartLinkInfo: [],
-  todaySuggestionMainTabMainInfo: [],
-  todaySuggestionMainTabSuperSaleInfo: [],
-  topSearchMainListInfo: [],
-  underFlashSalePartInfo: [],
-  footerDirectoryListInfo: [],
-  footerLinkAboutTextCSKHInfo: [],
-  footerLinkAboutTextVeShopeeInfo: [],
-  footerLinkAboutSocialInfo: [],
-  footerLinkCopyrightCountryAndAreaListInfo: [],
-}
-
-model outstanding_template {
-  id   String   @id @default(auto()) @map("_id") @db.ObjectId
-  info Json
-  list String[]
-}
-
-model outstanding_template_list_item {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  href  String
-  image String
-  price
+  id                                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  headerSearchHistoryListInfo         String[]
+  headerSearchHistoryKeywordsListInfo String[]
+  bannerListInfo                      String[]
+  created_at                          DateTime? @default(now()) @db.Date
+  updated_at                          DateTime? @updatedAt @db.Date
 }
 
 enum roles {
