@@ -113,3 +113,16 @@
     display: none;
   }
 }
+@media screen and (min-width: 413px) and (max-width: 414px) {
+  .footer__directory {
+    width: 80%;
+    height: 91rem;
+  }
+  .footer__directory__list {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .footer__directory__item:nth-last-child(-n + 4) {
+    display: none;
+  }
+}

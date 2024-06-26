@@ -164,3 +164,13 @@
     display: none;
   }
 }
+
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .footer__link__about {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .footer__link__copyright__country-and-area {
+    display: none;
+  }
+}

@@ -428,7 +428,7 @@
 @media screen and (min-width: 360px) and (max-width: 374.98px) {
   .header__notify-and-account {
     justify-content: center;
-    gap: 8px;
+    margin-left:  14px;
   }
   .header__links,
   .header__shopee-logo,
@@ -447,11 +447,11 @@
   }
   .header__notification__link,
   .header__login__btn {
-    width: 100px;
+    width: 99px;
   }
   .header__support__link,
   .header__register__btn {
-    width: 70px;
+    width: 65px;
   }
   .header__links > div > a,
   .header__notify-and-account > div > a {
@@ -465,7 +465,7 @@
 @media screen and (min-width: 375px) and (max-width: 389.98px) {
   .header__notify-and-account {
     justify-content: center;
-    gap: 8px;
+    margin-left:  16px;
   }
   .header__links,
   .header__shopee-logo,
@@ -502,7 +502,8 @@
 @media screen and (min-width: 390px) and (max-width: 411.98px) {
   .header__notify-and-account {
     justify-content: center;
-    gap: 8px;
+    margin-left:  18px;
+
   }
   .header__links,
   .header__shopee-logo,
@@ -536,10 +537,12 @@
     border: none;
   }
 }
+
 @media screen and (min-width: 412px) and (max-width: 413.98px) {
   .header__notify-and-account {
     justify-content: center;
-    gap: 8px;
+       margin-left:  10px;
+
   }
   .header__links,
   .header__shopee-logo,
@@ -574,10 +577,10 @@
   }
 }
 
-/* @media screen and (min-width: 414px) {
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
   .header__notify-and-account {
     justify-content: center;
-    gap: 8px;
+    margin-left: -42px;
   }
   .header__links,
   .header__shopee-logo,
@@ -585,9 +588,7 @@
   .header__search-history-keywords-item {
     display: none;
   }
-  .header__common-info {
-    margin: 0;
-  }
+
 
   .header__support__link,
   .header__register__btn,
@@ -610,4 +611,5 @@
   .header__register {
     border: none;
   }
-} */
+}
+

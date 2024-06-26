@@ -309,3 +309,40 @@
     height: 0;
   }
 }
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .top-search {
+    width: 100%;
+    margin-top: 412px;
+  }
+  .top-search__main {
+    height: 146rem;
+  }
+  .top-search__main__previous-btn,
+  .top-search__main__next-btn {
+    display: none;
+  }
+  .top-search__main__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 14px;
+    justify-content: flex-start;
+  }
+  .top-search__main__link {
+    width: 40%;
+    background-color: transparent;
+    border: none;
+  }
+  .top-search__main__link:nth-last-child(-n + 14) {
+    display: none;
+  }
+  .top-search__main__product {
+    width: 15rem;
+  }
+  .top-search__main__footer__text {
+    font-size: 1.5rem;
+    margin-left: 6px;
+  }
+  .top-search__main__footer {
+    height: 0;
+  }
+}
