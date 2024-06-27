@@ -28,28 +28,24 @@ model shops {
   take_part_int String
   created_at    DateTime?  @default(now()) @db.Date
   updated_at    DateTime?  @updatedAt @db.Date
-  deleted_at    DateTime?  @updatedAt @db.Date
+  deleted_at    DateTime?  @db.Date
 }
 
-model vonchers {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  type            voncher_type
-  code            String
-  discount        Float
-  discount_type   discount_type
-  minium_price    Float
-  maxium_discount Float?
-  expire          DateTime?
+model vouchers {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  type          voucher_type
+  code          String
+  discount      Float
+  discount_type discount_type
+  minium_price  Float
+  expire        DateTime?
 
   created_at DateTime? @default(now()) @db.Date
   updated_at DateTime? @updatedAt @db.Date
   deleted_at DateTime? @updatedAt @db.Date
-
-  order_discount   order_discounts? @relation(fields: [order_discountId], references: [id])
-  order_discountId String?          @db.ObjectId
 }
 
-enum voncher_type {
+enum voucher_type {
   SHOP
   USER
 }
@@ -85,7 +81,7 @@ model product_feeback {
   product    products? @relation(fields: [productId], references: [id])
   productId  String?   @unique @db.ObjectId
   created_at DateTime? @default(now()) @db.Date
-  deleted_at DateTime? @updatedAt @db.Date
+  deleted_at DateTime? @db.Date
   updated_at DateTime? @updatedAt @db.Date
 }
 
@@ -96,7 +92,7 @@ model products_type {
   store      Int       @default(1000)
   created_at DateTime? @default(now()) @db.Date
   updated_at DateTime? @updatedAt @db.Date
-  deleted_at DateTime? @updatedAt @db.Date
+  deleted_at DateTime? @db.Date
 
   products   products? @relation(fields: [productsId], references: [id])
   productsId String?   @db.ObjectId
@@ -146,18 +142,18 @@ model orders {
   total_price       Float
   created_at        DateTime?        @default(now()) @db.Date
   updated_at        DateTime?        @updatedAt @db.Date
-  deleted_at        DateTime?        @updatedAt @db.Date
+  deleted_at        DateTime?        @db.Date
 }
 
 model order_discounts {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  voncher        vonchers[]
-  order          orders     @relation(fields: [orderId], references: [id])
-  orderId        String     @unique @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  vouchers       String[]
+  order          orders    @relation(fields: [orderId], references: [id])
+  orderId        String    @unique @db.ObjectId
   total_discount Float
-  created_at     DateTime?  @default(now()) @db.Date
-  updated_at     DateTime?  @updatedAt @db.Date
-  deleted_at     DateTime?  @updatedAt @db.Date
+  created_at     DateTime? @default(now()) @db.Date
+  updated_at     DateTime? @updatedAt @db.Date
+  deleted_at     DateTime? @updatedAt @db.Date
 }
 
 model order_details {
