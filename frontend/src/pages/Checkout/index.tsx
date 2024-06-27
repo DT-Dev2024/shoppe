@@ -107,7 +107,7 @@ const Checkout = () => {
         <div className="grid px-4 py-2 border-dotted lg:px-8 lg:py-4 lg:grid-cols-2 border-y">
           <span></span>
           <div className="flex justify-between">
-            <div className="flex items-center text-[16px]">
+            <div className="flex items-center lg:text-[16px] text-[14px]">
               <img
                 src={Voucher}
                 alt=""
@@ -123,13 +123,13 @@ const Checkout = () => {
           <div className="flex items-start col-span-12 p-1 py-4 lg:p-3 lg:py-10 lg:col-span-5">
             <label
               htmlFor="note"
-              className="ml-8 mt-4 w-[100px]"
+              className="ml-8 mt-4 w-[100px] lg:text-[16px] text-[14px]"
             >
               Lời nhắn
             </label>
             <input
               id="note"
-              className="w-full p-3 mr-10 text-xl border border-gray-300 rounded"
+              className="w-full p-3 mr-10 text-xl lg:text-[16px] text-[14px] border border-gray-300 rounded"
               type="text"
               placeholder="Lưu ý cho Người bán..."
               value=""
@@ -137,10 +137,10 @@ const Checkout = () => {
           </div>
           <div className="col-span-12 border-l border-dotted lg:col-span-7">
             <div className="flex flex-col p-6 mr-2 border-b border-dotted lg:mr-10 lg:flex-row lg:p-10">
-              <span className="w-[16rem]">Đơn vị vận chuyển:</span>
+              <span className="w-[16rem] lg:text-[16px] text-[14px]">Đơn vị vận chuyển:</span>
               <div>
-                <p className="flex justify-between mt-4 mb-3 lg:mt-0">
-                  <span>Nhanh</span>
+                <p className="flex justify-between mt-4 mb-3 lg:mt-0 lg:text-[16px] text-[14px]">
+                  <span >Nhanh</span>
                   <span className="text-blue-600">Thay đổi</span>
                   <span className="">₫{formatCurrency(shippingFee)}</span>
                 </p>
@@ -158,15 +158,15 @@ const Checkout = () => {
                 </p>
               </div>
             </div>
-            <p className="flex items-center w-full p-4 space-x-3 lg:p-6 lg:p-10">
+            <p className="flex items-center w-full p-4 space-x-3 lg:p-6 lg:p-10 lg:text-[16px] text-[14px]">
               Được đồng kiểm
               <CiCircleQuestion className="ml-2 text-[20px]" />
             </p>
           </div>
         </div>
-        <p className="flex items-center justify-between px-6 py-6 lg:py-10 lg:px-0 lg:pr-12 lg:justify-end">
+        <p className="flex items-center justify-between px-4 py-6 lg:py-10 lg:px-0 lg:pr-12 lg:justify-end lg:text-[16px] text-[14px]">
           <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
-          <span className="text-[20px] text-main">
+          <span className="lg:text-[20px] text-[17px] text-main">
             ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
           </span>
         </p>
@@ -201,24 +201,24 @@ const Checkout = () => {
       <div className="mt-1 bg-white rounded">
         <p className="letter"></p>
         <div className="lg:p-10 p-5 text-[16px]">
-          <p className="flex items-center space-x-1 text-3xl mb-7 text-main">
+          <p className="flex items-center space-x-1 text-2xl lg:text-3xl mb-7 text-main">
             <FaLocationDot />
             Địa Chỉ Nhận Hàng
           </p>
           <div className="flex gap-2 lg:gap-0">
             <div className="lg:w-[290px] w-[170px]  lg:font-semibold ">
               <p>
-                <strong>
+                <strong className="lg:text-[16px] text-[14px]">
                   {user.name}({user.code})
                 </strong>
               </p>
               <p>
-                <strong>{user.phone}</strong>
+                <strong className="lg:text-[16px] text-[14px]">{user.phone}</strong>
               </p>
             </div>
-            <p className="lg:flex-1 lg:w-full w-[170px]">{user.address}</p>
-            <span className="p-1 mx-10 text-base border h-fit border-main text-main"> Mặc Định</span>
-            <span className="pr-2 text-blue-500 lg:pr-10">Thay đổi</span>
+            <p className="lg:flex-1 lg:w-full w-[170px] lg:text-[16px] text-[14px] ">{user.address}</p>
+            <span className="p-1 mx-10 text-base border h-fit border-main text-main "> Mặc Định</span>
+            <span className="pr-2 text-blue-500 lg:pr-10 lg:text-[16px] text-[14px]">Thay đổi</span>
           </div>
         </div>
       </div>
@@ -237,7 +237,7 @@ const Checkout = () => {
 
       <div className="mt-[-16px] bg-white rounded lg:mt-5">
         <div className="flex justify-between p-4 py-4 border-b lg:p-8 lg:py-10">
-          <div className="flex items-center text-[16px]">
+          <div className="flex items-center lg:text-[16px] text-[14px]   ">
             <img
               src={Voucher}
               alt=""
@@ -249,7 +249,7 @@ const Checkout = () => {
           </button>
         </div>
         <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
-          <div className="flex items-center text-[16px]">
+          <div className="flex items-center lg:text-[16px] text-[14px]">
             <img
               src={Coin}
               alt=""
@@ -268,34 +268,34 @@ const Checkout = () => {
       </div>
       <div className="mt-5 rounded bg-white text-[16px]">
         <div className="flex flex-col p-8 lg:flex-row">
-          <h1 className="mr-4 text-[18px]">Phương thức thanh toán</h1>
-          <ul className="flex flex-col gap-4 mt-6 lg:space-x-5 lg:gap-0 lg:flex-row lg:mt-0">
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[15px] text-gray-400">
+          <h1 className="mr-4 lg:text-[18px] text-[15px]">Phương thức thanh toán</h1>
+          <ul className="flex flex-col gap-4 mt-6 lg:space-x-5 lg:gap-0 lg:flex-row lg:mt-0 ">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
               Số dư TK Shoppe
             </li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[15px] text-gray-400">Ví Shoppe</li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[15px] text-gray-400">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">Ví Shoppe</li>
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
               Google Pay
             </li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[15px] text-gray-400">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
               Thẻ Tín Dụng/Ghi Nợ
             </li>
-            <li className="border border-main px-5 py-2 text-[15px] text-main">Thanh toán khi nhận hàng</li>
+            <li className="border border-main px-5 py-2 text-[14px] lg:text-[15px] text-main">Thanh toán khi nhận hàng</li>
           </ul>
         </div>
         <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
           <ul className="space-y-7">
-            <li className="grid items-center grid-cols-2">
+            <li className="grid items-center grid-cols-2 text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
               <span className="text-right">
                 ₫{formatCurrency(order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0))}
               </span>
             </li>
-            <li className="grid items-center grid-cols-2">
+            <li className="grid items-center grid-cols-2 text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
               <span className="text-right">₫{formatCurrency(order.length * shippingFee)}</span>
             </li>
-            <li className="grid items-center grid-cols-2">
+            <li className="grid items-center grid-cols-2 text-[15px]" >
               <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
               <span className="text-3xl text-right lg:text-4xl text-main">
                 ₫
@@ -308,11 +308,11 @@ const Checkout = () => {
           </ul>
         </div>
         <p className="flex flex-col items-center gap-6 px-6 py-4 mt-4 border-t lg:py-8 lg:gap-0 lg:mx-10 lg:flex-row lg:justify-between lg:mt-0">
-          <span className="px-6 lg:px-0">
+          <span className="px-6 lg:px-0 lg:text-[16px] text-[14px]">
             Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
             <span className="text-blue-600">Điều khoản Shopee</span>
           </span>
-          <button className="py-4 text-white bg-main px-36">Đặt hàng</button>
+          <button className="py-4 text-white lg:text-[16px] text-[14px] bg-main px-36">Đặt hàng</button>
         </p>
       </div>
     </div>

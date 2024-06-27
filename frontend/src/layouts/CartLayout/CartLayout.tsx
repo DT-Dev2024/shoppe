@@ -16,7 +16,7 @@ const CartLayout = ({ children }: CartLayoutPropsType) => {
       <HeaderSearchPart />
       <div className="mx-auto lg:w-[120rem]">{children}</div>
       <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
-      <div className="lg:px-[35rem]">
+      <div>
         <FooterLink bg="bg-neutral-100" />
         <FooterPolicyAndTerms />
       </div>
@@ -29,10 +29,10 @@ export default CartLayout;
 function HeaderSearchPart() {
   const navigate = useNavigate();
   return (
-    <div className="mb-10  flex items-center justify-between bg-white px-10 py-10 lg:px-[35rem]">
+    <div className="mb-10  flex items-center justify-start gap-6 bg-white px-8 py-10 lg:justify-between lg:gap-0 lg:pl-[24rem] lg:pr-[35rem]">
       <div className="flex items-center ">
         <button
-          className="h-[50px] w-[100px] fill-current text-white lg:w-[150px]"
+          className="h-[50px] w-[90px] fill-current text-white lg:w-[150px]"
           onClick={() => navigate("/")}
         >
           <svg
@@ -57,7 +57,7 @@ function HeaderSearchPart() {
           <input
             type="text"
             placeholder="CUỐI TUẦN GIẢI TRÍ"
-            className="h-[40px] w-[120px]  border-2 border-[#ee4d2d] pl-4 text-xl lg:w-[535px]"
+            className="h-[40px] w-[160px]  border-2 border-[#ee4d2d] pl-4 text-xl lg:w-[535px]"
           />
         </form>
         <span className="text-red flex h-[40px] w-24 items-center bg-[#ee4d2d] px-10 text-2xl font-light text-white lg:w-32">
