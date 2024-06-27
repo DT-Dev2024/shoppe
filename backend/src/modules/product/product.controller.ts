@@ -11,7 +11,7 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponseService } from 'src/shared/providers/api-response/api-response.service';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
 import { AuthGuard } from '../auth/auth.guard';
@@ -29,6 +29,7 @@ export class ProductController {
   @ApiOperation({
     summary: 'Tạo sản phẩm mới',
   })
+  @ApiBearerAuth('token')
   async create(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
     const result = await this.productService.create(createProductDto);
@@ -46,6 +47,7 @@ export class ProductController {
   @ApiOperation({
     summary: 'Lấy toàn bộ danh sách sản phẩm',
   })
+  @ApiBearerAuth('token')
   async findAll() {
     const result = await this.productService.findAll();
     if (!result) {
@@ -62,23 +64,26 @@ export class ProductController {
   @ApiOperation({
     summary: 'Lấy sản phẩm theo Id',
   })
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+  @ApiBearerAuth('token')
+  async findOne(@Param('id') id: string) {
+    return await this.productService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Cập nhật sản phẩm theo Id',
   })
-  update(@Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(updateProductDto);
+  @ApiBearerAuth('token')
+  async update(@Body() updateProductDto: UpdateProductDto) {
+    return await this.productService.update(updateProductDto);
   }
 
   @Delete(':id')
   @ApiOperation({
     summary: 'Xoá sản phẩm theo id',
   })
-  remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+  @ApiBearerAuth('token')
+  async remove(@Param('id') id: string) {
+    return await this.productService.remove(id);
   }
 }

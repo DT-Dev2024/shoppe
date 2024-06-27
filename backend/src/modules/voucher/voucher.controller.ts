@@ -50,6 +50,7 @@ export class VoucherController {
   }
 
   @Patch()
+  @ApiBearerAuth('token')
   async update(@Body() updateVoucherDto: UpdateVoucherDto) {
     const voncher = await this.voncherService.update(updateVoucherDto);
     if (voncher) {
@@ -59,6 +60,7 @@ export class VoucherController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('token')
   remove(@Param('id') id: string) {
     const voncher = this.voncherService.remove(id);
     if (voncher) {
