@@ -462,3 +462,28 @@
     width: 17rem;
   }
 }
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .today-suggestion {
+    margin-top: 116rem;
+    width: 100%;
+  }
+  .today-suggestion__heading-tab-super-sale {
+    width: 140px;
+  }
+  .today-suggestion__main-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    margin-left: 16px;
+  }
+  .today-suggestion__main-item:nth-last-child(-n + 4) {
+    display: none;
+  }
+  .today-suggestion__main__view-all-btn {
+    width: 26rem;
+    margin: 10px 66px;
+  }
+  .today-suggestion__main-item {
+    width: 17rem;
+  }
+}
