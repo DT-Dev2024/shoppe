@@ -9,37 +9,57 @@ import { TExtendedPurchases } from "src/types/purchase.type";
 import Voucher from "src/assets/img/voucher.png";
 import Coin from "src/assets/img/coin.png";
 import { Helmet } from "react-helmet-async";
-import "../../components/old/GlobalStyles/GlobalStyles.css"
+import { InputChange } from "src/helpers";
+
+interface Address {
+  id: string;
+  name: string;
+  phone: string;
+  code: string;
+  address: string;
+  default: boolean;
+}
+
 const Checkout = () => {
-  const defaultUser: TUser = {
-    _id: "2",
-    roles: ["User"],
-    email: "email@gmail.com",
-    name: "Alex",
-    date_of_birth: "1999-02-22",
-    address: "Số 1, Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
-    avatar: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ll86dohx6hmefa_tn",
-    code: "+84",
-    phone: "123456789",
-    createdAt: "2022-02-22T07:00:00.000Z",
-    updatedAt: "2022-02-22T07:00:00.000Z",
-  };
+  const addess: Address[] = [
+    {
+      id: "1",
+      name: "Nguyễn Văn A",
+      phone: "0123456789",
+      code: "+84",
+      address: "Số 1, Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+      default: true,
+    },
+    {
+      id: "2",
+      name: "Nguyễn Văn B",
+      phone: "0123456789",
+      code: "+84",
+      address: "Số 2, Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+      default: false,
+    },
+    {
+      id: "3",
+      name: "Nguyễn Văn C",
+      phone: "0123456789",
+      code: "+84",
+      address: "Số 3, Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+      default: false,
+    },
+    {
+      id: "4",
+      name: "Nguyễn Văn D",
+      phone: "0123456789",
+      code: "+84",
+      address: "Số 4, Đại Cồ Việt, Hai Bà Trưng, Hà Nội",
+      default: false,
+    },
+  ];
 
-   const { order } = useContext(OrderContext);
-  const [user, setUser] = useState<TUser>(defaultUser);
-  useEffect(() => {
-    const userString = localStorage.getItem("user");
-    if (userString) {
-      const user = JSON.parse(userString);
-      setUser(user);
-    } else {
-      setUser(defaultUser);
-    }
-  }, []);
-   useEffect(() => {
-    console.log("Order:", order);
-  }, [order]);
-
+  const [addresses, setAddresses] = useState<Address[]>(addess);
+  const [user, setUser] = useState<Address>(addresses.find((item) => item.default) || addresses[0]);
+  const { order } = useContext(OrderContext); // Assuming you're using this somewhere
+  const [addressEdit, setAddressEdit] = useState<Address | undefined>(user);
   const shippingFee = 32000;
   const CaculateDateShip = () => {
     const date = new Date();
@@ -57,19 +77,37 @@ const Checkout = () => {
     });
     e.currentTarget.classList.add("bg-main", "text-white");
   };
+  const handleAddressChange = (selectedId: string) => {
+    const updatedAddresses = addresses.map((item) => ({
+      ...item,
+      default: item.id === selectedId,
+    }));
+    console.log(updatedAddresses);
 
+    setAddresses(updatedAddresses);
+    setUser(updatedAddresses.find((item) => item.id === selectedId) || addresses[0]);
+  };
+
+  const [note, setNote] = useState("");
+  const [isShowFormAddress, setIsShowFormAddress] = useState(false);
+  const [isShowEditFormAddress, setIsShowEditFormAddress] = useState(false);
+  const handleChangeInput = (e: InputChange) => {
+    const { value, name } = e.target;
+    if (!addressEdit) return;
+    setAddressEdit({ ...addressEdit, [name]: value });
+  };
   const Item = ({ item }: { item: TExtendedPurchases }) => {
     return (
       <div
         key={item._id}
         className="w-ful mb-6 rounded bg-white text-[15px]"
       >
-        <p className="flex px-3 py-2 space-x-4 lg:px-8 lg:py-4">
+        <p className="flex space-x-4 px-3 py-2 lg:px-8 lg:py-4">
           <span className="mr-3 uppercase">{item.product.category.name}</span>
           <span className="cursor-pointer text-[#26aa99]">
             <svg
               viewBox="0 0 16 16"
-              className="inline-block mr-1 shopee-svg-icon FpgzUK"
+              className="shopee-svg-icon FpgzUK mr-1 inline-block"
               width="16"
               height="16"
             >
@@ -84,30 +122,34 @@ const Checkout = () => {
           </span>
         </p>
         <div className="grid grid-cols-12 p-2 py-8 lg:p-8 lg:py-10">
-          <div className="flex items-center col-span-4 lg:col-span-7 gap-x-3">
-            <div className="flex lg:flex-row lg:gap-0 gap-2 flex-col lg:max-w-[40rem] max-w-[12rem] space-x-2 text-left">
+          <div className="col-span-4 flex items-center gap-x-3 lg:col-span-7">
+            <div className="flex max-w-[12rem] flex-col gap-2 space-x-2 text-left lg:max-w-[40rem] lg:flex-row lg:gap-0">
               <img
                 alt={item.product.name}
                 src={item.product.image}
-                className="object-cover w-24 h-24 sm:h-36 sm:w-36"
+                className="h-24 w-24 object-cover sm:h-36 sm:w-36"
               />
               <div>
-                <p className="mb-5 lg:text-[15px] lg:p-2 text-[14px] lg:line-clamp-5 line-clamp-2">{item.product.name}</p>
-                <span className="p-2 text-base font-thin border border-main text-main">Đổi ý miễn phí 15 ngày</span>
+                <p className="mb-5 line-clamp-2 text-[14px] lg:line-clamp-5 lg:p-2 lg:text-[15px]">
+                  {item.product.name}
+                </p>
+                <span className="border border-main p-2 text-base font-thin text-main">Đổi ý miễn phí 15 ngày</span>
               </div>
             </div>
           </div>
 
-          <span className="col-span-3 lg:ml-0 ml-6 my-auto lg:col-span-2 lg:block lg:text-[15px] text-[13px]">₫{formatCurrency(item.product.price)}</span>
-          <span className="m-auto   lg:text-[15px] text-[13px]">{item.buy_count}</span>
-          <span className="col-span-4  lg:col-span-2 lg:pr-10 pr-4 pr my-auto text-right lg:text-[15px] text-[13px]">
+          <span className="col-span-3 my-auto ml-6 text-[13px] lg:col-span-2 lg:ml-0 lg:block lg:text-[15px]">
+            ₫{formatCurrency(item.product.price)}
+          </span>
+          <span className="m-auto   text-[13px] lg:text-[15px]">{item.buy_count}</span>
+          <span className="pr  col-span-4 my-auto pr-4 text-right text-[13px] lg:col-span-2 lg:pr-10 lg:text-[15px]">
             ₫{formatCurrency(item.buy_count * item.product.price)}
           </span>
         </div>
-        <div className="grid px-4 py-2 border-dotted lg:px-8 lg:py-4 lg:grid-cols-2 border-y">
+        <div className="grid border-y border-dotted px-4 py-2 lg:grid-cols-2 lg:px-8 lg:py-4">
           <span></span>
           <div className="flex justify-between">
-            <div className="flex items-center lg:text-[16px] text-[14px]">
+            <div className="flex items-center text-[14px] lg:text-[16px]">
               <img
                 src={Voucher}
                 alt=""
@@ -119,28 +161,29 @@ const Checkout = () => {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-12 border-dotted border-y">
-          <div className="flex items-start col-span-12 p-1 py-4 lg:p-3 lg:py-10 lg:col-span-5">
+        <div className="grid grid-cols-12 border-y border-dotted">
+          <div className="col-span-12 flex items-start p-1 py-4 lg:col-span-5 lg:p-3 lg:py-10">
             <label
               htmlFor="note"
-              className="ml-8 mt-4 w-[100px] lg:text-[16px] text-[14px]"
+              className="ml-8 mt-4 w-[100px] text-[14px] lg:text-[16px]"
             >
               Lời nhắn
             </label>
             <input
               id="note"
-              className="w-full p-3 mr-10 text-xl lg:text-[16px] text-[14px] border border-gray-300 rounded"
+              className="mr-10 w-full rounded border border-gray-300 p-3 text-[14px] text-xl lg:text-[16px]"
               type="text"
               placeholder="Lưu ý cho Người bán..."
               value=""
+              onChange={(e) => setNote(e.target.value)}
             />
           </div>
           <div className="col-span-12 border-l border-dotted lg:col-span-7">
-            <div className="flex flex-col p-6 mr-2 border-b border-dotted lg:mr-10 lg:flex-row lg:p-10">
-              <span className="w-[16rem] lg:text-[16px] text-[14px]">Đơn vị vận chuyển:</span>
+            <div className="mr-2 flex flex-col border-b border-dotted p-6 lg:mr-10 lg:flex-row lg:p-10">
+              <span className="w-[16rem] text-[14px] lg:text-[16px]">Đơn vị vận chuyển:</span>
               <div>
-                <p className="flex justify-between mt-4 mb-3 lg:mt-0 lg:text-[16px] text-[14px]">
-                  <span >Nhanh</span>
+                <p className="mb-3 mt-4 flex justify-between text-[14px] lg:mt-0 lg:text-[16px]">
+                  <span>Nhanh</span>
                   <span className="text-blue-600">Thay đổi</span>
                   <span className="">₫{formatCurrency(shippingFee)}</span>
                 </p>
@@ -158,15 +201,15 @@ const Checkout = () => {
                 </p>
               </div>
             </div>
-            <p className="flex items-center w-full p-4 space-x-3 lg:p-6 lg:p-10 lg:text-[16px] text-[14px]">
+            <p className="flex w-full items-center space-x-3 p-4 text-[14px] lg:p-10 lg:p-6 lg:text-[16px]">
               Được đồng kiểm
               <CiCircleQuestion className="ml-2 text-[20px]" />
             </p>
           </div>
         </div>
-        <p className="flex items-center justify-between px-4 py-6 lg:py-10 lg:px-0 lg:pr-12 lg:justify-end lg:text-[16px] text-[14px]">
+        <p className="flex items-center justify-between px-4 py-6 text-[14px] lg:justify-end lg:px-0 lg:py-10 lg:pr-12 lg:text-[16px]">
           <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
-          <span className="lg:text-[20px] text-[17px] text-main">
+          <span className="text-[17px] text-main lg:text-[20px]">
             ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
           </span>
         </p>
@@ -184,10 +227,181 @@ const Checkout = () => {
             content={`Trang thanh toán của Shopee At Home`}
           />
         </Helmet>
-        <div className="flex items-center justify-center text-4xl text-center">Giỏ hàng trống</div>
+        <div className="flex items-center justify-center text-center text-4xl">Giỏ hàng trống</div>
       </div>
     );
   }
+
+  const FormAddress = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="max-h-[600px] w-[500px] rounded-lg bg-white shadow-lg">
+          <h1 className="h-24 border-b py-9 pl-8 text-[16px]">Địa Chỉ Của Tôi</h1>
+          <div
+            className="
+                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
+                grid
+                max-h-[512px]
+                grid-cols-1 gap-4 overflow-y-auto
+              "
+          >
+            {addresses.map((item) => (
+              <div
+                key={item.id}
+                className="mx-8 mt-3 flex cursor-pointer items-start space-x-2 border-b border-gray-400 py-5"
+              >
+                <input
+                  id={`default-radio-${item.id}`}
+                  type="radio"
+                  value={item.id}
+                  checked={item.default}
+                  onChange={() => handleAddressChange(item.id)}
+                  name="default-radio-group"
+                  className="h-5 w-5 bg-gray-100 text-main focus:ring-transparent "
+                />
+                <div className="flex-1">
+                  <p className="mb-2 flex items-center">
+                    <span className="border-r text-[16px]">{item.name.toUpperCase()}</span>
+                    <span className="mx-4 inline-block h-9 w-[1px] bg-[#0000008a] leading-9"></span>
+
+                    <span className="text-[15px] text-[#0000008a]">
+                      ({item.code}) {item.phone}
+                    </span>
+                  </p>
+                  <p className="mb-2 text-[15px] text-[#0000008a]">{item.address}</p>
+                  {item.default && <span className=" h-fit border border-main p-1 text-base text-main">Mặc định</span>}
+                </div>
+                <button
+                  onClick={() => {
+                    setIsShowEditFormAddress(true);
+                    setIsShowFormAddress(false);
+                    setAddressEdit(item);
+                  }}
+                  className="px-6 py-4 text-[15px] text-blue-500"
+                >
+                  Cập nhật
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex h-[64px] items-center justify-end border-t">
+            <button
+              className="mr-2 rounded  border border-main px-12 py-3 text-xl text-main "
+              onClick={() => {
+                setIsShowFormAddress(false);
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={() => {
+                // delete to server
+                setIsShowFormAddress(false);
+                console.log("Xác nhận", user);
+              }}
+              className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const EditFormAddress = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="max-h-[600px] w-[500px] rounded-lg bg-white p-8 shadow-lg">
+          <h1 className="h-20 text-[18px]">Cập nhật địa chỉ</h1>
+          <form className="">
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="group relative z-0 mb-8 w-full">
+                <input
+                  type="text"
+                  id="name"
+                  className="peer block w-full border bg-transparent px-0 py-2.5 pl-4 text-[18px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 "
+                  placeholder=" "
+                  required
+                  value={addressEdit?.name}
+                  name="name"
+                  onChange={handleChangeInput}
+                />
+                <label
+                  htmlFor="name"
+                  className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3 peer-focus:text-[16px] "
+                >
+                  Họ và tên
+                </label>
+              </div>
+
+              <div className="group relative z-0 mb-8 w-full">
+                <input
+                  type="text"
+                  id="phone"
+                  className="peer block w-full border bg-transparent px-0 py-2.5 pl-4 text-[18px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 "
+                  placeholder=" "
+                  required
+                  value={addressEdit?.phone}
+                  name="phone"
+                  onChange={handleChangeInput}
+                />
+                <label
+                  htmlFor="phone"
+                  className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3 peer-focus:text-[16px] "
+                >
+                  Số điện thoại
+                </label>
+              </div>
+            </div>
+            <div className="group relative z-0 mb-6 w-full">
+              <input
+                type="text"
+                id="address"
+                className="peer block w-full border bg-transparent px-0 py-2.5 pl-4 text-[18px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 "
+                placeholder=" "
+                required
+                value={addressEdit?.address}
+                name="address"
+                onChange={handleChangeInput}
+              />
+              <label
+                htmlFor="address"
+                className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3 peer-focus:text-[16px] "
+              >
+                Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã
+              </label>
+            </div>
+          </form>
+
+          <div className="flex h-[64px] items-center justify-end border-t">
+            <button
+              className="mr-2 rounded  border border-main px-12 py-3 text-xl text-main "
+              onClick={() => {
+                setIsShowFormAddress(true);
+                setIsShowEditFormAddress(false);
+                setAddressEdit(undefined);
+              }}
+            >
+              Trở lại
+            </button>
+            <button
+              onClick={() => {
+                // delete to server
+                setIsShowEditFormAddress(false);
+                setIsShowFormAddress(true);
+                setAddresses(addresses.map((item) => (item.id === addressEdit?.id ? addressEdit : item)));
+              }}
+              className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
+            >
+              Hoàn thành
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -198,35 +412,37 @@ const Checkout = () => {
           content={`Trang thanh toán của Shopee At Home`}
         />
       </Helmet>
-      <div className="mt-1 bg-white rounded">
+      <div className="rounded bg-white">
+        {isShowFormAddress && <FormAddress />}
+        {addressEdit && isShowEditFormAddress && !isShowFormAddress && <EditFormAddress />}
         <p className="letter"></p>
-        <div className="lg:p-10 p-5 text-[16px]">
-          <p className="flex items-center space-x-1 text-2xl lg:text-3xl mb-7 text-main">
+        <div className="p-5 text-[16px] lg:p-10">
+          <p className="mb-7 flex items-center space-x-1 text-2xl text-main lg:text-3xl">
             <FaLocationDot />
             Địa Chỉ Nhận Hàng
           </p>
-          <div className="flex gap-2 lg:gap-0">
-            <div className="lg:w-[290px] w-[170px]  lg:font-semibold ">
+          <div className="flex items-center gap-2 lg:gap-0">
+            <div className="w-[170px] lg:w-[290px]  lg:font-semibold ">
               <p>
-                <strong className="lg:text-[16px] text-[14px]">
+                <strong className="text-[14px] lg:text-[16px]">
                   {user.name}({user.code})
                 </strong>
               </p>
               <p>
-                <strong className="lg:text-[16px] text-[14px]">{user.phone}</strong>
+                <strong className="text-[14px] lg:text-[16px]">{user.phone}</strong>
               </p>
             </div>
-            <p className="lg:flex-1 lg:w-full w-[170px] lg:text-[16px] text-[14px] ">{user.address}</p>
-            <span className="p-1 mx-10 text-base border h-fit border-main text-main "> Mặc Định</span>
-            <span className="pr-2 text-blue-500 lg:pr-10 lg:text-[16px] text-[14px]">Thay đổi</span>
+            <p className="w-[170px] text-[14px] lg:w-full lg:flex-1 lg:text-[16px] ">{user.address}</p>
+            <span className="mx-10 h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
+            <span className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]">Thay đổi</span>
           </div>
         </div>
       </div>
-      <div className="lg:mt-5 lg:ml-0 ml-1   lg:mr-0 mr-2 mt-0 grid lg:grid-cols-12 grid-cols-8 bg-white lg:p-8 p-2 lg:text-[16px] text-[15px]">
+      <div className="ml-1 mr-2 mt-0   grid grid-cols-8 bg-white p-2 text-[15px] lg:ml-0 lg:mr-0 lg:mt-5 lg:grid-cols-12 lg:p-8 lg:text-[16px]">
         <div className="col-span-3 lg:col-span-7">Sản phẩm</div>
-        <div className="col-span-1 lg:w-full w-[90px] lg:col-span-2">Đơn giá</div>
+        <div className="col-span-1 w-[90px] lg:col-span-2 lg:w-full">Đơn giá</div>
         <div className="col-span-2 ml-10 lg:col-span-1">Số lượng</div>
-        <div className="col-span-2 text-right lg:w-full w-[90px] lg:pr-10 lg:col-span-2">Thành tiền</div>
+        <div className="col-span-2 w-[90px] text-right lg:col-span-2 lg:w-full lg:pr-10">Thành tiền</div>
       </div>
       {order.map((item: TExtendedPurchases) => (
         <Item
@@ -235,9 +451,9 @@ const Checkout = () => {
         />
       ))}
 
-      <div className="mt-[-16px] bg-white rounded lg:mt-5">
-        <div className="flex justify-between p-4 py-4 border-b lg:p-8 lg:py-10">
-          <div className="flex items-center lg:text-[16px] text-[14px]   ">
+      <div className="mt-[-16px] rounded bg-white lg:mt-5">
+        <div className="flex justify-between border-b p-4 py-4 lg:p-8 lg:py-10">
+          <div className="flex items-center text-[14px] lg:text-[16px]   ">
             <img
               src={Voucher}
               alt=""
@@ -249,7 +465,7 @@ const Checkout = () => {
           </button>
         </div>
         <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
-          <div className="flex items-center lg:text-[16px] text-[14px]">
+          <div className="flex items-center text-[14px] lg:text-[16px]">
             <img
               src={Coin}
               alt=""
@@ -261,43 +477,47 @@ const Checkout = () => {
             <input
               disabled={true}
               type="checkbox"
-              className="w-6 h-6 cursor-not-allowed"
+              className="h-6 w-6 cursor-not-allowed"
             />
           </div>
         </div>
       </div>
       <div className="mt-5 rounded bg-white text-[16px]">
         <div className="flex flex-col p-8 lg:flex-row">
-          <h1 className="mr-4 lg:text-[18px] text-[15px]">Phương thức thanh toán</h1>
-          <ul className="flex flex-col gap-4 mt-6 lg:space-x-5 lg:gap-0 lg:flex-row lg:mt-0 ">
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
+          <h1 className="mr-4 text-[15px] lg:text-[18px]">Phương thức thanh toán</h1>
+          <ul className="mt-6 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:gap-0 lg:space-x-5 ">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
               Số dư TK Shoppe
             </li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">Ví Shoppe</li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
+              Ví Shoppe
+            </li>
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
               Google Pay
             </li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] text-gray-400">
+            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
               Thẻ Tín Dụng/Ghi Nợ
             </li>
-            <li className="border border-main px-5 py-2 text-[14px] lg:text-[15px] text-main">Thanh toán khi nhận hàng</li>
+            <li className="border border-main px-5 py-2 text-[14px] text-main lg:text-[15px]">
+              Thanh toán khi nhận hàng
+            </li>
           </ul>
         </div>
         <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
           <ul className="space-y-7">
-            <li className="grid items-center grid-cols-2 text-[15px]">
+            <li className="grid grid-cols-2 items-center text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
               <span className="text-right">
                 ₫{formatCurrency(order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0))}
               </span>
             </li>
-            <li className="grid items-center grid-cols-2 text-[15px]">
+            <li className="grid grid-cols-2 items-center text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
               <span className="text-right">₫{formatCurrency(order.length * shippingFee)}</span>
             </li>
-            <li className="grid items-center grid-cols-2 text-[15px]" >
+            <li className="grid grid-cols-2 items-center text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-              <span className="text-3xl text-right lg:text-4xl text-main">
+              <span className="text-right text-3xl text-main lg:text-4xl">
                 ₫
                 {formatCurrency(
                   order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0) +
@@ -307,12 +527,12 @@ const Checkout = () => {
             </li>
           </ul>
         </div>
-        <p className="flex flex-col items-center gap-6 px-6 py-4 mt-4 border-t lg:py-8 lg:gap-0 lg:mx-10 lg:flex-row lg:justify-between lg:mt-0">
-          <span className="px-6 lg:px-0 lg:text-[16px] text-[14px]">
+        <p className="mt-4 flex flex-col items-center gap-6 border-t px-6 py-4 lg:mx-10 lg:mt-0 lg:flex-row lg:justify-between lg:gap-0 lg:py-8">
+          <span className="px-6 text-[14px] lg:px-0 lg:text-[16px]">
             Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
             <span className="text-blue-600">Điều khoản Shopee</span>
           </span>
-          <button className="py-4 text-white lg:text-[16px] text-[14px] bg-main px-36">Đặt hàng</button>
+          <button className="bg-main px-36 py-4 text-[14px] text-white lg:text-[16px]">Đặt hàng</button>
         </p>
       </div>
     </div>
