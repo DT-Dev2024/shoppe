@@ -231,7 +231,6 @@ const Checkout = () => {
       </div>
     );
   }
-
   const FormAddress = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
@@ -296,9 +295,8 @@ const Checkout = () => {
             </button>
             <button
               onClick={() => {
-                // delete to server
                 setIsShowFormAddress(false);
-                console.log("Xác nhận", user);
+                setIsShowEditFormAddress(false);
               }}
               className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
             >
@@ -434,7 +432,12 @@ const Checkout = () => {
             </div>
             <p className="w-[170px] text-[14px] lg:w-full lg:flex-1 lg:text-[16px] ">{user.address}</p>
             <span className="mx-10 h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
-            <span className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]">Thay đổi</span>
+            <button
+              onClick={() => setIsShowFormAddress(true)}
+              className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]"
+            >
+              Thay đổi
+            </button>
           </div>
         </div>
       </div>
