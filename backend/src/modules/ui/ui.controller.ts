@@ -16,25 +16,25 @@ export class UiController {
 
   @Post()
   @ApiBearerAuth('token')
-  create(@Body() createUiDto: CreateUiDto) {
-    return this.uiService.create(createUiDto);
+  async create(@Body() createUiDto: CreateUiDto) {
+    return await this.uiService.create(createUiDto);
   }
 
   @Get()
   @ApiBearerAuth('token')
-  findAll() {
-    return this.uiService.findAll();
+  async findAll() {
+    return await this.uiService.findAll();
   }
 
   @Patch()
   @ApiBearerAuth('token')
-  update(@Body() updateUiDto: UpdateUiDto) {
-    return this.uiService.update(updateUiDto);
+  async update(@Body() updateUiDto: UpdateUiDto) {
+    return await this.uiService.update(updateUiDto);
   }
 
   @Patch('add-key')
   @ApiBearerAuth('token')
   async addKey(@Body() updateUiDto: UpdateKeywordDto) {
-    return this.uiService.addKey(updateUiDto);
+    return await this.uiService.addKey(updateUiDto);
   }
 }

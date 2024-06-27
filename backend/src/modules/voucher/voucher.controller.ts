@@ -61,8 +61,8 @@ export class VoucherController {
 
   @Delete(':id')
   @ApiBearerAuth('token')
-  remove(@Param('id') id: string) {
-    const voncher = this.voncherService.remove(id);
+  async remove(@Param('id') id: string) {
+    const voncher = await this.voncherService.remove(id);
     if (voncher) {
       return ApiResponse.buildApiResponse(voncher, 200, 'Voucher deleted');
     }

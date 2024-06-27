@@ -20,8 +20,8 @@ export class UsersController {
 
   @Get()
   @ApiBearerAuth('token')
-  findAll() {
-    const users = this.usersService.findAll();
+  async findAll() {
+    const users = await this.usersService.findAll();
     return ApiResponse.buildCollectionApiResponse(
       users,
       200,
@@ -31,8 +31,8 @@ export class UsersController {
 
   @Get(':id')
   @ApiBearerAuth('token')
-  findOne(@Param('id') id: string) {
-    const user = this.usersService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersService.findOne(id);
     if (!user) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }
@@ -45,8 +45,8 @@ export class UsersController {
 
   @Patch()
   @ApiBearerAuth('token')
-  update(@Body() updateUserDto: UpdateUserDto) {
-    const user = this.usersService.update(updateUserDto);
+  async update(@Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(updateUserDto);
     if (!user) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }
@@ -55,8 +55,8 @@ export class UsersController {
 
   @Delete(':id')
   @ApiBearerAuth('token')
-  remove(@Param('id') id: string) {
-    const user = this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    const user = await this.usersService.remove(id);
     if (!user) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     } else {
@@ -70,8 +70,8 @@ export class UsersController {
 
   @Post('address')
   @ApiBearerAuth('token')
-  updateAddress(@Body() address: CreateAddressDto) {
-    const user = this.usersService.updateAddress(address);
+  async updateAddress(@Body() address: CreateAddressDto) {
+    const user = await this.usersService.updateAddress(address);
     if (!user) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }

@@ -7,11 +7,18 @@ import { CreateAddressDto } from './dto/address.dto';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
   async findAll() {
-    return await this.prismaService.users.findMany();
+    return await this.prismaService.users.findMany({
+      include: {
+        address: true,
+      },
+    });
   }
 
   async findOne(id: string) {
-    const user = await this.prismaService.users.findUnique({ where: { id } });
+    const user = await this.prismaService.users.findUnique({
+      where: { id },
+      include: { address: true, orders: true },
+    });
     return user ? user : null;
   }
 
