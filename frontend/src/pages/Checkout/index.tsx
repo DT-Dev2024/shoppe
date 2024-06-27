@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { CiCircleQuestion } from "react-icons/ci";
-
 import { FaLocationDot } from "react-icons/fa6";
 import { OrderContext } from "src/contexts/order.context";
 import { TUser } from "src/types/user.types";
@@ -10,7 +9,7 @@ import { TExtendedPurchases } from "src/types/purchase.type";
 import Voucher from "src/assets/img/voucher.png";
 import Coin from "src/assets/img/coin.png";
 import { Helmet } from "react-helmet-async";
-
+import "../../components/old/GlobalStyles/GlobalStyles.css"
 const Checkout = () => {
   const defaultUser: TUser = {
     _id: "2",
@@ -25,7 +24,8 @@ const Checkout = () => {
     createdAt: "2022-02-22T07:00:00.000Z",
     updatedAt: "2022-02-22T07:00:00.000Z",
   };
-  const { order } = useContext(OrderContext);
+
+   const { order } = useContext(OrderContext);
   const [user, setUser] = useState<TUser>(defaultUser);
   useEffect(() => {
     const userString = localStorage.getItem("user");
@@ -36,6 +36,10 @@ const Checkout = () => {
       setUser(defaultUser);
     }
   }, []);
+   useEffect(() => {
+    console.log("Order:", order);
+  }, [order]);
+
   const shippingFee = 32000;
   const CaculateDateShip = () => {
     const date = new Date();
@@ -60,12 +64,12 @@ const Checkout = () => {
         key={item._id}
         className="w-ful mb-6 rounded bg-white text-[15px]"
       >
-        <p className="flex space-x-4 px-8 py-10">
+        <p className="flex px-3 py-2 space-x-4 lg:px-8 lg:py-4">
           <span className="mr-3 uppercase">{item.product.category.name}</span>
           <span className="cursor-pointer text-[#26aa99]">
             <svg
               viewBox="0 0 16 16"
-              className="shopee-svg-icon FpgzUK mr-1 inline-block"
+              className="inline-block mr-1 shopee-svg-icon FpgzUK"
               width="16"
               height="16"
             >
@@ -79,28 +83,28 @@ const Checkout = () => {
             Chat ngay
           </span>
         </p>
-        <div className="grid grid-cols-12 p-8 py-10 ">
-          <div className="col-span-7 flex items-center  gap-x-3">
-            <div className="flex max-w-[40rem] space-x-2 text-left">
+        <div className="grid grid-cols-12 p-2 py-8 lg:p-8 lg:py-10">
+          <div className="flex items-center col-span-4 lg:col-span-7 gap-x-3">
+            <div className="flex lg:flex-row lg:gap-0 gap-2 flex-col lg:max-w-[40rem] max-w-[12rem] space-x-2 text-left">
               <img
                 alt={item.product.name}
                 src={item.product.image}
-                className="h-14 w-14 object-cover sm:h-20 sm:w-20"
+                className="object-cover w-24 h-24 sm:h-36 sm:w-36"
               />
               <div>
-                <p>{item.product.name}</p>
-                <span className="border border-main p-2 text-base font-thin text-main">Đổi ý miễn phí 15 ngày</span>
+                <p className="mb-5 lg:text-[15px] lg:p-2 text-[14px] lg:line-clamp-5 line-clamp-2">{item.product.name}</p>
+                <span className="p-2 text-base font-thin border border-main text-main">Đổi ý miễn phí 15 ngày</span>
               </div>
             </div>
           </div>
 
-          <span className="col-span-2 my-auto hidden lg:block">₫{formatCurrency(item.product.price)}</span>
-          <span className="m-auto">{item.buy_count}</span>
-          <span className="col-span-2 my-auto pr-10 text-right">
+          <span className="col-span-3 lg:ml-0 ml-6 my-auto lg:col-span-2 lg:block lg:text-[15px] text-[13px]">₫{formatCurrency(item.product.price)}</span>
+          <span className="m-auto   lg:text-[15px] text-[13px]">{item.buy_count}</span>
+          <span className="col-span-4  lg:col-span-2 lg:pr-10 pr-4 pr my-auto text-right lg:text-[15px] text-[13px]">
             ₫{formatCurrency(item.buy_count * item.product.price)}
           </span>
         </div>
-        <div className="grid grid-cols-2  border-y border-dotted px-8 py-4">
+        <div className="grid px-4 py-2 border-dotted lg:px-8 lg:py-4 lg:grid-cols-2 border-y">
           <span></span>
           <div className="flex justify-between">
             <div className="flex items-center text-[16px]">
@@ -115,8 +119,8 @@ const Checkout = () => {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-12 border-y border-dotted">
-          <div className="col-span-5 flex items-start p-3 py-10">
+        <div className="grid grid-cols-12 border-dotted border-y">
+          <div className="flex items-start col-span-12 p-1 py-4 lg:p-3 lg:py-10 lg:col-span-5">
             <label
               htmlFor="note"
               className="ml-8 mt-4 w-[100px]"
@@ -125,22 +129,22 @@ const Checkout = () => {
             </label>
             <input
               id="note"
-              className="mr-10 w-full rounded border border-gray-300 p-3 text-xl"
+              className="w-full p-3 mr-10 text-xl border border-gray-300 rounded"
               type="text"
               placeholder="Lưu ý cho Người bán..."
               value=""
             />
           </div>
-          <div className="col-span-7 border-l border-dotted">
-            <div className="mr-10 flex border-b border-dotted p-10">
+          <div className="col-span-12 border-l border-dotted lg:col-span-7">
+            <div className="flex flex-col p-6 mr-2 border-b border-dotted lg:mr-10 lg:flex-row lg:p-10">
               <span className="w-[16rem]">Đơn vị vận chuyển:</span>
               <div>
-                <p className="mb-3 flex justify-between">
+                <p className="flex justify-between mt-4 mb-3 lg:mt-0">
                   <span>Nhanh</span>
                   <span className="text-blue-600">Thay đổi</span>
                   <span className="">₫{formatCurrency(shippingFee)}</span>
                 </p>
-                <p className="mb-2 text-[13px] text-[#26aa99]">
+                <p className="mb-2 mt-4 text-[13px] text-[#26aa99]">
                   <img
                     src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/checkout/41fe56ab756fc3082a08.svg"
                     alt=""
@@ -154,13 +158,13 @@ const Checkout = () => {
                 </p>
               </div>
             </div>
-            <p className="flex w-full items-center space-x-3 p-10">
+            <p className="flex items-center w-full p-4 space-x-3 lg:p-6 lg:p-10">
               Được đồng kiểm
               <CiCircleQuestion className="ml-2 text-[20px]" />
             </p>
           </div>
         </div>
-        <p className="flex items-center justify-end py-8 pr-12">
+        <p className="flex items-center justify-between px-6 py-6 lg:py-10 lg:px-0 lg:pr-12 lg:justify-end">
           <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
           <span className="text-[20px] text-main">
             ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
@@ -180,7 +184,7 @@ const Checkout = () => {
             content={`Trang thanh toán của Shopee At Home`}
           />
         </Helmet>
-        <div className="flex items-center justify-center text-center text-4xl">Giỏ hàng trống</div>
+        <div className="flex items-center justify-center text-4xl text-center">Giỏ hàng trống</div>
       </div>
     );
   }
@@ -194,15 +198,15 @@ const Checkout = () => {
           content={`Trang thanh toán của Shopee At Home`}
         />
       </Helmet>
-      <div className="rounded bg-white">
+      <div className="mt-1 bg-white rounded">
         <p className="letter"></p>
-        <div className="p-10 text-[16px]">
-          <p className="mb-7 flex items-center space-x-1 text-3xl text-main">
+        <div className="lg:p-10 p-5 text-[16px]">
+          <p className="flex items-center space-x-1 text-3xl mb-7 text-main">
             <FaLocationDot />
             Địa Chỉ Nhận Hàng
           </p>
-          <div className="flex">
-            <div className="w-[290px] font-semibold">
+          <div className="flex gap-2 lg:gap-0">
+            <div className="lg:w-[290px] w-[170px]  lg:font-semibold ">
               <p>
                 <strong>
                   {user.name}({user.code})
@@ -212,17 +216,17 @@ const Checkout = () => {
                 <strong>{user.phone}</strong>
               </p>
             </div>
-            <p className="flex-1">{user.address}</p>
-            <span className="mx-10 h-fit border border-main p-1 text-base text-main"> Mặc Định</span>
-            <span className="pr-10 text-blue-500">Thay đổi</span>
+            <p className="lg:flex-1 lg:w-full w-[170px]">{user.address}</p>
+            <span className="p-1 mx-10 text-base border h-fit border-main text-main"> Mặc Định</span>
+            <span className="pr-2 text-blue-500 lg:pr-10">Thay đổi</span>
           </div>
         </div>
       </div>
-      <div className="mt-5  grid grid-cols-12 bg-white p-8 text-[16px]">
-        <div className="col-span-7">Sản phẩm</div>
-        <div className="col-span-2">Đơn giá</div>
-        <div className="col-span-1">Số lượng</div>
-        <div className="col-span-2 pr-10 text-right">Thành tiền</div>
+      <div className="lg:mt-5 lg:ml-0 ml-1   lg:mr-0 mr-2 mt-0 grid lg:grid-cols-12 grid-cols-8 bg-white lg:p-8 p-2 lg:text-[16px] text-[15px]">
+        <div className="col-span-3 lg:col-span-7">Sản phẩm</div>
+        <div className="col-span-1 lg:w-full w-[90px] lg:col-span-2">Đơn giá</div>
+        <div className="col-span-2 ml-10 lg:col-span-1">Số lượng</div>
+        <div className="col-span-2 text-right lg:w-full w-[90px] lg:pr-10 lg:col-span-2">Thành tiền</div>
       </div>
       {order.map((item: TExtendedPurchases) => (
         <Item
@@ -230,8 +234,9 @@ const Checkout = () => {
           item={item}
         />
       ))}
-      <div className="mt-5 rounded bg-white">
-        <div className="flex justify-between border-b p-8 py-10">
+
+      <div className="mt-[-16px] bg-white rounded lg:mt-5">
+        <div className="flex justify-between p-4 py-4 border-b lg:p-8 lg:py-10">
           <div className="flex items-center text-[16px]">
             <img
               src={Voucher}
@@ -243,7 +248,7 @@ const Checkout = () => {
             Chọn Voucher
           </button>
         </div>
-        <div className="flex justify-between p-8 py-10">
+        <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
           <div className="flex items-center text-[16px]">
             <img
               src={Coin}
@@ -256,15 +261,15 @@ const Checkout = () => {
             <input
               disabled={true}
               type="checkbox"
-              className="h-6 w-6 cursor-not-allowed"
+              className="w-6 h-6 cursor-not-allowed"
             />
           </div>
         </div>
       </div>
       <div className="mt-5 rounded bg-white text-[16px]">
-        <div className="flex p-8">
+        <div className="flex flex-col p-8 lg:flex-row">
           <h1 className="mr-4 text-[18px]">Phương thức thanh toán</h1>
-          <ul className="flex space-x-5">
+          <ul className="flex flex-col gap-4 mt-6 lg:space-x-5 lg:gap-0 lg:flex-row lg:mt-0">
             <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[15px] text-gray-400">
               Số dư TK Shoppe
             </li>
@@ -278,21 +283,21 @@ const Checkout = () => {
             <li className="border border-main px-5 py-2 text-[15px] text-main">Thanh toán khi nhận hàng</li>
           </ul>
         </div>
-        <div className="flex justify-end p-8 pr-14">
+        <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
           <ul className="space-y-7">
-            <li className="grid grid-cols-2 items-center">
+            <li className="grid items-center grid-cols-2">
               <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
               <span className="text-right">
                 ₫{formatCurrency(order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0))}
               </span>
             </li>
-            <li className="grid grid-cols-2 items-center">
+            <li className="grid items-center grid-cols-2">
               <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
               <span className="text-right">₫{formatCurrency(order.length * shippingFee)}</span>
             </li>
-            <li className="grid grid-cols-2 items-center">
+            <li className="grid items-center grid-cols-2">
               <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-              <span className="text-right text-5xl text-main">
+              <span className="text-3xl text-right lg:text-4xl text-main">
                 ₫
                 {formatCurrency(
                   order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0) +
@@ -302,12 +307,12 @@ const Checkout = () => {
             </li>
           </ul>
         </div>
-        <p className="mx-10 flex items-center justify-between border-t py-8">
-          <span>
+        <p className="flex flex-col items-center gap-6 px-6 py-4 mt-4 border-t lg:py-8 lg:gap-0 lg:mx-10 lg:flex-row lg:justify-between lg:mt-0">
+          <span className="px-6 lg:px-0">
             Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
             <span className="text-blue-600">Điều khoản Shopee</span>
           </span>
-          <button className="bg-main px-36 py-4 text-white">Đặt hàng</button>
+          <button className="py-4 text-white bg-main px-36">Đặt hàng</button>
         </p>
       </div>
     </div>
