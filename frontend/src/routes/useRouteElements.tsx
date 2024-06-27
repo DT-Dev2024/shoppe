@@ -17,6 +17,7 @@ const NotFound = lazy(() => import("src/pages/NotFound"));
 const ProductDetails = lazy(() => import("src/pages/ProductDetails"));
 const OrderHistory = lazy(() => import("src/pages/User/pages/OrderHistory"));
 const Checkout = lazy(() => import("src/pages/Checkout"));
+const ProductList = lazy(() => import("src/pages/ProductList"));
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -67,6 +68,14 @@ export default function useRoutesElement() {
           element: (
             <Suspense>
               <ProductDetails />
+            </Suspense>
+          ),
+        },
+        {
+          path: path.productList,
+          element: (
+            <Suspense>
+              <ProductList />
             </Suspense>
           ),
         },

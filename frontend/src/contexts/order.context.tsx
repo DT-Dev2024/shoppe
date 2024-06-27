@@ -15,6 +15,6 @@ const initialOrderContext: OrderContextInterface = {
 export const OrderContext = createContext<OrderContextInterface>(initialOrderContext);
 
 export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
-  const [order, setOrder] = useState<TExtendedPurchases[]>([]);
+  const [order, setOrder] = useState<TExtendedPurchases[]>(orders);
   return <OrderContext.Provider value={{ order, setOrder }}>{children}</OrderContext.Provider>;
 };
