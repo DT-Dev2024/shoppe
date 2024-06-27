@@ -259,7 +259,7 @@ const Cart = () => {
   const DetailPurchase = (cart: CartProps) => {
     const { pricesAll, priceDiscount, finalPrice } = cart;
     return (
-      <div className="absolute  bottom-[120%] right-full w-[60rem] rounded border bg-white p-5 text-2xl shadow-lg">
+      <div className="absolute  bottom-[120%] right-full w-[20rem] rounded  border bg-white p-5 text-xl shadow-lg lg:w-[60rem] lg:text-2xl">
         <h1 className="border-b border-gray-300 py-7">Chi tiết khuyến mãi</h1>
         <div className="flex justify-between border-b border-gray-300 py-6">
           <span>Tổng tiền hàng</span>
@@ -292,7 +292,7 @@ const Cart = () => {
           <div className="mt-12 flex justify-end">
             <button
               onClick={() => setIsModalDeleteCartVisible(false)}
-              className="mr-2 rounded bg-main  px-10 py-4 text-3xl text-white"
+              className="mr-2 rounded bg-main px-10 py-4 text-3xl text-white"
             >
               Trở lại
             </button>
@@ -332,11 +332,11 @@ const Cart = () => {
   const ModalVoucher = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="max-h-[640px] w-[616px] rounded-lg bg-white  text-black">
-          <div className="p-10 pb-0">
+        <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
+          <div className="p-3 lg:p-10 lg:pb-4">
             <div className="flex justify-between">
-              <h1 className="text-3xl">Chọn Shopee Voucher</h1>
-              <p className="flex items-center text-2xl text-gray-500">
+              <h1 className="text-2xl">Chọn Shopee Voucher</h1>
+              <p className="flex items-center text-xl text-gray-500">
                 Hỗ trợ
                 <CiCircleQuestion />
               </p>
@@ -357,9 +357,9 @@ const Cart = () => {
                 placeholder="Mã Shoppe Voucher"
                 className="w-full border border-gray-300 p-4"
               />
-              <button className="w-60 border p-4 text-2xl text-[#ccc] ">Áp dụng</button>
+              <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
             </form>
-            <p className="text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
+            <p className="mb-2 text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
             <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
 
             <ul
@@ -401,8 +401,8 @@ const Cart = () => {
                       className="ml-4"
                     />
                   </div>
-                  <p className="mt-2 flex items-center text-[14px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1" />
+                  <p className="mt-4 flex items-center text-[13px] text-main">
+                    <AiOutlineExclamationCircle className="mr-1 " />
                     Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
                   </p>
                 </li>
@@ -413,7 +413,7 @@ const Cart = () => {
           <div className="flex h-[64px] items-center justify-end border-t">
             <button
               onClick={() => setIsModalVoucherVisible(false)}
-              className="mr-2 rounded  border-2 px-12 py-3 text-3xl text-[#b6b6b6] "
+              className="mr-2 rounded  border-2 px-12 py-3 text-xl text-[#b6b6b6] "
             >
               Trở lại
             </button>
@@ -421,7 +421,7 @@ const Cart = () => {
               onClick={() => {
                 // delete to server
               }}
-              className="mx-7 rounded border bg-main px-20 py-3 text-3xl text-white"
+              className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
             >
               OK
             </button>
@@ -502,11 +502,11 @@ const Cart = () => {
               </div>
             </div>
             {extendedPurchases.length > 0 && (
-              <div className="my-3 rounded-sm  shadow ">
+              <div className="my-3 rounded-sm shadow ">
                 {extendedPurchases.map((purchase, index) => (
                   <div
                     key={purchase._id}
-                    className="mb-5  rounded-sm bg-white text-center text-2xl first:mt-0"
+                    className="mb-5 rounded-sm bg-white text-center text-2xl first:mt-0"
                   >
                     <div className="flex items-center justify-between border-b px-16 py-5">
                       <h5 className="flex space-x-2 text-3xl font-bold">
@@ -525,8 +525,8 @@ const Cart = () => {
                       </h5>
                       <p className="mr-8 text-xl font-bold text-orange-600">Trạng thái</p>
                     </div>
-                    <div className="mt-3 grid grid-cols-12 px-16 py-10">
-                      <div className="col-span-6 flex items-center  gap-x-3">
+                    <div className="mt-3 grid px-6 py-6 lg:grid-cols-12 lg:px-16 lg:py-10">
+                      <div className="col-span-6 flex items-center gap-x-3">
                         <input
                           type="checkbox"
                           className="h-6 w-6 accent-primary"
@@ -534,23 +534,23 @@ const Cart = () => {
                           onChange={handleSelectProduct(index)}
                         />
 
-                        <div className="flex max-w-[40rem] space-x-2 text-left">
+                        <div className="flex items-center  space-x-2 text-left lg:max-w-[40rem]">
                           <img
                             alt={purchase.product.name}
                             src={purchase.product.image}
-                            className="h-14 w-14 object-cover sm:h-20 sm:w-20"
+                            className="mb-8 w-24 object-cover lg:mb-0 lg:h-36 lg:w-36 "
                           />
-                          <div>
-                            <p>{purchase.product.name}</p>
-                            <span className="border border-main p-2 text-base font-thin text-main">
+                          <div className="mb-6 lg:mb-0">
+                            <p className="mb-2 ml-4 text-xl lg:mb-4 lg:ml-0 lg:text-2xl ">{purchase.product.name}</p>
+                            <span className="ml-4 border border-main p-2 text-base font-thin text-main lg:ml-0">
                               Đổi ý miễn phí 15 ngày
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="col-span-6">
-                        <div className=" grid grid-cols-5 items-center">
-                          <div className="col-span-2 hidden items-center justify-center gap-x-3 lg:flex">
+                      <div className="col-span-6 lg:col-span-6">
+                        <div className=" grid grid-cols-2 items-center gap-y-4 lg:grid-cols-5 lg:grid-rows-1 ">
+                          <div className=" flex items-center justify-center gap-x-3 lg:col-span-2 lg:ml-10 lg:flex lg:justify-start">
                             <span className="text-gray-300 line-through">
                               ₫{formatCurrency(purchase.product.price_before_discount)}
                             </span>
@@ -560,7 +560,7 @@ const Cart = () => {
                             </span>
                           </div>
 
-                          <div className="flex items-center">
+                          <div className=" ml-16 flex lg:ml-0  lg:mr-[180px]  ">
                             <button
                               type="button"
                               className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
@@ -571,7 +571,7 @@ const Cart = () => {
                               <FaMinus />
                             </button>
                             <input
-                              className="mx-1 w-10 shrink-0  border bg-transparent text-center  font-medium text-gray-900 focus:outline-none focus:ring-0"
+                              className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0"
                               value={quantities[purchase.product._id]?.quantity || purchase.buy_count}
                               onChange={(e) => {
                                 if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
@@ -597,24 +597,24 @@ const Cart = () => {
                               <FaPlus />
                             </button>
                           </div>
-                          <div className="col-span-1 hidden lg:block">
+                          <div className=" lg:block">
                             <span className="text-primary">
                               ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
                             </span>
                           </div>
-                          <div className="col-span-1 mr-6 hidden lg:block">
+                          <div className=" mr-6  lg:ml-0 lg:block">
                             <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-16 py-8 shadow">
+                    <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-6 py-6 shadow lg:px-16 lg:py-8">
                       <img
                         src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
                         alt=""
                         width={30}
                       />
-                      <span className=" text-[14px]">
+                      <span className=" text-left text-[12px] lg:text-[14px]">
                         Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu
                         ₫1.000.000
                       </span>
@@ -623,8 +623,8 @@ const Cart = () => {
                 ))}
               </div>
             )}
-            <div className="sticky bottom-0 z-10 mt-8  rounded-sm border border-gray-100 bg-white p-5 pt-0 text-3xl shadow-lg lg:flex-row lg:items-center">
-              <div className="grid grid-cols-2 border-b border-gray-300 py-4">
+            <div className="sticky bottom-0 z-10 mt-8 rounded-sm border border-gray-100 bg-white p-5 pt-0 text-3xl shadow-lg lg:flex-row lg:items-center">
+              <div className="grid grid-cols-1 border-b border-gray-300 py-4 lg:grid-cols-2">
                 <span></span>
                 <div className="flex justify-between">
                   <div className="flex items-center text-[16px]">
@@ -632,7 +632,7 @@ const Cart = () => {
                       src={Voucher}
                       alt=""
                     />
-                    <span>Shopee Voucher</span>
+                    <span className="ml-2 lg:text-[14px]  ">Shopee Voucher</span>
                   </div>
                   <button
                     onClick={() => setIsModalVoucherVisible(true)}
@@ -655,31 +655,34 @@ const Cart = () => {
                   </div>
                   <label
                     htmlFor="selectAllProducts"
-                    className="mx-3 cursor-pointer border-none bg-none p-3 pl-0"
+                    className="mx-3 cursor-pointer border-none bg-none p-3 pl-0 text-[13px] lg:text-[16px]"
                   >
                     Chọn tất cả{" "}
                   </label>
                   <button
                     onClick={handleDeleteMultiplePurchases}
-                    className="mx-3 border-none bg-none p-3"
+                    className="mx-3 border-none bg-none p-3 text-[13px] lg:text-[16px]"
                   >
                     Xóa
                   </button>
                 </div>
 
-                <div className=" mt-5 flex flex-col lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
+                <div className="mt-5 flex flex-col lg:ml-auto lg:mt-0 lg:flex-row lg:items-center">
                   <div
                     className="flex"
                     onMouseEnter={() => setIsModalDetailVisible(true)}
                     onMouseLeave={() => setIsModalDetailVisible(false)}
                   >
-                    <span className="text-[16px]">Tổng thanh toán ({checkedPurchasesCount} sản phẩm):</span>
+                    <span className="text-[13px] lg:text-[16px]">
+                      Tổng thanh toán
+                      <br />({checkedPurchasesCount} sản phẩm):
+                    </span>
 
                     <div className="flex flex-col items-start justify-center text-2xl lg:justify-end">
-                      <div className="ml-2 flex w-full justify-between text-primary">
-                        <span className="text-5xl">₫{formatCurrency(totalCheckedPurchasesPrice)}</span>
+                      <div className="w-ful ml-4 flex justify-start gap-4 text-primary">
+                        <span className="text-2xl lg:text-3xl">₫{formatCurrency(totalCheckedPurchasesPrice)}</span>
                         {checkedPurchasesCount > 0 && (
-                          <span className="relative flex cursor-pointer items-center text-3xl text-gray-500">
+                          <span className="relative flex cursor-pointer items-center text-2xl text-gray-500">
                             {isModalDetailVisible ? <IoIosArrowDown /> : <IoIosArrowUp />}
                             {isModalDetailVisible && (
                               <DetailPurchase
@@ -692,8 +695,8 @@ const Cart = () => {
                         )}
                       </div>
                       {checkedPurchasesCount > 0 && (
-                        <div>
-                          <span className="text-gray-500">Tiết kiệm</span>
+                        <div className="ml-1 mt-1">
+                          <span className="text-[12px] text-gray-500 lg:text-[16px]">Tiết kiệm</span>
                           <span className="ml-6 text-left text-primary">₫{formatCurrency(totalSavedPrice)}k</span>
                         </div>
                       )}

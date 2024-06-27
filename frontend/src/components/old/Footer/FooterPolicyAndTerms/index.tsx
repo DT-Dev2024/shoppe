@@ -70,7 +70,7 @@ function FooterPolicyAndTerms() {
     ));
 
   return (
-    <div className="footer__policy-terms">
+    <div className="footer__policy-terms lg:px-[35rem]">
       <div className="footer__policy-terms__part">
         <div className="footer__policy-terms__part__title">
           {footerPolicyTermsPartTitleInfo && renderTitlePart(footerPolicyTermsPartTitleInfo)}

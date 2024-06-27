@@ -184,3 +184,21 @@
     display: none;
   }
 }
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .directory {
+    margin-top: -110px;
+    width: 100%;
+  }
+  .directory__main__list {
+    margin-top: -18px;
+    gap: 25px;
+    justify-content: flex-start;
+  }
+  .directory__main__item:nth-last-child(-n + 10) {
+    display: none;
+  }
+  .directory__main__previous-btn,
+  .directory__main__next-btn {
+    display: none;
+  }
+}

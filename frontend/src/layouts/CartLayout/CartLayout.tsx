@@ -3,21 +3,20 @@ import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
-
 type CartLayoutPropsType = {
   children?: React.ReactNode;
 };
 
 const CartLayout = ({ children }: CartLayoutPropsType) => {
   return (
-    <div className="bg-neutral-100">
-      <div className=" w-full bg-[#f94f2f] px-[3.4rem] py-[0.8rem] pl-[3rem] pt-[1rem]">
+    <div className="w-full bg-neutral-100">
+      <div className="  bg-[#f94f2f] py-[1rem] pt-[1.3rem] lg:py-[0.8rem]  lg:pt-[1rem]">
         <HeaderCommonInfo />
       </div>
       <HeaderSearchPart />
-      <div className="mx-auto w-[120rem]">{children}</div>
-      <hr className="mt-40 h-2 w-full bg-[#f94f2f]" />
-      <div className="px-[35rem]">
+      <div className="mx-auto lg:w-[120rem]">{children}</div>
+      <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
+      <div className="lg:px-[35rem]">
         <FooterLink bg="bg-neutral-100" />
         <FooterPolicyAndTerms />
       </div>
@@ -30,10 +29,10 @@ export default CartLayout;
 function HeaderSearchPart() {
   const navigate = useNavigate();
   return (
-    <div className="mb-10 flex items-center justify-between bg-white px-[35rem] py-10">
+    <div className="mb-10  flex items-center justify-between bg-white px-10 py-10 lg:px-[35rem]">
       <div className="flex items-center ">
         <button
-          className="h-[50px] w-[150px] fill-current text-white"
+          className="h-[50px] w-[100px] fill-current text-white lg:w-[150px]"
           onClick={() => navigate("/")}
         >
           <svg
@@ -48,8 +47,8 @@ function HeaderSearchPart() {
             </g>
           </svg>
         </button>
-        <span className="mx-4 mt-6 h-11 w-1 bg-[#ee4d2d] leading-9"></span>
-        <span className="h my-auto mb-2  text-[2.25rem] font-medium capitalize leading-[1.875rem] text-[#ee4d2d]">
+        <span className="mx-4 mt-6 hidden h-11 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
+        <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize leading-[1.875rem] text-[#ee4d2d] lg:block">
           Giỏ hàng
         </span>
       </div>
@@ -58,10 +57,10 @@ function HeaderSearchPart() {
           <input
             type="text"
             placeholder="CUỐI TUẦN GIẢI TRÍ"
-            className="h-[40px] w-[535px] border-2 border-[#ee4d2d] pl-4 text-xl"
+            className="h-[40px] w-[120px]  border-2 border-[#ee4d2d] pl-4 text-xl lg:w-[535px]"
           />
         </form>
-        <span className="text-red flex h-[40px] w-32 items-center bg-[#ee4d2d] px-10 text-2xl font-light text-white">
+        <span className="text-red flex h-[40px] w-24 items-center bg-[#ee4d2d] px-10 text-2xl font-light text-white lg:w-32">
           <FaSearch />
         </span>
       </div>

@@ -106,18 +106,14 @@ export default function useRoutesElement() {
           ),
         },
         {
-          path: path.user,
-          element: <UserLayout />,
-          children: [
-            {
-              path: path.profile,
-              element: (
-                <Suspense>
-                  <Profile />
-                </Suspense>
-              ),
-            },
-          ],
+          path: path.orderHistory,
+          element: (
+            <UserLayout>
+              <Suspense>
+                <Profile />
+              </Suspense>
+            </UserLayout>
+          ),
         },
       ],
     },

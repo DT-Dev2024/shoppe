@@ -29,7 +29,7 @@ function FooterText() {
   }, [footerTextATagsInfo]);
 
   return (
-    <div className="footer__text">
+    <div className="footer__text lg:px-[35rem]">
       <div className="footer__text__item">
         <h1 className="footer__text__item__title text-3xl font-extrabold leading-loose">
           SHOPEE - GÌ CŨNG CÓ, MUA HẾT Ở SHOPEE

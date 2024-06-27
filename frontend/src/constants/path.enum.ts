@@ -1,7 +1,6 @@
 export enum path {
   home = "/",
-  user = "/user",
-  profile = "/user/profile",
+  orderHistory = "/order-history",
   login = "/login",
   logout = "/logout",
   productDetail = "/productDetails",

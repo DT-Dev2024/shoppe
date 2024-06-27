@@ -53,3 +53,13 @@
     object-fit: cover;
   }
 }
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .gift-banner {
+    margin-top: -110px;
+    width: 100%;
+    height: 40px;
+  }
+  .gift-banner__part__img {
+    object-fit: cover;
+  }
+}

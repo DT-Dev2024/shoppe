@@ -11,6 +11,7 @@ import { AuthProvider } from "./contexts/auth.context";
 import { CartProvider } from "./contexts/cart.context";
 import { OrderProvider } from "./contexts/order.context";
 import "./index.css";
+import "./components/old/GlobalStyles/GlobalStyles.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

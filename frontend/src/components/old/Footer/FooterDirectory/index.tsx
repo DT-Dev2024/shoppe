@@ -66,7 +66,7 @@ function FooterDirectory() {
   };
 
   return (
-    <div className="footer__directory">
+    <div className="footer__directory lg:px-[35rem]">
       <span className="footer__directory__heading">Danh Mục</span>
       <ul className="footer__directory__list">
         {footerDirectoryListInfo && renderFooterDirectoryList(footerDirectoryListInfo)}

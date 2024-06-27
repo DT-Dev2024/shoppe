@@ -302,3 +302,32 @@
     height: 11.5rem;
   }
 }
+
+@media screen and (min-width: 413.99px) and (max-width: 414px) {
+  .outstanding {
+    width: 100%;
+    background-color: transparent;
+  }
+  .outstanding__hot-brands__info {
+    display: none;
+  }
+  .outstanding__hot-selling-products__info,
+  .outstanding__hot-brands__info {
+    justify-content: flex-start;
+    gap: 60px;
+  }
+
+  .outstanding__hot-brands__list {
+    display: none;
+  }
+  .outstanding__hot-selling-products__list {
+    gap: 6px;
+    height: 18rem;
+  }
+  .outstanding__hot-selling-products__item {
+    width: 100%;
+  }
+  .outstanding__hot-selling-products__img {
+    height: 11.5rem;
+  }
+}
