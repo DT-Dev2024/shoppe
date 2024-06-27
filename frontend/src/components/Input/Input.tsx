@@ -20,9 +20,9 @@ const Input = ({
   errorMsg,
   name,
   register,
-  className = "p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm",
+  className = "w-full p-4 border border-gray-300 rounded-sm outline-none lg:text-xl focus:border-gray-500 focus:shadow-sm",
   containerClassName = "",
-  errorClassName = "mt-1 text-red-600 min-h-[1.25rem] text-sm",
+  errorClassName = "mt-1 text-red-600 lg:text-xl mt-[6px] min-h-[1.25rem] text-sm",
   placeholder = "",
   rules,
   ...rest
@@ -37,7 +37,7 @@ const Input = ({
           `${className}`,
           // Error!
           {
-            "border-red-600 bg-red-50 focus:border-red-600": errorMsg,
+            "border-red-600 bg-red-50 focus:border-red-600  ": errorMsg,
           },
           // Custom classNames
         )}
