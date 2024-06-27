@@ -10,13 +10,13 @@ const UserLayout = ({ children }: UserLayoutPropsType) => {
     <div className="bg-neutral-100">
       <Header />
 
-      <div className="mt-40 py-16 text-sm text-gray-600">
-        <div className="mx-[28%] w-[51%]">{children}</div>
+      <div className="mt-32 py-16 text-sm text-gray-600 lg:mt-40">
+        <div className="mx-2 lg:mx-[16%]">{children}</div>
       </div>
       <hr className="mt-32 h-2 w-full bg-[#f94f2f]" />
 
       <FooterLink bg="bg-white" />
-      <div className="px-[35rem]">
+      <div>
         <FooterPolicyAndTerms />
       </div>
       <MotionPart />
