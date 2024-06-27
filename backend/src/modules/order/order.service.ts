@@ -1,26 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OrderService {
+  constructor(private readonly prismaService: PrismaService) {}
   create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+    const order = this.prismaService.orders.create({
+      data: {
+        userId: createOrderDto.userId,
+        address_id: createOrderDto.addressId,
+        status: createOrderDto.status,
+        total_price: createOrderDto.totalPrice,
+        order_details: {
+          createMany: {
+            data: createOrderDto.orderDetails,
+          },
+        },
+        order_discount: {
+          create: createOrderDto.orderDiscount,
+        },
+      },
+    });
+
+    return order ? order : null;
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll() {
+    return await this.prismaService.orders.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string) {
+    const order = await this.prismaService.orders.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        order_details: true,
+        order_discount: true,
+      },
+    });
+    return order ? order : null;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  update(updateOrderDto: UpdateOrderDto) {
+    const updateOrder = this.prismaService.orders.update({
+      where: {
+        id: updateOrderDto.id,
+      },
+      data: {
+        userId: updateOrderDto.userId,
+        address_id: updateOrderDto.addressId,
+        status: updateOrderDto.status,
+        total_price: updateOrderDto.totalPrice,
+        order_details: {
+          createMany: {
+            data: updateOrderDto.orderDetails,
+          },
+        },
+        order_discount: {
+          create: updateOrderDto.orderDiscount,
+        },
+      },
+    });
+
+    return updateOrder ? updateOrder : null;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: string) {
+    const order = await this.prismaService.orders.delete({
+      where: {
+        id,
+      },
+    });
+
+    return order ? order : null;
   }
 }

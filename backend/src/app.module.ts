@@ -14,6 +14,7 @@ import { TransformableInfo } from 'logform';
 import 'winston-daily-rotate-file';
 import { AuthModule } from './modules/auth/auth.module';
 import { VoncherModule } from './modules/voucher/voucher.module';
+import { OrderModule } from './modules/order/order.module';
 @Module({
   imports: [
     LoggerModule.forRootAsync({
@@ -71,6 +72,7 @@ import { VoncherModule } from './modules/voucher/voucher.module';
     UiModule,
     AuthModule,
     VoncherModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
