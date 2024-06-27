@@ -1,8 +1,17 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
+import { CreateAddressDto } from './dto/address.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -10,6 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @ApiBearerAuth('token')
   findAll() {
     const users = this.usersService.findAll();
     return ApiResponse.buildCollectionApiResponse(
@@ -20,6 +30,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiBearerAuth('token')
   findOne(@Param('id') id: string) {
     const user = this.usersService.findOne(id);
     if (!user) {
@@ -33,6 +44,7 @@ export class UsersController {
   }
 
   @Patch()
+  @ApiBearerAuth('token')
   update(@Body() updateUserDto: UpdateUserDto) {
     const user = this.usersService.update(updateUserDto);
     if (!user) {
@@ -42,6 +54,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('token')
   remove(@Param('id') id: string) {
     const user = this.usersService.remove(id);
     if (!user) {
@@ -53,5 +66,19 @@ export class UsersController {
         'User deleted successfully',
       );
     }
+  }
+
+  @Post('address')
+  @ApiBearerAuth('token')
+  updateAddress(@Body() address: CreateAddressDto) {
+    const user = this.usersService.updateAddress(address);
+    if (!user) {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
+    return ApiResponse.buildApiResponse(
+      user,
+      200,
+      'User updated address successfully',
+    );
   }
 }

@@ -15,6 +15,14 @@ async function bootstrap() {
     .setTitle('API Shopee')
     .setDescription('The API Shopee description')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'token', // đây là tên của định nghĩa security trong Swagger
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
