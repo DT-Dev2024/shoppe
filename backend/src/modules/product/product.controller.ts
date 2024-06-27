@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -13,13 +14,15 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponseService } from 'src/shared/providers/api-response/api-response.service';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
+import { AuthGuard } from '../auth/auth.guard';
 @ApiTags('product')
 @Controller('product')
+@UseGuards(AuthGuard)
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly response: ApiResponseService,
-  ) { }
+  ) {}
 
   @Post()
   @ApiBody({ type: CreateProductDto })

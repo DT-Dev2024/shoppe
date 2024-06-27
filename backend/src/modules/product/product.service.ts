@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
   async create(createProductDto: CreateProductDto) {
     console.log(createProductDto);
     // const product_type = createProductDto.type;
@@ -50,10 +50,24 @@ export class ProductService {
   }
 
   async update(updateProductDto: UpdateProductDto) {
-    // return await this.prismaService.products.update({
-    //   where: { id: updateProductDto.id },
-    //   data: updateProductDto,
-    // });
+    return await this.prismaService.products.update({
+      where: { id: updateProductDto.id },
+      data: {
+        name: updateProductDto.name,
+        description: updateProductDto.description,
+        image: updateProductDto.image,
+        sale_price: updateProductDto.sale_price,
+        detailImage: updateProductDto.detailImage,
+        product_types: {
+          createMany: {
+            data: updateProductDto.product_types,
+          },
+        },
+        product_feeback: {
+          create: updateProductDto.feedback,
+        },
+      },
+    });
   }
 
   async remove(id: string) {

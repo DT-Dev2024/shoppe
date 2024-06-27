@@ -44,6 +44,9 @@ model voncher {
   created_at DateTime? @default(now()) @db.Date
   updated_at DateTime? @updatedAt @db.Date
   deleted_at DateTime? @updatedAt @db.Date
+
+  order_discount   order_discount? @relation(fields: [order_discountId], references: [id])
+  order_discountId String?         @db.ObjectId
 }
 
 enum voncher_type {
@@ -71,6 +74,7 @@ model products {
   shop            shop?              @relation(fields: [shopId], references: [id])
   shopId          String?            @db.ObjectId
   product_feeback product_feeback?
+  order_details   order_details[]
 }
 
 model product_feeback {
@@ -101,13 +105,14 @@ model products_type {
 model users {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   phone      String    @unique @db.String
-  name       String
+  name       String?
   email      String?
-  password   String
+  password   String?
   address    String?
   created_at DateTime? @default(now()) @db.Date
   updated_at DateTime? @updatedAt @db.Date
   roles      roles     @default(USER)
+  orders     orders?
 }
 
 model ui_home_data_source {
@@ -117,6 +122,49 @@ model ui_home_data_source {
   bannerListInfo                      String[]
   created_at                          DateTime? @default(now()) @db.Date
   updated_at                          DateTime? @updatedAt @db.Date
+}
+
+model orders {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  user              users?          @relation(fields: [userId], references: [id])
+  userId            String?         @unique @db.ObjectId
+  status            order_status    @default(WAITING)
+  order_discount_id order_discount?
+  total_price       Float
+  created_at        DateTime?       @default(now()) @db.Date
+  updated_at        DateTime?       @updatedAt @db.Date
+  deleted_at        DateTime?       @updatedAt @db.Date
+  order_details     order_details[]
+}
+
+model order_discount {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  voncher        voncher[]
+  order          orders    @relation(fields: [orderId], references: [id])
+  orderId        String    @unique @db.ObjectId
+  total_discount Float
+  created_at     DateTime? @default(now()) @db.Date
+  updated_at     DateTime? @updatedAt @db.Date
+  deleted_at     DateTime? @updatedAt @db.Date
+}
+
+model order_details {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  order      orders    @relation(fields: [orderId], references: [id])
+  orderId    String    @unique @db.ObjectId
+  product    products? @relation(fields: [productId], references: [id])
+  productId  String?   @db.ObjectId
+  quantity   Int
+  created_at DateTime? @default(now()) @db.Date
+  updated_at DateTime? @updatedAt @db.Date
+}
+
+enum order_status {
+  WAITING
+  DELIVERING
+  DELIVERED
+  CANCELED
+  RETURN
 }
 
 enum roles {

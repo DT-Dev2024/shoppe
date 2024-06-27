@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as winston from 'winston';
 import { TransformableInfo } from 'logform';
 import 'winston-daily-rotate-file';
+import { AuthModule } from './modules/auth/auth.module';
 @Module({
   imports: [
     LoggerModule.forRootAsync({
@@ -66,9 +67,10 @@ import 'winston-daily-rotate-file';
     ProductModule,
     UploadModule,
     SharedModule,
-    UiModule
+    UiModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
