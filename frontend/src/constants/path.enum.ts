@@ -1,9 +1,8 @@
 export enum path {
-  home = "/",
-  orderHistory = "/order-history",
-  login = "/login",
-  logout = "/logout",
-  productDetail = "/productDetails",
-  cart = "/cart",
-  checkout = "/checkout",
+  home = "/", //DONE
+  orderHistory = "/order-history", //TODO
+  login = "/login", //DONE
+  productDetail = "/productDetails", //TODO
+  cart = "/cart", //DONE
+  checkout = "/checkout", // TODO
 }

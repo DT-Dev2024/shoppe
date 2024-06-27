@@ -15,7 +15,7 @@ const Login = lazy(() => import("src/pages/Login"));
 const Cart = lazy(() => import("src/pages/Cart"));
 const NotFound = lazy(() => import("src/pages/NotFound"));
 const ProductDetails = lazy(() => import("src/pages/ProductDetails"));
-const Profile = lazy(() => import("src/pages/User/pages/Profile"));
+const OrderHistory = lazy(() => import("src/pages/User/pages/OrderHistory"));
 const Checkout = lazy(() => import("src/pages/Checkout"));
 
 function ProtectedRoute() {
@@ -110,7 +110,7 @@ export default function useRoutesElement() {
           element: (
             <UserLayout>
               <Suspense>
-                <Profile />
+                <OrderHistory />
               </Suspense>
             </UserLayout>
           ),

@@ -11,13 +11,13 @@ const AuthenticationLayoutInner = ({ children }: RegisterLayoutProps) => {
   return (
     <div>
       <AuthenticationNavbar></AuthenticationNavbar>
-      <div className="h-full bg-primary py-20">
-        <div className="container lg:bg-shopee-pattern lg:bg-no-repeat">
+      <div className="h-full py-20 bg-primary">
+        <div className="container lg:h-[390px] lg:bg-shopee-pattern lg:bg-no-repeat">
           <Outlet></Outlet>
           {children}
         </div>
       </div>
-      <div className="px-[30rem]">
+      <div className="">
         <FooterLink />
         <FooterPolicyAndTerms />
       </div>
