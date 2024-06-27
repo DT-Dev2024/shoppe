@@ -12,6 +12,7 @@ export class AuthService {
   async signIn(phone: string) {
     const user = await this.prismaService.users.findUnique({
       where: { phone: phone },
+      include: { address: true, orders: true },
     });
 
     console.log(user);
@@ -21,7 +22,9 @@ export class AuthService {
     }
 
     const payload = { username: user.phone, sub: user.id };
+    delete user.password;
     return {
+      user: user,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

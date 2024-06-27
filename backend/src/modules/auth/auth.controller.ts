@@ -4,6 +4,7 @@ import { Public } from './decorators/public.decorator';
 import { SignInDto } from './dto/sign-in.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
+import { ApiResponse } from 'src/shared/providers/api-response/api-response';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -13,16 +14,32 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    console.log(signInDto);
-    return this.authService.signIn(signInDto.phone);
+  async signIn(@Body() signInDto: SignInDto) {
+    const user = await this.authService.signIn(signInDto.phone);
+    if (user) {
+      return ApiResponse.buildApiResponse(
+        user,
+        200,
+        'User logged in successfully',
+      );
+    } else {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  signUp(@Body() signInDto: SignUpDto) {
-    console.log(signInDto);
-    return this.authService.signUp(signInDto.phone);
+  async signUp(@Body() signInDto: SignUpDto) {
+    const token = await this.authService.signUp(signInDto.phone);
+    if (token) {
+      return ApiResponse.buildApiResponse(
+        token,
+        200,
+        'User registered successfully',
+      );
+    } else {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
   }
 }
