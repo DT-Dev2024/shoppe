@@ -101,7 +101,7 @@ function FooterLink({ bg }: { bg?: string }) {
     });
 
   return (
-    <div className={`footer__link ${bg} lg-px-[35rem] `}>
+    <div className={`footer__link ${bg} lg:px-[35rem] `}>
       <div className="footer__link__about">
         <div className="footer__link__about__part">
           <div className="footer__link__about__item">

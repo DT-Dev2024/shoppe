@@ -11,7 +11,7 @@ const UserSidebar = () => {
     <aside>
       <div className="flex items-center border-b border-b-gray-200 py-4">
         <NavLink
-          to={path.profile}
+          to={path.orderHistory}
           className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-black/10"
         >
           <img
@@ -23,7 +23,7 @@ const UserSidebar = () => {
         <div className="flex-grow pl-4">
           <div className="mb-1 line-clamp-1 font-semibold text-gray-600">Trần Đăng Khôi</div>
           <NavLink
-            to={path.profile}
+            to={path.orderHistory}
             className="flex items-center capitalize text-gray-500"
           >
             <svg
@@ -45,7 +45,7 @@ const UserSidebar = () => {
       </div>
       <div className="mt-7">
         <NavLink
-          to={path.profile}
+          to={path.orderHistory}
           className={({ isActive }) =>
             `flex items-center gap-x-3 capitalize transition-colors ${isActive ? "text-primary" : "text-gray-600"}`
           }
