@@ -1,0 +1,97 @@
+{
+  "account": "Tài khoản",
+  "password": "Mật khẩu",
+  "login": "Đăng nhập",
+  "partner": "Đối tác",
+  "remember_password": "Ghi nhớ mật khẩu",
+  "dialog": {
+    "error": "Lỗi",
+    "cancel": "Đóng",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "loading": "Đang tải",
+    "select": "Chọn",
+    "success": "Thành công"
+  },
+  "product_category": "Danh mục sản phẩm",
+  "category": "Danh mục",
+  "enterprise": "Doanh nghiệp",
+  "request": "Yêu cầu",
+  "banner": "Banner",
+  "config": "Cấu hình",
+  "created_at": "Ngày tạo",
+  "time_minus": {
+    "hour_ago": "giờ trước",
+    "minute_ago": "phút trước",
+    "just_now": "vừa xong",
+    "day_ago": "ngày trước"
+  },
+  "fail_request": "Yêu cầu thất bại",
+  "error_network": "Mất kết nối đến máy chủ. Vui lòng kiểm tra đường truyền!",
+  "please_enter": {
+    "category_name": "Vui lòng nhập Tên nhóm hàng",
+    "account": "Vui lòng nhập Tên tài khoản",
+    "pass": "Vui lòng nhập Mật khẩu"
+  },
+  "please_select": {
+    "category_name": "Vui lòng chọn Nhóm mặt hàng"
+  },
+  "store": "Kho hàng",
+  "payment": {
+    "info": "Thông tin thanh toán",
+    "method": "Hình thức thanh toán"
+  },
+  "search": {
+    "category": "Tìm kiếm nhóm hàng",
+    "product": "Mã, tên sản phẩm",
+    "order": "Tìm kiếm"
+  },
+  "action": {
+    "create": "Thêm mới",
+    "remove": "Xóa",
+    "edit": "Chỉnh sửa",
+    "export": "Export",
+    "import": "Import",
+    "update": "Cập nhật",
+    "back": "Quay lại"
+  },
+  "remove": {
+    "product": "Bạn chắc chắn muốn xóa sản phẩm này?"
+  },
+  "status": "Trạng thái",
+  "active": "Hoạt động",
+  "un_active": "Dừng hoạt động",
+  "success": "Thành công",
+  "notification": "Thông báo",
+  "enter": "Nhập",
+  "agent_request": "Yêu cầu CTV",
+  "withdraw_request": "Rút tiền",
+  "title_header": {
+    "dashboard": "Tổng quan",
+    "product": "Sản phẩm",
+    "store": "Kho hàng",
+    "store_list": "Danh sách kho",
+    "inventory": "Tồn kho",
+    "import_stock": "Nhập kho",
+    "export_stock": "Xuất kho",
+    "order_list": "Danh sách đơn hàng",
+    "sell": "Bán hàng",
+    "customer": "Khách hàng",
+    "customer_list": "Danh sách khách hàng",
+    "account": "Tài khoản",
+    "import_goods": "Nhập hàng",
+    "agent": "Cộng tác viên",
+    "request_become_partner": "Yêu cầu trở thành Đối tác",
+    "order": "Đơn hàng",
+    "news": "Tin tức",
+    "debt_report": "Báo cáo công nợ",
+    "shop_report": "Báo cáo CHXD",
+    "config": "Thiết lập",
+    "ware_house": "Kho hàng",
+    "sale_report": "Báo cáo bán hàng",
+    "stock": "Kho hàng",
+    "category_product": "Danh mục SP",
+    "report": "Thống kê doanh số"
+  },
+  "test": "Test"
+}
