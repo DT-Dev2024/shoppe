@@ -10,6 +10,9 @@ export class UsersService {
     return await this.prismaService.users.findMany({
       include: {
         address: true,
+        orders: {
+          include: { order_details: true, order_discount: true },
+        },
       },
     });
   }
@@ -17,7 +20,12 @@ export class UsersService {
   async findOne(id: string) {
     const user = await this.prismaService.users.findUnique({
       where: { id },
-      include: { address: true, orders: true },
+      include: {
+        address: true,
+        orders: {
+          include: { order_details: true, order_discount: true },
+        },
+      },
     });
     return user ? user : null;
   }
@@ -39,6 +47,19 @@ export class UsersService {
   }
 
   async updateAddress(address: CreateAddressDto) {
+    if (address.id) {
+      const update = await this.prismaService.addresses.update({
+        where: { id: address.id },
+        data: {
+          name: address.name,
+          phone: address.phone,
+          address: address.address,
+          default: address.default,
+        },
+      });
+      return update ? update : null;
+    }
+
     const user = await this.prismaService.users.update({
       where: { id: address.userId },
       data: {
@@ -53,5 +74,16 @@ export class UsersService {
       },
     });
     return user ? user : null;
+  }
+
+  async updateAddress2(addressId: string) {
+    const update = await this.prismaService.addresses.update({
+      where: { id: addressId },
+      data: {
+        default: true,
+      },
+    });
+
+    return update ? update : null;
   }
 }

@@ -12,13 +12,17 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
+import { CreatePaymentDto } from './dto/payment.dto';
+import { CreateCartDto } from './dto/cart.dto';
+import { UpdateCartDto } from './dto/update-cart.dto';
+import { DeleteCartDto } from './dto/delete-cart.dto';
 
 @Controller('order')
 @ApiTags('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
+  @Post('checkout')
   @ApiBearerAuth('token')
   async create(@Body() createOrderDto: CreateOrderDto) {
     const order = await this.orderService.create(createOrderDto);
@@ -81,6 +85,76 @@ export class OrderController {
       order,
       200,
       'Order deleted successfully',
+    );
+  }
+
+  @Get('payment')
+  @ApiBearerAuth('token')
+  async payment() {
+    return ApiResponse.buildCollectionApiResponse(
+      await this.orderService.getPayment(),
+      200,
+      'Orders retrieved successfully',
+    );
+  }
+
+  @Post('payment')
+  @ApiBearerAuth('token')
+  async paymentMethod(@Body() payment: CreatePaymentDto) {
+    return ApiResponse.buildCollectionApiResponse(
+      await this.orderService.UpdatePayment(payment),
+      200,
+      'Orders retrieved successfully',
+    );
+  }
+
+  @Post('add-to-cart')
+  @ApiBearerAuth('token')
+  async addToCart(cart: CreateCartDto) {
+    const result = await this.orderService.addToCart(cart);
+    if (result) {
+      return ApiResponse.buildApiResponse(
+        result,
+        200,
+        'Cart created successfully',
+      );
+    } else {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
+  }
+
+  @Post('update-cart')
+  @ApiBearerAuth('token')
+  async updateCart(@Body() cart: UpdateCartDto) {
+    const result = await this.orderService.updateCart(cart);
+    if (result) {
+      return ApiResponse.buildApiResponse(
+        result,
+        200,
+        'Cart created successfully',
+      );
+    } else {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
+  }
+
+  @Get('cart/:userId')
+  @ApiBearerAuth('token')
+  async getCart(@Param('userId') userId: string) {
+    return ApiResponse.buildCollectionApiResponse(
+      await this.orderService.getCart(userId),
+      200,
+      'Cart retrieved successfully',
+    );
+  }
+
+  @Delete('cart')
+  @ApiBearerAuth('token')
+  async deleteCart(deleteCart: DeleteCartDto) {
+    return ApiResponse.buildCollectionApiResponse(
+      await this.orderService.deleteCart(deleteCart),
+      200,
+      'Cart deleted successfully',
     );
   }
 }

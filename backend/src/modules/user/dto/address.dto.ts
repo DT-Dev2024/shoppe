@@ -3,6 +3,10 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateAddressDto {
   @ApiProperty()
+  @IsOptional()
+  id?: string;
+
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   userId: string;

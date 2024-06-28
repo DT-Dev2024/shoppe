@@ -71,6 +71,7 @@ model products {
   shopId          String?            @db.ObjectId
   product_feeback product_feeback?
   order_details   order_details[]
+  cart_item       cart_item[]
 }
 
 model product_feeback {
@@ -109,6 +110,7 @@ model users {
   updated_at DateTime?   @updatedAt @db.Date
   roles      roles       @default(USER)
   orders     orders?
+  cart       cart?
 }
 
 model addresses {
@@ -136,14 +138,39 @@ model orders {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   user           users?           @relation(fields: [userId], references: [id])
   userId         String?          @unique @db.ObjectId
-  status         order_status     @default(WAITING)
   order_discount order_discounts?
   order_details  order_details[]
   address_id     String           @db.ObjectId
   total_price    Float
+  payment_method payment_method
   created_at     DateTime?        @default(now()) @db.Date
   updated_at     DateTime?        @updatedAt @db.Date
   deleted_at     DateTime?        @db.Date
+}
+
+model cart {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  user          users?          @relation(fields: [userId], references: [id])
+  userId        String?         @unique @db.ObjectId
+  cart_items    cart_item[]
+  created_at    DateTime?       @default(now()) @db.Date
+  updated_at    DateTime?       @updatedAt @db.Date
+  deleted_at    DateTime?       @db.Date
+  order_details order_details[]
+}
+
+model cart_item {
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  product               products?    @relation(fields: [productId], references: [id])
+  productId             String?      @db.ObjectId
+  buy_count             Int
+  price                 Float        @default(0)
+  price_before_discount Float        @default(0)
+  status                order_status @default(WAITING)
+  created_at            DateTime?    @default(now()) @db.Date
+  updated_at            DateTime?    @updatedAt @db.Date
+  cart                  cart?        @relation(fields: [cartId], references: [id])
+  cartId                String?      @db.ObjectId
 }
 
 model order_discounts {
@@ -158,22 +185,45 @@ model order_discounts {
 }
 
 model order_details {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  order      orders    @relation(fields: [orderId], references: [id])
-  orderId    String    @unique @db.ObjectId
-  product    products? @relation(fields: [productId], references: [id])
-  productId  String?   @db.ObjectId
-  quantity   Int
-  created_at DateTime? @default(now()) @db.Date
-  updated_at DateTime? @updatedAt @db.Date
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
+  order                 orders       @relation(fields: [orderId], references: [id])
+  orderId               String       @db.ObjectId
+  product               products?    @relation(fields: [productId], references: [id])
+  productId             String?      @db.ObjectId
+  buy_count             Int
+  price                 Float        @default(0)
+  price_before_discount Float        @default(0)
+  status                order_status @default(WAITING)
+  created_at            DateTime?    @default(now()) @db.Date
+  updated_at            DateTime?    @updatedAt @db.Date
+  cart                  cart?        @relation(fields: [cartId], references: [id])
+  cartId                String?      @db.ObjectId
+}
+
+model payments {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  MOMO        String
+  BANK        String
+  PAY_OFFLINE String
+  status      Boolean   @default(true)
+  created_at  DateTime? @default(now()) @db.Date
+  updated_at  DateTime? @updatedAt @db.Date
+  deleted_at  DateTime? @db.Date
 }
 
 enum order_status {
   WAITING
   DELIVERING
+  WAIT_RECEIVED
   DELIVERED
   CANCELED
   RETURN
+}
+
+enum payment_method {
+  MOMO
+  BANK
+  PAY_OFFLINE
 }
 
 enum roles {

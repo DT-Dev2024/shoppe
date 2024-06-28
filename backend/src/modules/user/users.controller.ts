@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Post,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -72,6 +73,20 @@ export class UsersController {
   @ApiBearerAuth('token')
   async updateAddress(@Body() address: CreateAddressDto) {
     const user = await this.usersService.updateAddress(address);
+    if (!user) {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
+    return ApiResponse.buildApiResponse(
+      user,
+      200,
+      'User updated address successfully',
+    );
+  }
+
+  @Put('update-address-default/:id')
+  @ApiBearerAuth('token')
+  async updateAddress2(@Param('id') addressId: string) {
+    const user = await this.usersService.updateAddress2(addressId);
     if (!user) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }

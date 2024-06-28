@@ -10,6 +10,21 @@ export class AuthService {
   ) {}
 
   async signIn(phone: string) {
+    const checkUser = await this.prismaService.users.findUnique({
+      where: { phone: phone },
+    });
+
+    if (!checkUser) {
+      await this.prismaService.users.create({
+        data: {
+          phone: phone,
+          roles: 'USER',
+          name: 'user',
+          password: '123456',
+        },
+      });
+    }
+
     const user = await this.prismaService.users.findUnique({
       where: { phone: phone },
       include: { address: true, orders: true },

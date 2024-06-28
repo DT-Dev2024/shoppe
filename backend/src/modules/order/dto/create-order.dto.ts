@@ -2,22 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
-  IsEnum,
   IsNumber,
   IsArray,
   ValidateNested,
+  IsEnum,
 } from 'class-validator';
 import { CreateOrderDetailsDto } from './order-detail.dto';
-import { CreateOrderDiscountDto } from './order-discount.dto';
 import { Type } from 'class-transformer';
-
-export enum OrderStatus {
-  WAITING = 'WAITING',
-  DELIVERING = 'DELIVERING',
-  DELIVERED = 'DELIVERED',
-  CANCELED = 'CANCELED',
-  RETURN = 'RETURN',
-}
+import { PaymentMethod } from './payment-method';
 
 export class CreateOrderDto {
   @ApiProperty()
@@ -30,24 +22,6 @@ export class CreateOrderDto {
   @IsNotEmpty()
   addressId: string;
 
-  @ApiProperty({
-    default: OrderStatus.WAITING,
-    description:
-      'Order status is ' +
-      OrderStatus.WAITING +
-      ' or ' +
-      OrderStatus.DELIVERING +
-      ' or ' +
-      OrderStatus.DELIVERED +
-      ' or ' +
-      OrderStatus.CANCELED +
-      ' or ' +
-      OrderStatus.RETURN,
-  })
-  @IsNotEmpty()
-  @IsEnum(OrderStatus)
-  status: OrderStatus;
-
   @ApiProperty({ type: [CreateOrderDetailsDto] })
   @IsNotEmpty()
   @IsArray()
@@ -55,13 +29,22 @@ export class CreateOrderDto {
   @Type(() => CreateOrderDetailsDto)
   orderDetails: CreateOrderDetailsDto[];
 
-  @ApiProperty({
-    type: CreateOrderDiscountDto,
-  })
-  orderDiscount: CreateOrderDiscountDto;
-
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
   totalPrice: number;
+
+  @ApiProperty({
+    default: PaymentMethod.MOMO,
+    description:
+      'Payment method is ' +
+      PaymentMethod.MOMO +
+      ' or ' +
+      PaymentMethod.BANK +
+      ' or ' +
+      PaymentMethod.PAY_OFFLINE,
+  })
+  @IsNotEmpty()
+  @IsEnum(PaymentMethod)
+  paymentMethod: PaymentMethod;
 }
