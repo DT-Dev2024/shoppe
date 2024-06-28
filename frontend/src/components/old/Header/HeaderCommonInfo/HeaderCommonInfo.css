@@ -463,8 +463,16 @@
   }
   .header__notification__link,
   .header__login__btn {
-    width: 99px;
+    width: 100px;
   }
+  .header__login__btn {
+    margin-left: 70px;
+  }
+  .user-menu {
+    margin-left: 120px;
+    font-size: 30px;
+  }
+
   .header__support__link,
   .header__register__btn {
     width: 65px;
@@ -502,6 +510,13 @@
   .header__login__btn {
     width: 100px;
   }
+  .header__login__btn {
+    margin-left: 70px;
+  }
+  .user-menu {
+    margin-left: 120px;
+    font-size: 30px;
+  }
   .header__support__link,
   .header__register__btn {
     width: 70px;
@@ -538,6 +553,13 @@
   .header__notification__link,
   .header__login__btn {
     width: 100px;
+  }
+  .header__login__btn {
+    margin-left: 70px;
+  }
+  .user-menu {
+    margin-left: 120px;
+    font-size: 30px;
   }
   .header__support__link,
   .header__register__btn {
@@ -577,6 +599,13 @@
   .header__login__btn {
     width: 100px;
   }
+  .header__login__btn {
+    margin-left: 70px;
+  }
+  .user-menu {
+    margin-left: 120px;
+    font-size: 30px;
+  }
   .header__support__link,
   .header__register__btn {
     width: 70px;
@@ -611,6 +640,13 @@
   .header__notification__link,
   .header__login__btn {
     width: 100px;
+  }
+  .header__login__btn {
+    margin-left: 70px;
+  }
+  .user-menu {
+    margin-left: 120px;
+    font-size: 30px;
   }
   .header__support__link,
   .header__register__btn {
