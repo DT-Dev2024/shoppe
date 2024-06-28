@@ -10,7 +10,7 @@ import {
 import { useState, useRef, useContext } from "react";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import { IDataSource } from "src/contexts";
-import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
+import { FaFacebook, FaInstagramSquare, FaUser } from "react-icons/fa";
 import { AuthContext } from "src/contexts/auth.context";
 import { CiUser } from "react-icons/ci";
 import { Link } from "react-router-dom";
@@ -267,17 +267,17 @@ function HeaderCommonInfo() {
             //   localStorage.removeItem("user");
             //   window.location.reload();
             // }}
-            className="user-menu relative"
+            className="relative user-menu"
           >
-            <span className="flex h-10 items-center text-[20px] text-white">
-              <CiUser />
+            <span className="flex h-10 items-center lg:text-[22px] text-[20px] text-white">
+              <FaUser />
             </span>
 
-            <ul className="absolute -left-4 top-10 z-20 mt-2 hidden w-60 rounded border bg-white text-[14px] shadow-lg">
-              <li className="cursor-pointer p-2 hover:bg-main hover:text-white">
+            <ul className="absolute -left-4 top-10 z-20 mt-2 hidden lg:w-40 w-30 rounded border bg-white text-[14px] shadow-lg">
+              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
                 <Link to={path.orderHistory}>Đơn mua</Link>
               </li>
-              <li className="cursor-pointer p-2 hover:bg-main hover:text-white">
+              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
                 <button
                   onClick={() => {
                     localStorage.removeItem("access_token");
@@ -293,14 +293,14 @@ function HeaderCommonInfo() {
           </span>
         ) : (
           <>
-            <div className="header__register">
+            {/* <div className="header__register">
               <a
                 href="/"
                 className="header__register__btn"
               >
                 <span>Đăng Ký</span>
               </a>
-            </div>
+            </div> */}
 
             <div className="header__login">
               <a
