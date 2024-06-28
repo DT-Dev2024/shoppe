@@ -1,7 +1,7 @@
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import {
-  MdOutlineArrowForwardIos,
   MdOutlineArrowBackIos,
+  MdOutlineArrowForwardIos,
 } from "react-icons/md"; /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SliderMotionBanner1, SliderNoMotionBanner1, SliderNoMotionBanner2 } from "src/assets/img";
 import { $$ } from "src/constants";
@@ -10,6 +10,7 @@ import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import "./Slider.css";
 
 import icon1 from "src/assets/img/container/slider/favourite-selections/icon1.gif";
+import icon10 from "src/assets/img/container/slider/favourite-selections/icon10.png";
 import icon2 from "src/assets/img/container/slider/favourite-selections/icon2.png";
 import icon3 from "src/assets/img/container/slider/favourite-selections/icon3.png";
 import icon4 from "src/assets/img/container/slider/favourite-selections/icon4.png";
@@ -18,20 +19,7 @@ import icon6 from "src/assets/img/container/slider/favourite-selections/icon6.pn
 import icon7 from "src/assets/img/container/slider/favourite-selections/icon7.png";
 import icon8 from "src/assets/img/container/slider/favourite-selections/icon8.png";
 import icon9 from "src/assets/img/container/slider/favourite-selections/icon9.gif";
-import icon10 from "src/assets/img/container/slider/favourite-selections/icon10.png";
 
-import banner1 from "src/assets/img/container/slider/main/motion/banner1.png";
-import banner2 from "src/assets/img/container/slider/main/motion/banner2.png";
-import banner3 from "src/assets/img/container/slider/main/motion/banner3.png";
-import banner4 from "src/assets/img/container/slider/main/motion/banner4.png";
-import banner5 from "src/assets/img/container/slider/main/motion/banner5.png";
-import banner6 from "src/assets/img/container/slider/main/motion/banner6.png";
-import banner7 from "src/assets/img/container/slider/main/motion/banner7.png";
-import banner8 from "src/assets/img/container/slider/main/motion/banner8.png";
-import banner9 from "src/assets/img/container/slider/main/motion/banner9.png";
-import banner10 from "src/assets/img/container/slider/main/motion/banner10.png";
-import banner11 from "src/assets/img/container/slider/main/motion/banner11.png";
-import banner12 from "src/assets/img/container/slider/main/motion/banner12.png";
 interface IData {
   href: string;
   image: string;
@@ -49,26 +37,15 @@ function Slider() {
   const motionPartImageRef = useRef<HTMLImageElement | null>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   const previousButtonRef = useRef<HTMLButtonElement>(null);
-  const banners = [
-    banner1,
-    banner2,
-    banner3,
-    banner4,
-    banner5,
-    banner6,
-    banner7,
-    banner8,
-    banner9,
-    banner10,
-    banner11,
-    banner12,
-  ];
 
-  const { sliderFavouriteSelectionsInfo: favouriteSelectionsInfo, sliderMainMotionPartLinkInfo: motionPartLinkInfo } =
-    useDataSourceContext() as IDataSource;
+  const {
+    sliderFavouriteSelectionsInfo: favouriteSelectionsInfo,
+    sliderMainMotionPartLinkInfo: motionPartLinkInfo,
+    bannerListInfo,
+  } = useDataSourceContext() as IDataSource;
 
   let queueItemCurrentIndex = 0;
-  const len = motionPartLinkInfo?.length;
+  const len = motionPartLinkInfo?.slice(0, 5)?.length;
   const QUEUE_ITEM_CLASS = "slider__main__motion-part__queue-item";
   const QUEUE_ITEM_CURRENT_CLASS = "slider__main__motion-part__queue-item--current";
 
@@ -97,30 +74,30 @@ function Slider() {
     });
   };
 
-  const renderQueueItems = (datas: IData[]) =>
-    datas.map((data: IData, index: number) => {
-      const { key, className }: IQueueItem = {
-        key: index,
-        className: `${QUEUE_ITEM_CLASS} ${index === 0 ? QUEUE_ITEM_CURRENT_CLASS : ""}`,
-      };
-      return (
-        <div
-          key={key}
-          // onClick={(event) => handleClickQueueItem(event)}
-          className={className}
-        ></div>
-      );
-    });
+  const renderQueueItems = (datas: IData[]) => {
+    {
+      return datas.map((data: IData, index: number) => {
+        const { key, className }: IQueueItem = {
+          key: index,
+          className: `${QUEUE_ITEM_CLASS} ${index === 0 ? QUEUE_ITEM_CURRENT_CLASS : ""}`,
+        };
+        return (
+          <div
+            key={key}
+            // onClick={(event) => handleClickQueueItem(event)}
+            className={className}
+          ></div>
+        );
+      });
+    }
+  };
 
   const updateMotionPartImageLinkProps = (index: number) => {
-    if (motionPartLinkInfo && motionPartLinkInfo?.length > 0) {
-      const { image, href } = motionPartLinkInfo[index];
-      const img = banners[index];
+    if (bannerListInfo && bannerListInfo?.length > 0) {
+      // const { image, href } = motionPartLinkInfo[index];
+      const img = bannerListInfo[index];
       if (motionPartImageRef.current) {
         motionPartImageRef.current.src = img;
-      }
-      if (motionPartLinkRef.current) {
-        motionPartLinkRef.current.href = href;
       }
     }
   };
@@ -160,9 +137,9 @@ function Slider() {
       queueItems[queueItemCurrentIndex].classList.add(QUEUE_ITEM_CURRENT_CLASS);
     } else {
       //! cannot read property 'classList' of undefined
-      // queueItemCurrentIndex = 0;
-      // queueItems[len! - 1].classList.remove(QUEUE_ITEM_CURRENT_CLASS);
-      // queueItems[0].classList.add(QUEUE_ITEM_CURRENT_CLASS);
+      queueItemCurrentIndex = 0;
+      queueItems[len! - 1].classList.remove(QUEUE_ITEM_CURRENT_CLASS);
+      queueItems[0].classList.add(QUEUE_ITEM_CURRENT_CLASS);
     }
 
     updateMotionPartImageLinkProps(queueItemCurrentIndex);
@@ -213,24 +190,24 @@ function Slider() {
                 alt=""
               />
             </a>
-            {/* <button
+            <button
               ref={previousButtonRef}
               onClick={handleClickPreviousButton}
-              className="slider__main__motion-part__btn slider__main__motion-part__previous-btn"
+              className="slider__main__motion-part__btn slider__main__motion-part__previous-btn lg:none hidden"
             >
               <MdOutlineArrowBackIos />
             </button>
             <button
               ref={nextButtonRef}
               onClick={handleClickNextButton}
-              className="slider__main__motion-part__btn slider__main__motion-part__next-btn"
+              className="slider__main__motion-part__btn slider__main__motion-part__next-btn lg:none hidden"
             >
               <MdOutlineArrowForwardIos />
-            </button> */}
+            </button>
 
-            {/* <div className="slider__main__motion-part__queue">
-              {motionPartLinkInfo && renderQueueItems(motionPartLinkInfo)}
-            </div> */}
+            <div className="slider__main__motion-part__queue hidden lg:block">
+              {motionPartLinkInfo && renderQueueItems(motionPartLinkInfo.slice(0, 5))}
+            </div>
           </div>
 
           <div className="slider__main__no-motion-part">

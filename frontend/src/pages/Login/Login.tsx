@@ -1,17 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { isAxiosError } from "axios";
 import { useContext, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import authApi from "src/apis/auth.api";
+import { loginAccount } from "src/apis/auth.api";
 import Button from "src/components/Button";
 import { Input } from "src/components/Input";
 import { path } from "src/constants/path.enum";
 import { AuthContext } from "src/contexts/auth.context";
+import { loginSchema, TLoginSchemaType } from "src/schemas/schema";
 import { TErrorApiResponse } from "src/types/utils.types";
 import { isAxiosUnprocessableEntity } from "src/utils/isAxiosError";
-import { loginSchema, TLoginSchemaType } from "src/schemas/schema";
-import { Helmet } from "react-helmet-async";
 
 type FormData = TLoginSchemaType;
 
@@ -27,15 +27,16 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
   const navigate = useNavigate();
-  const { setIsAuthenticated, setUserProfile } = useContext(AuthContext);
+  const { setIsAuthenticated } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = handleSubmit(async (data) => {
     try {
       setIsLoading(true);
-      const response = await authApi.loginAccount(data);
+      const response = await loginAccount(data);
+      localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setIsAuthenticated(true);
-      setUserProfile(response.data.data.user);
       navigate(path.home);
     } catch (error) {
       if (
@@ -65,7 +66,6 @@ const Login = () => {
       </Helmet>
       <div className="lg:col-span-2 lg:col-start-4">
         <form
-          onSubmit={handleLogin}
           className="rounded bg-white p-10 shadow-sm"
           noValidate
           autoComplete="on"
@@ -82,8 +82,9 @@ const Login = () => {
 
           <div className="mt-3">
             <Button
-              type="submit"
+              type="button"
               isLoading={isLoading}
+              onClick={handleLogin}
               containerClassName="mt-1  lg:text-xl "
             >
               Đăng nhập

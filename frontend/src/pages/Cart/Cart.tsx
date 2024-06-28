@@ -4,7 +4,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { VscTriangleDown } from "react-icons/vsc";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { BsExclamationCircle } from "react-icons/bs";
-import React, { useContext, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -19,129 +19,33 @@ import { formatCurrency } from "src/utils/formatNumber";
 import { CiCircleQuestion } from "react-icons/ci";
 import { FormSubmit } from "src/helpers";
 import { OrderContext } from "src/contexts/order.context";
+import { getAllVouchers } from "src/apis/voucher";
 type Quantity = Record<string, { quantity: number | string }>;
+
 interface CartProps {
   pricesAll: string;
   priceDiscount: string;
   finalPrice: string;
 }
 
-const voucherMock: TVoucher[] = [
-  {
-    _id: "1",
-    type: "SHOP",
-    code: "SHOPEE",
-    discount: 300000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 0,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "2",
-    type: "USER",
-    code: "USER",
-    discount: 500000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 1000000,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "3",
-    type: "SHOP",
-    code: "SHOPEE",
-    discount: 300000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 0,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "4",
-    type: "USER",
-    code: "USER",
-    discount: 500000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 1000000,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "5",
-    type: "SHOP",
-    code: "SHOPEE",
-    discount: 300000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 0,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "6",
-    type: "USER",
-    code: "USER",
-    discount: 500000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 1000000,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "7",
-    type: "SHOP",
-    code: "SHOPEE",
-    discount: 300000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 0,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "8",
-    type: "USER",
-    code: "USER",
-    discount: 500000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 1000000,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "9",
-    type: "SHOP",
-    code: "SHOPEE",
-    discount: 300000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 0,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-  {
-    _id: "10",
-    type: "USER",
-    code: "USER",
-    discount: 500000,
-    discount_type: "FIXED",
-    expire: "2021-09-07T07:54:15.000Z",
-    minium_price: 1000000,
-    createdAt: "2021-09-07T07:54:15.000Z",
-    updatedAt: "2021-09-07T07:54:15.000Z",
-  },
-];
-
 const Cart = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+
+  const [vouchers, setVouchers] = useState<TVoucher[]>([]);
+  useEffect(() => {
+    // setVouchers(voucherMock);
+    const vouchers = async () => {
+      try {
+        const response = await getAllVouchers();
+        setVouchers(response.data);
+      } catch (error) {
+        toast.error("Có lỗi xảy ra khi lấy danh sách voucher");
+      }
+    };
+    vouchers();
+  }, []);
+
   const { extendedPurchases, setExtendedPurchases } = useContext(CartContext);
   // Đại diện cho những purchase được checked
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases]);
@@ -371,7 +275,7 @@ const Cart = () => {
                 grid-cols-1 gap-4 overflow-y-auto
               "
             >
-              {voucherMock.map((voucher) => (
+              {vouchers.map((voucher) => (
                 <li
                   key={voucher._id}
                   className={`border-b  border-gray-300 p-4 shadow-md`}
