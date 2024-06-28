@@ -1,15 +1,16 @@
-import { axiosClient } from "./config";
+import axiosClient from "./config";
 
 // API endpoints
 const API1_URL = "https://61bc99f0d8542f001782486b.mockapi.io/api/1";
 const API2_URL = "https://61bc99f0d8542f001782486b.mockapi.io/api/2";
 const API3_URL = "https://61bc99f0d8542f001782486b.mockapi.io/api/3";
 const API4_URL = "https://61bc99f0d8542f001782486b.mockapi.io/api/4";
+const API = "http://103.72.99.224:3000/api";
 
-const historyListInfoApi = {
+const api = {
   // [GET]
-  get: async () => {
-    const result = await axiosClient.get("/");
+  get: async (path: string) => {
+    const result = await axiosClient.get(path);
     return result.data;
   },
 
@@ -23,4 +24,4 @@ const historyListInfoApi = {
   },
 };
 
-export { API1_URL, API2_URL, API3_URL, API4_URL, historyListInfoApi };
+export { API1_URL, API2_URL, API3_URL, API4_URL, api, API };

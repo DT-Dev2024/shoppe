@@ -29,6 +29,7 @@
     "html-to-text": "^9.0.5",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
+    "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^1.3.0",

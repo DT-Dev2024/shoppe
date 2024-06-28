@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useState, useEffect, createContext } from "react";
-import { API1_URL, API2_URL, API3_URL, historyListInfoApi } from "src/apis";
+import { createContext, useEffect, useState } from "react";
+import { api, API, API1_URL, API2_URL, API3_URL } from "src/apis";
+import axiosClient from "src/apis/config";
 
 export interface IDataSource {
   directoryMainItemListInfo: {
@@ -31,14 +32,8 @@ export interface IDataSource {
     itemTitle: string;
     itemDescription: string;
   }[];
-  headerSearchHistoryListInfo?: {
-    href: string;
-    innerHTML: string;
-  }[];
-  headerSearchHistoryKeywordsListInfo?: {
-    href: string;
-    innerHTML: string;
-  }[];
+  headerSearchHistoryListInfo?: [];
+  headerSearchHistoryKeywordsListInfo?: [];
   flashSaleMainListInfo?: {
     href: string;
     bubbleImage: string;
@@ -185,6 +180,7 @@ export interface IDataSource {
     href: string;
     innerHTML: string;
   }[]; // replace with the actual type
+  bannerListInfo?: string[];
 }
 
 interface IHeading {
@@ -224,6 +220,7 @@ const defaultDataSource: IDataSource = {
   footerLinkAboutTextVeShopeeInfo: [],
   footerLinkAboutSocialInfo: [],
   footerLinkCopyrightCountryAndAreaListInfo: [],
+  bannerListInfo: [],
 };
 
 // Context
@@ -238,8 +235,9 @@ function DataSourceContextProvider({ children }: { children: React.ReactNode }) 
       const { data: data1 } = await axios.get(API1_URL);
       const { data: data2 } = await axios.get(API2_URL);
       const { data: data3 } = await axios.get(API3_URL);
+      const response = await api.get(`${API}/ui`);
 
-      const historyListInfo = await historyListInfoApi.get();
+      const historyListInfo = await api.get("/");
 
       // Format data
       const resultData1 = [...data1, ...data2, ...data3];
@@ -247,7 +245,9 @@ function DataSourceContextProvider({ children }: { children: React.ReactNode }) 
         ...resultData1[0],
         ...resultData1[1],
         ...resultData1[2],
-        headerSearchHistoryListInfo: historyListInfo,
+        headerSearchHistoryKeywordsListInfo: response.headerSearchHistoryKeywordsListInfo,
+        headerSearchHistoryListInfo: response.headerSearchHistoryListInfo,
+        bannerListInfo: response.bannerListInfo,
       };
 
       // Pass dataSource to Consumers

@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { KeyboardEvent, RefObject, useRef } from "react";
-import { historyListInfoApi } from "src/apis";
 import { HeaderCartImage, HeaderSearchVoucherHoanXuBanner } from "src/assets/img";
 import { IDataSource } from "src/contexts";
 import { handlePreventDefault, scrollToTop } from "src/helpers";
@@ -9,11 +8,7 @@ import "./HeaderSearchPart.css";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { path } from "src/constants/path.enum";
 import { useNavigate } from "react-router-dom";
-
-interface IData {
-  href: string;
-  innerHTML: string;
-}
+import { api } from "src/apis";
 
 function HeaderSearchPart() {
   const historyRef = useRef<HTMLDivElement>(null);
@@ -22,22 +17,20 @@ function HeaderSearchPart() {
   const frameBtnRef = useRef();
 
   const { headerSearchHistoryKeywordsListInfo, headerSearchHistoryListInfo } = useDataSourceContext() as IDataSource;
-
-  const renderHistoryKeywordsList = (datas: IData[]) =>
-    datas.map((data: IData, index: number) => {
-      const { href, innerHTML } = data;
+  console.log(headerSearchHistoryListInfo);
+  const renderHistoryKeywordsList = (datas: string[]) =>
+    datas.map((data: string, index: number) => {
       return (
-        <a
+        <span
           key={index}
-          href={href}
           className="header__search-history-keywords-item"
         >
-          {innerHTML}
-        </a>
+          {data}
+        </span>
       );
     });
 
-  const renderHistoryList = (datas: IData[]) => (
+  const renderHistoryList = (datas: string[]) => (
     <div>
       <li className="header__search-history-item header__search-history-item--default">
         <a
@@ -58,19 +51,13 @@ function HeaderSearchPart() {
           .slice(0)
           .reverse()
           .slice(0, 10)
-          .map((data: IData, index: number) => {
-            const { href, innerHTML } = data;
+          .map((data: string, index: number) => {
             return (
               <li
                 key={index}
                 className="header__search-history-item"
               >
-                <a
-                  href={href}
-                  className="header__search-history-item__link"
-                >
-                  {innerHTML}
-                </a>
+                <span className="header__search-history-item__link">{data}</span>
               </li>
             );
           })}
@@ -85,7 +72,7 @@ function HeaderSearchPart() {
 
       // [POST]
       const postData = { href, innerHTML };
-      historyListInfoApi.post(postData);
+      api.post(postData);
 
       // Navigate to search page
       window.location.href = href;

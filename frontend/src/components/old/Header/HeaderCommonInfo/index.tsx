@@ -7,10 +7,14 @@ import {
   HeaderQRCodeImage,
   HeaderNotificationWhenNotLoginIcon,
 } from "src/assets/img";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
 import { IDataSource } from "src/contexts";
-import { FaFacebook, FaInstagramSquare } from "react-icons/fa";
+import { FaFacebook, FaInstagramSquare, FaUser } from "react-icons/fa";
+import { AuthContext } from "src/contexts/auth.context";
+import { CiUser } from "react-icons/ci";
+import { Link } from "react-router-dom";
+import { path } from "src/constants/path.enum";
 interface IData {
   href: string;
   itemImage: string;
@@ -21,6 +25,7 @@ interface IData {
 function HeaderCommonInfo() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const notificationQuantityRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const { headerNotificationPopupWhenLoggedInListInfo } = useDataSourceContext() as IDataSource;
   const notificationQuantity =
@@ -169,7 +174,7 @@ function HeaderCommonInfo() {
             )}
           </a>
           <div className="header__notification__popup">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <div
                 style={{ display: "block" }}
                 className="header__notification__popup--when-logged-in"
@@ -254,23 +259,59 @@ function HeaderCommonInfo() {
           </a>
         </div>
 
-        <div className="header__register">
-          <a
-            href="/"
-            className="header__register__btn"
+        {isAuthenticated ? (
+          <span
+            // onClick={() => {
+            //   localStorage.removeItem("access_token");
+            //   setIsLoggedIn(false);
+            //   localStorage.removeItem("user");
+            //   window.location.reload();
+            // }}
+            className="relative user-menu"
           >
-            <span>Đăng Ký</span>
-          </a>
-        </div>
+            <span className="flex h-10 items-center lg:text-[22px] text-[20px] text-white">
+              <FaUser />
+            </span>
 
-        <div className="header__login">
-          <a
-            href="/login"
-            className="header__login__btn"
-          >
-            <span>Đăng Nhập</span>
-          </a>
-        </div>
+            <ul className="absolute -left-4 top-10 z-20 mt-2 hidden lg:w-40 w-30 rounded border bg-white text-[14px] shadow-lg">
+              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
+                <Link to={path.orderHistory}>Đơn mua</Link>
+              </li>
+              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("access_token");
+                    setIsLoggedIn(false);
+                    localStorage.removeItem("user");
+                    window.location.reload();
+                  }}
+                >
+                  Đăng xuất
+                </button>
+              </li>
+            </ul>
+          </span>
+        ) : (
+          <>
+            {/* <div className="header__register">
+              <a
+                href="/"
+                className="header__register__btn"
+              >
+                <span>Đăng Ký</span>
+              </a>
+            </div> */}
+
+            <div className="header__login">
+              <a
+                href="/login"
+                className="header__login__btn"
+              >
+                <span>Đăng Nhập</span>
+              </a>
+            </div>
+          </>
+        )}
 
         <div className="header__user-account">
           <a
