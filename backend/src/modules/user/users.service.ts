@@ -47,7 +47,7 @@ export class UsersService {
   }
 
   async updateAddress(address: CreateAddressDto) {
-    if (address.id) {
+    if (address.id !== '') {
       const update = await this.prismaService.addresses.update({
         where: { id: address.id },
         data: {
@@ -72,6 +72,7 @@ export class UsersService {
           },
         },
       },
+      include: { address: true },
     });
     return user ? user : null;
   }
