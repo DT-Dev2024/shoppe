@@ -1,4 +1,4 @@
 export type TCategory = {
-  _id: string;
+  id: string;
   name: string;
 };

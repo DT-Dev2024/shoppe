@@ -104,18 +104,18 @@ const AsideFilter = ({ categories, queryConfig }: AsideFilterProps) => {
       <div className="my-4 h-[1px] bg-gray-300" />
       <ul>
         {categories.map((categoryItem) => {
-          const isActive = categoryItem._id === category;
+          const isActive = categoryItem.id === category;
           return (
             <li
               className="py-2 pl-2"
-              key={categoryItem._id}
+              key={categoryItem.id}
             >
               <Link
                 to={{
                   pathname: path.home,
                   search: createSearchParams({
                     ...queryConfig,
-                    category: categoryItem._id.toString(),
+                    category: categoryItem.id.toString(),
                   }).toString(),
                 }}
                 className={classNames(

@@ -29,7 +29,7 @@ export default CartLayout;
 function HeaderSearchPart() {
   const navigate = useNavigate();
   return (
-    <div className="mb-10  flex items-center justify-start gap-6 bg-white px-8 py-10 lg:justify-between lg:gap-0 lg:pl-[24rem] lg:pr-[35rem]">
+    <div className="mb-10  flex items-center justify-start gap-6 bg-white px-8 py-10 lg:justify-between lg:gap-0 lg:px-[35rem] ">
       <div className="flex items-center ">
         <button
           className="h-[50px] w-[90px] fill-current text-white lg:w-[150px]"

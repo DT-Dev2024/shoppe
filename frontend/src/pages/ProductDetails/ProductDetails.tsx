@@ -36,11 +36,11 @@ const ProductDetails = () => {
     };
 
     const fetchRelevantProducts = async () => {
-      if (product?.category?._id) {
+      if (product?.category?.id) {
         try {
           const response = await axios.get("/api/products", {
             params: {
-              category: product.category._id,
+              category: product.category.id,
               sort_by: "sold",
               order: "desc",
               limit: 12,
@@ -55,9 +55,9 @@ const ProductDetails = () => {
 
     fetchProductDetails();
     fetchRelevantProducts();
-  }, [id, product?.category?._id]);
+  }, [id, product?.category?.id]);
 
-  const addToCart = async (data: { buy_count: number; product_id: string }) => {
+  const addToCart = async (data: { buy_count: number; productid: string }) => {
     try {
       const response = await axios.post("/api/add-to-cart", data);
       return response.data;
@@ -73,7 +73,7 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart({ buy_count: currentQuantity, product_id: product?._id });
+      await addToCart({ buy_count: currentQuantity, productid: product?.id });
       toast.dismiss();
       toast.success("Thêm vào giỏ hàng thành công", {
         hideProgressBar: true,
@@ -91,7 +91,7 @@ const ProductDetails = () => {
 
   const handleBuyNow = async () => {
     try {
-      await addToCart({ buy_count: currentQuantity, product_id: product?._id });
+      await addToCart({ buy_count: currentQuantity, productid: product?.id });
       navigate(path.cart);
     } catch (error) {
       console.error("Lỗi khi mua hàng:", error);
@@ -327,7 +327,7 @@ const ProductDetails = () => {
             relevantProductListData.data.data.products.map((product) => (
               <div
                 className="col-span-1"
-                key={product._id}
+                key={product.id}
               >
                 <Product product={product}></Product>
               </div>

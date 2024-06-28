@@ -1,5 +1,5 @@
 export type TProduct = {
-  _id: string;
+  id: string;
   images: string[];
   price: number;
   rating: number;
@@ -10,7 +10,7 @@ export type TProduct = {
   name: string;
   description: string;
   category: {
-    _id: string;
+    id: string;
     name: string;
   };
   image: string;

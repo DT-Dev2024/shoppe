@@ -10,7 +10,7 @@ type ProductProps = {
 const Product = ({ product }: ProductProps) => {
   product;
   return (
-    <Link to={`/${generateSlug({ name: product.name, id: product._id })}`}>
+    <Link to={`/${generateSlug({ name: product.name, id: product.id })}`}>
       <div className="overflow-hidden rounded-sm bg-white shadow transition-all duration-200 hover:translate-y-[-0.09rem] hover:shadow-md">
         <div className="relative w-full pt-[100%]">
           <img

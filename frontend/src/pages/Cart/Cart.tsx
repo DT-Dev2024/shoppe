@@ -100,7 +100,7 @@ const Cart = () => {
 
     setExtendedPurchases(
       produce((draft) => {
-        const index = draft.findIndex((purchase) => purchase._id === id);
+        const index = draft.findIndex((purchase) => purchase.id === id);
         if (index !== -1) {
           // Ensure the purchase is checked before updating
           draft[index].buy_count = newQuantity;
@@ -277,7 +277,7 @@ const Cart = () => {
             >
               {vouchers.map((voucher) => (
                 <li
-                  key={voucher._id}
+                  key={voucher.id}
                   className={`border-b  border-gray-300 p-4 shadow-md`}
                 >
                   <div className="relative flex cursor-not-allowed items-center">
@@ -298,7 +298,7 @@ const Cart = () => {
                     <input
                       type="radio"
                       name="selectedVoucher"
-                      checked={selectedVoucher?._id === voucher._id}
+                      checked={selectedVoucher?.id === voucher.id}
                       onChange={(e) => {
                         e.preventDefault(); // Prevent the default action
                       }}
@@ -409,7 +409,7 @@ const Cart = () => {
               <div className="my-3 rounded-sm shadow ">
                 {extendedPurchases.map((purchase, index) => (
                   <div
-                    key={purchase._id}
+                    key={purchase.id}
                     className="mb-5 rounded-sm bg-white text-center text-2xl first:mt-0"
                   >
                     <div className="flex items-center justify-between border-b px-16 py-5">
@@ -469,14 +469,14 @@ const Cart = () => {
                               type="button"
                               className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
                               onClick={() => {
-                                handleChangeQuantity(-1, purchase.product._id, purchase);
+                                handleChangeQuantity(-1, purchase.product.id, purchase);
                               }}
                             >
                               <FaMinus />
                             </button>
                             <input
                               className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0"
-                              value={quantities[purchase.product._id]?.quantity || purchase.buy_count}
+                              value={quantities[purchase.product.id]?.quantity || purchase.buy_count}
                               onChange={(e) => {
                                 if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
                                   toast.error("Please enter a number");
@@ -485,7 +485,7 @@ const Cart = () => {
                                 const newQuantity = e.target.value ? parseInt(e.target.value) : "";
                                 setQuantities((prevQuantities) => ({
                                   ...prevQuantities,
-                                  [purchase.product._id]: {
+                                  [purchase.product.id]: {
                                     quantity: newQuantity,
                                   },
                                 }));
@@ -495,7 +495,7 @@ const Cart = () => {
                               type="button"
                               className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
                               onClick={() => {
-                                handleChangeQuantity(1, purchase.product._id, purchase);
+                                handleChangeQuantity(1, purchase.product.id, purchase);
                               }}
                             >
                               <FaPlus />

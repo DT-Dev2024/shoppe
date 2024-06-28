@@ -1,10 +1,11 @@
 import { TProduct } from "./product.type";
+import { TAddress } from "./user.types";
 
 export type TPurchaseStatus = -1 | 1 | 2 | 3 | 4 | 5;
 export type TPurchaseListStatus = TPurchaseStatus | 0;
 
 export type TPurchase = {
-  _id: string;
+  id: string;
   buy_count: number;
   price: number;
   price_before_discount: number;
@@ -23,7 +24,7 @@ export type TVoucherType = "SHOP" | "USER";
 export type TDiscountType = "PERCENTAGE" | "FIXED";
 
 export type TVoucher = {
-  _id: string;
+  id: string;
   type: TVoucherType;
   code: string;
   discount: number;
@@ -34,4 +35,10 @@ export type TVoucher = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+};
+
+export type TCheckout = {
+  orders: TExtendedPurchases[];
+  address: TAddress;
+  payment_method: string;
 };
