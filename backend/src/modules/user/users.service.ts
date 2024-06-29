@@ -49,6 +49,7 @@ export class UsersService {
   async updateAddress(address: CreateAddressDto) {
     // If the address has an ID, it's an update operation
     if (address.id !== '') {
+      console.log('update');
       // If the address should be the default, unset all other default addresses for the user
       if (address.default) {
         await this.prismaService.$transaction(async (prisma) => {
@@ -70,18 +71,8 @@ export class UsersService {
         },
       });
     }
+    console.log(address);
 
-    // Check if the user already has an address
-    const existingAddress = await this.prismaService.addresses.findFirst({
-      where: { usersId: address.userId },
-    });
-
-    if (!existingAddress) {
-      // If no existing address, set this address as default
-      address.default = true;
-    }
-
-    // Create the new address
     await this.prismaService.addresses.create({
       data: {
         name: address.name,
@@ -91,7 +82,6 @@ export class UsersService {
         usersId: address.userId,
       },
     });
-
     // Return the user with updated addresses
     return await this.prismaService.users.findUnique({
       where: { id: address.userId },
@@ -105,6 +95,11 @@ export class UsersService {
       data: {
         default: true,
       },
+    });
+
+    await this.prismaService.addresses.updateMany({
+      where: { usersId: update.usersId, id: { not: update.id } },
+      data: { default: false },
     });
 
     return update ? update : null;
