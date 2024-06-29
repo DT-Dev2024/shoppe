@@ -79,14 +79,6 @@ export class UsersService {
     if (!existingAddress) {
       // If no existing address, set this address as default
       address.default = true;
-    } else if (address.default) {
-      // If there is an existing address and the new address is default, unset all other defaults
-      await this.prismaService.$transaction(async (prisma) => {
-        await prisma.addresses.updateMany({
-          where: { usersId: address.userId },
-          data: { default: false },
-        });
-      });
     }
 
     // Create the new address
