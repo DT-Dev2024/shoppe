@@ -25,7 +25,7 @@ function TopSearch() {
         return (
           <a
             key={index}
-            href={"/"}
+            href={"/productList"}
             className="top-search__main__link"
           >
             <div className="top-search__main__product">

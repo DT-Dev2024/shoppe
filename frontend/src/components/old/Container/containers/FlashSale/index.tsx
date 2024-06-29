@@ -28,7 +28,7 @@ function FlashSale() {
       return (
         <a
           key={index}
-          href={"/"}
+          href={"/productList"}
           className="flash-sale__main__link"
         >
           <img

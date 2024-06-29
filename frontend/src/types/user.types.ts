@@ -13,12 +13,12 @@ export type TUser = {
 };
 
 export type TAddress = {
-  id: string;
+  id?: string;
   address: string;
   name: string;
   phone: string;
   default: boolean;
-  created_at: string;
-  updated_at: string;
-  usersId: string;
+  created_at?: string;
+  updated_at?: string;
+  userId?: string;
 };

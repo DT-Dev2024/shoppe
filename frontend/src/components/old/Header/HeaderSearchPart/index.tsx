@@ -1,17 +1,15 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { KeyboardEvent, RefObject, useEffect, useRef, useState } from "react";
-import { HeaderCartImage, HeaderSearchVoucherHoanXuBanner } from "src/assets/img";
-import { IDataSource } from "src/contexts";
-import { handlePreventDefault, scrollToTop } from "src/helpers";
-import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
-import "./HeaderSearchPart.css";
+import { KeyboardEvent, RefObject, useContext, useRef } from "react";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
-import { path } from "src/constants/path.enum";
 import { useNavigate } from "react-router-dom";
 import { api } from "src/apis";
-import { TExtendedPurchases } from "src/types/purchase.type";
-import purchaseAPI from "src/apis/purchase.api";
-import { orders } from "src/contexts/cart.context";
+import { HeaderCartImage, HeaderSearchVoucherHoanXuBanner } from "src/assets/img";
+import { path } from "src/constants/path.enum";
+import { IDataSource } from "src/contexts";
+import { AuthContextInterface, CartContext } from "src/contexts/cart.context";
+import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
+import "./HeaderSearchPart.css";
+import { formatCurrency } from "src/utils/formatNumber";
 
 function HeaderSearchPart() {
   const historyRef = useRef<HTMLDivElement>(null);
@@ -19,19 +17,9 @@ function HeaderSearchPart() {
   const frameInputRef = useRef<HTMLInputElement>(null);
   const frameBtnRef = useRef();
 
-  const [cart, setCart] = useState<TExtendedPurchases[]>(orders);
-  // useEffect(() => {
-  //   const fetchCartList = async () => {
-  //     try {
-  //       const response = await purchaseAPI.getCart();
-  //       setCart(response.data);
-  //     } catch (error) {
-  //       console.error("fetchCartList", error);
-  //     }
-  //   };
-
-  //   fetchCartList();
-  // }, []);
+  const { extendedPurchases } = useContext(CartContext) as AuthContextInterface;
+  // const { order, setOrder } = useContext(OrderContext);
+  console.log("extendedPurchases", extendedPurchases);
 
   const { headerSearchHistoryKeywordsListInfo, headerSearchHistoryListInfo } = useDataSourceContext() as IDataSource;
   const renderHistoryKeywordsList = (datas: string[]) =>
@@ -173,14 +161,16 @@ function HeaderSearchPart() {
           className="header__cart__link relative"
         >
           <FaShoppingCart className="text-5xl" />
-          <span className="absolute -right-2 -top-0 flex h-10 w-10 items-center justify-center rounded-full border bg-main p-3  text-[14px]">
-            {cart.length}
-          </span>
+          {extendedPurchases.length > 0 && (
+            <span className="absolute -right-2 -top-0 flex h-10 w-10 items-center justify-center rounded-full border bg-main p-3  text-[14px]">
+              {extendedPurchases.length}
+            </span>
+          )}
         </a>
         <div className="header__cart-popup header__cart-popup--no-goods">
-          {cart.length > 0 ? (
+          {extendedPurchases.length > 0 ? (
             <>
-              {cart.map((item, index) => {
+              {extendedPurchases.map((item, index) => {
                 const name = item.product.name.length > 20 ? item.product.name.slice(0, 30) + "..." : item.product.name;
                 return (
                   <div
@@ -198,7 +188,7 @@ function HeaderSearchPart() {
                       <span className="header__cart-popup__item__info__price">{item.product.price}</span>
                     </div> */}
                     <span className="flex-1">{name}</span>
-                    <span className="mr-3 text-main">x{item.product.price}</span>
+                    <span className="mr-3 text-main">{formatCurrency(item.price)}</span>
                   </div>
                 );
               })}

@@ -5,10 +5,13 @@ export type TProduct = {
   rating: number;
   price_before_discount: number;
   quantity: number;
+  sale_price: number;
   sold: number;
   view: number;
   name: string;
   description: string;
+  product_types: TProductType[];
+  product_feeback: TProductFeedback;
   category: {
     id: string;
     name: string;
@@ -18,6 +21,17 @@ export type TProduct = {
   updatedAt: string;
 };
 
+export type TProductFeedback = {
+  id: string;
+  star: number;
+  comment: string;
+  sold: number;
+  productId: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+};
+
 export type TProductList = {
   products: TProduct[];
   pagination: {
@@ -25,6 +39,17 @@ export type TProductList = {
     limit: number;
     page_size: number;
   };
+};
+
+export type TProductType = {
+  id: string;
+  name: string;
+  price: number;
+  store: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  productsId: string;
 };
 
 export type TProductListConfig = {

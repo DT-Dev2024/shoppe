@@ -39,7 +39,7 @@ function Outstanding() {
         <div className="outstanding__hot-selling-products__info">
           <h4 className="outstanding__hot-selling-products__info__heading">{info.heading}</h4>
           <a
-            href={"/"}
+            href={"/productList"}
             className="outstanding__hot-selling-products__info__view-more-btn"
           >
             Xem thêm <MdOutlineArrowForwardIos />
@@ -52,7 +52,7 @@ function Outstanding() {
             return (
               <a
                 key={index}
-                href={"/"}
+                href={"/productList"}
                 className="outstanding__hot-selling-products__item"
               >
                 <img
@@ -80,7 +80,7 @@ function Outstanding() {
         <div className="outstanding__hot-brands__info">
           <h4 className="outstanding__hot-brands__info__heading">{info.heading}</h4>
           <a
-            href={"/"}
+            href={"/productList"}
             className="outstanding__hot-brands__info__view-more-btn"
           >
             Xem thêm <MdOutlineArrowForwardIos />
@@ -93,7 +93,7 @@ function Outstanding() {
             return (
               <a
                 key={index}
-                href={"/"}
+                href={"/productList"}
                 className="outstanding__hot-brands__item"
               >
                 <img

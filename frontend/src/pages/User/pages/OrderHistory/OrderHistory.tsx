@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { ordersStatus, TOrderHisotry } from "src/types/order.type";
+import { OrderContext } from "src/contexts/order.context";
+import { TOrderHisotry } from "src/types/order.type";
 import { formatCurrency } from "src/utils/formatNumber";
 const tabs: string[] = [
   "Tất cả",
@@ -81,7 +82,8 @@ const OrderItem = ({ order }: { order: TOrderHisotry }) => {
 };
 
 const OrderList: React.FC = () => {
-  const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(ordersStatus);
+  const { order } = useContext(OrderContext);
+  const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(order);
 
   const [activeTab, setActiveTab] = React.useState<string>(tabs[0]);
   const [onSearch, setOnSearch] = React.useState<boolean>(false);
@@ -95,9 +97,9 @@ const OrderList: React.FC = () => {
               onClick={() => {
                 setActiveTab(tab);
                 if (index === 0) {
-                  setOrderFilter(ordersStatus);
+                  setOrderFilter(order);
                 } else {
-                  setOrderFilter(ordersStatus.filter((order) => order.status === index));
+                  setOrderFilter(order.filter((order) => order.status === index));
                 }
               }}
               className={`${

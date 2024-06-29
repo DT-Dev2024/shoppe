@@ -1,15 +1,16 @@
 import { TProduct } from "./product.type";
 import { TAddress } from "./user.types";
 
-export type TPurchaseStatus = -1 | 1 | 2 | 3 | 4 | 5;
-export type TPurchaseListStatus = TPurchaseStatus | 0;
+export type TPurchaseListStatus = TOrderStatus | "ALL";
+
+export type TOrderStatus = "CANCELED" | "WAITING" | "DELIVERING" | "WAIT_RECEIVED" | "DELIVERED" | "RETURN";
 
 export type TPurchase = {
   id: string;
   buy_count: number;
   price: number;
   price_before_discount: number;
-  status: TPurchaseStatus;
+  status: TOrderStatus;
   product: TProduct;
   createdAt: string;
   updatedAt: string;
@@ -38,7 +39,16 @@ export type TVoucher = {
 };
 
 export type TCheckout = {
-  orders: TExtendedPurchases[];
-  address: TAddress;
-  payment_method: string;
+  totalPrice: number;
+  userId: string;
+  orderDetails: {
+    productId: string;
+    buy_count: number;
+    status: TOrderStatus;
+    price: number;
+    price_before_discount: number;
+  }[];
+  voucherId: string;
+  addressId: string;
+  paymentMethod: string;
 };
