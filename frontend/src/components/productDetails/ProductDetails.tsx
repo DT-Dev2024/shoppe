@@ -205,11 +205,11 @@ const handleImageClick = (image) => {
         ))}
               </Swiper>
             </div>
-            <div className="block mt-5 lg:col-span-7">
-              <h1 className="text-[24px] font-medium uppercase">{product?.name}</h1>
+            <div className="block mt-8 lg:mt-5 lg:col-span-7">
+              <h1 className="lg:text-[20px] text-[18px] font-medium uppercase">{product?.name}</h1>
               <div className="flex items-center mt-4">
                 <div className="flex items-center">
-                  <span className="mr-1 border-b text-[16px] font-medium text-[rgb(238,77,45)]">
+                  <span className="mr-1 border-b lg:text-[16px] text-[14px] font-medium text-[rgb(238,77,45)]">
                     {product?.product_feeback.star} Sao
                   </span>
                 </div>
@@ -225,7 +225,7 @@ const handleImageClick = (image) => {
                 </div>
               </div>
               <div className="flex items-center p-5 mt-4 bg-gray-50">
-                <div className="text-[32px] font-medium text-[rgb(238,77,45)]">
+                <div className="lg:text-[32px] text-[24px] font-medium text-[rgb(238,77,45)]">
                   {formatCurrency(
                     product?.sale_price > 0
                       ? product?.product_types[0].price * ((100 - product?.sale_price) / 100)
@@ -234,7 +234,7 @@ const handleImageClick = (image) => {
 
                 </div>
                 <div className="ml-4">
-                  <span className="text-[14px] font-medium text-gray-500 line-through">
+                  <span className="lg:text-[14px] text-[13px] font-medium text-gray-500 line-through">
                      {formatCurrency(product?.product_types[0].price || 0)}đ
                   </span>
                 </div>
@@ -242,10 +242,10 @@ const handleImageClick = (image) => {
               <div className="mt-4">
 
                 <div className="flex items-center mt-6 ">
-                <div className="mr-5 max-w-[120px] text-[15px] capitalize text-gray-500">Chính Sách Trả Hàng</div>
+                <div className="mr-5 max-w-[120px] lg:text-[15px] text-[14px] capitalize text-gray-500">Chính Sách Trả Hàng</div>
 
                 <div className="flex items-center mt-0 ">
-                  <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
+                  <div className="ml-4 flex gap-2 lg:text-[15px] text-[14px] text-gray-500">
                     <img
                       src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/b69402e4275f823f7d47.svg"
                       alt=""
@@ -253,7 +253,7 @@ const handleImageClick = (image) => {
                     />
                     Trả hàng 15 ngày
                   </div>
-                  <div className="ml-4 flex gap-2 text-[14px] text-gray-400">
+                  <div className="ml-4 flex gap-2 lg:text-[14px] text-[13px] text-gray-400">
                     Đổi ý miễn phí
                     <img
                       src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/be6f27f93268c0f88ded.svg"
@@ -264,9 +264,9 @@ const handleImageClick = (image) => {
                 </div>
               </div>
               <div className="flex items-center mt-6 ">
-                <div className="mr-5 max-w-[120px] text-[15px] capitalize text-gray-500">Vận Chuyển</div>
+                <div className="mr-5 max-w-[120px] lg:text-[15px] text-[14px] capitalize text-gray-500">Vận Chuyển</div>
                 <div className="flex items-center mt-0 ">
-                  <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
+                  <div className="ml-4 flex gap-2 lg:text-[15px] text-[14px] text-gray-500">
                     <img
                       src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/d9e992985b18d96aab90.png"
                       alt=""
@@ -288,9 +288,9 @@ const handleImageClick = (image) => {
                 </div>
               </div> */}
               <div className="flex items-center mt-6 ">
-                <div className="mr-5 text-[15px] capitalize text-gray-500">Số lượng</div>
-                <div className="text-3xl">
-                  <div className=" ml-16 flex lg:ml-0  lg:mr-[180px]  ">
+                <div className="mr-5 lg:text-[15px] text-[14px] capitalize text-gray-500">Số lượng</div>
+                <div className="text-2xl lg:text-3xl">
+                  <div className=" ml-2 lg:ml-16 flex mr-8  lg:mr-[180px]  ">
                     <button
                       type="button"
                       className="inline-flex items-center justify-center p-1 border border-gray-300 rounded shrink-0"
@@ -315,7 +315,7 @@ const handleImageClick = (image) => {
                   </div>
                 </div>
                 {/* <p className="text-2xl font-medium">20</p> */}
-                <div className="ml-0 text-[15px] text-gray-500">
+                <div className="ml-0 lg:text-[15px] text-[14px] text-gray-500">
                   {/* {product?.sale_price} sản phẩm có sẵn */}
                   13 sản phẩm có sẵn
                 </div>
@@ -324,20 +324,20 @@ const handleImageClick = (image) => {
               <div className="mt-10 sm:flex sm:items-center sm:gap-x-4">
                 <button
                   onClick={handleAddToCart}
-                  className="flex h-[40px] w-full items-center justify-center rounded-sm border border-[rgb(238,77,45)] bg-[rgb(252,222,216)] px-5 capitalize text-[rgb(238,77,45)] shadow-sm hover:bg-[rgb(255,160,142)] sm:w-auto"
+                  className="flex h-[40px] w-full  items-center justify-center rounded-sm border border-[rgb(238,77,45)] bg-[rgb(252,222,216)] px-5 capitalize text-[rgb(238,77,45)] shadow-sm hover:bg-[rgb(255,160,142)] sm:w-auto"
                 >
                   <FaCartArrowDown className="mr-4 text-xl" />
-                  <p className="text-[16px]">Thêm vào giỏ hàng</p>
+                  <p className="lg:text-[16px] text-[14px]">Thêm vào giỏ hàng</p>
                 </button>
                 <button
                   onClick={handleBuyNow}
                   className="mt-5 flex h-[40px] w-full min-w-[5rem] items-center justify-center rounded-sm bg-[rgb(238,77,45)] px-5 capitalize text-white shadow-sm outline-none hover:bg-[rgb(255,117,89)] sm:mt-0 sm:w-auto"
                 >
-                  <p className="text-[16px]">Mua ngay</p>
+                  <p className="lg:text-[16px] text-[14px]">Mua ngay</p>
                 </button>
               </div>
             </div>
-             <div className="flex p-6 mt-6 bg-gray-100 lg:col-span-12">
+             <div className="flex flex-col p-6 mt-6 bg-gray-100 lg:gap-0 gap-y-3 lg:flex-row lg:col-span-12">
               <div className="flex items-center mr-16">
                 <img src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn" alt="Shop Logo" className="rounded-full w-36 h-36" />
                 <div className="ml-4 ">
@@ -350,23 +350,23 @@ const handleImageClick = (image) => {
                 </div>
 
               </div>
-              <div className="grid grid-cols-3 grid-rows-2 gap-x-2 mt-4 ml-10 text-medium lg:text-xl text-[#999999] ">
-                <div>
+              <div className="grid lg:w-full w-[230px] lg:grid-cols-3 grid-cols-1 lg:grid-rows-2 gap-x-2 lg:gap-y-0 gap-y-4 mt-1 lg:mt-4 ml-10 gap-x-10 text-medium lg:text-xl text-[13px] text-[#999999] ">
+                <div className="flex justify-between">
                   Đánh Giá <span className=" ml-10 text-[#D2295C]  ">13k</span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                   Tỉ lệ phản hồi <span className=" ml-10  text-[#D2295C] ">99%</span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                   Tham Gia <span className=" ml-4 text-[#D2295C] ">6 tháng trước</span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                    Sản Phẩm <span className="ml-10 text-[#D2295C] ">15</span>
                 </div>
-                 <div>
-                   Thời gian phản hồi <span className="ml-10 text-[#D2295C] ">trong vài giờ</span>
+                 <div className="flex justify-between">
+                   Thời gian phản hồi <span className="ml-10 text-right text-[#D2295C] ">trong vài giờ</span>
                 </div>
-                <div>
+                <div className="flex justify-between">
                   Người theo dõi <span className="ml-10 text-[#D2295C] ">12,3k</span>
                 </div>
 
@@ -403,8 +403,8 @@ const handleImageClick = (image) => {
             </div>
             <div className="col-span-12 mt-4">
     <div className="p-4 bg-gray-100">
-        <div className="flex justify-between gap-20">
-         <div className="w-[300px]">
+        <div className="flex gap-6 mb-8 lg:gap-20 lg:flex-row flex-coljustify-between">
+         <div className="lg:w-[300px] w-[445px]">
            <h2 className="mb-2 text-2xl font-semibold">Đánh giá sản phẩm</h2>
         <div className="flex items-center">
             <span className="text-3xl font-bold text-red-500">5.0 trên 5</span>
