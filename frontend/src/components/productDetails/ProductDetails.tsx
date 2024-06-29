@@ -16,7 +16,6 @@ const ProductDetails = () => {
   const [product, setProduct] = useState<TProduct>();
   const { id } = useParams();
   const [user, setUser] = useState<TUser>();
-  console.log(reviews);
   useEffect(() => {
     // fetchProductById(id);
     const getProduct = async () => {
@@ -136,7 +135,14 @@ const ProductDetails = () => {
 
 
 
+ const [currentImage, setCurrentImage] = useState(product && product?.image ? product?.image : '');
+
+const handleImageClick = (image) => {
+  setCurrentImage(image);
+};
+
   return (
+
     <div className="py-6 pt-12   bg-gray-200 mt-[11rem]">
       <div className="p-10 bg-white shadow">
         <div className="container">
@@ -144,22 +150,23 @@ const ProductDetails = () => {
 
             <div className="block lg:col-span-5">
               <Swiper
-                // thumbs={{ swiper: thumbSwiper && !thumbSwiper.destroyed ? thumbSwiper : null }}
+
                 spaceBetween={10}
                 grabCursor={true}
                 preventInteractionOnTransition={true}
-                // modules={[Thumbs]}
                 className="transition-all duration-200 hover:shadow-bottom-spread active:pointer-events-none"
               >
-                <SwiperSlide>
+                <SwiperSlide key={currentImage}>
                   <div
                     className="relative w-full overflow-hidden pt-[100%]"
                     onMouseMove={handleZoom}
                     onMouseLeave={handleRemoveZoom}
                   >
                     <img
-                      src={product?.image}
+                     src={ currentImage || product?.image}
                       alt={product?.name}
+                      onMouseMove={handleZoom}
+                      onMouseLeave={handleRemoveZoom}
                       onMouseEnter={handleEnterZoomMode}
                       aria-hidden={true}
                       className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-zoom-in"
@@ -182,15 +189,20 @@ const ProductDetails = () => {
                   },
                 }}
               >
-                <SwiperSlide>
-                  <div className="relative w-full pt-[100%]">
-                    <img
-                      src="https://api-ecom.duthanhduoc.com/images/bbea6d3e-e5b1-494f-ab16-02eece816d50.jpg"
-                      alt="details điện thoại di động"
-                      className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-pointer"
-                    />
-                  </div>
-                </SwiperSlide>
+               {product?.detailImage.map((image, index) => (
+          <SwiperSlide key={index}>
+            <div
+              className="relative w-full pt-[100%]"
+              onClick={() => handleImageClick(image)}
+            >
+              <img
+                src={image}
+                alt={product?.name}
+                className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-pointer"
+              />
+            </div>
+          </SwiperSlide>
+        ))}
               </Swiper>
             </div>
             <div className="block mt-5 lg:col-span-7">
