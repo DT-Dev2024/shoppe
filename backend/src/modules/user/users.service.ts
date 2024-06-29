@@ -60,21 +60,67 @@ export class UsersService {
       return update ? update : null;
     }
 
-    const user = await this.prismaService.users.update({
-      where: { id: address.userId },
-      data: {
-        address: {
-          create: {
+    // check have address
+    const check = await this.prismaService.addresses.findFirst({
+      where: { usersId: address.userId },
+    });
+
+    if (!check) {
+      address.default = true;
+      return await this.prismaService.addresses.create({
+        data: {
+          name: address.name,
+          phone: address.phone,
+          address: address.address,
+          default: address.default,
+          usersId: address.userId,
+        },
+      });
+    } else {
+      if (address.default) {
+        return await this.prismaService.$transaction(async (prisma) => {
+          await prisma.addresses.updateMany({
+            where: { usersId: address.userId },
+            data: { default: false },
+          });
+          return await prisma.addresses.create({
+            data: {
+              name: address.name,
+              phone: address.phone,
+              address: address.address,
+              default: address.default,
+              usersId: address.userId,
+            },
+          });
+        });
+      } else {
+        return await this.prismaService.addresses.create({
+          data: {
             name: address.name,
             phone: address.phone,
             address: address.address,
             default: address.default,
+            usersId: address.userId,
           },
-        },
-      },
-      include: { address: true },
-    });
-    return user ? user : null;
+        });
+      }
+    }
+
+    // const user = await this.prismaService.users.update({
+    //   where: { id: address.userId },
+    //   data: {
+    //     address: {
+    //       create: {
+    //         name: address.name,
+    //         phone: address.phone,
+    //         address: address.address,
+    //         default: address.default,
+    //       },
+    //     },
+    //   },
+    //   include: { address: true },
+    // });
+    // return user ? user : null;
   }
 
   async updateAddress2(addressId: string) {
