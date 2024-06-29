@@ -28,7 +28,7 @@ function Directory() {
           className="directory__main__item"
         >
           <a
-            href={"/"}
+            href={"/productList"}
             className="directory__main__item__link"
           >
             <img
@@ -40,7 +40,7 @@ function Directory() {
           </a>
 
           <a
-            href={"/"}
+            href={"/productList"}
             className="directory__main__item__link"
           >
             <img

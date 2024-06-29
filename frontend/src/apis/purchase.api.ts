@@ -1,24 +1,23 @@
-import { TPurchaseListStatus, TPurchase } from "src/types/purchase.type";
-import { TSuccessApiResponse } from "src/types/utils.types";
-import http from "src/utils/http";
+import { TCheckout } from "src/types/purchase.type";
+import axiosClient from "./config";
+
+export interface Item {
+  productId: string;
+  buy_count: number;
+}
+
+export interface AddCart {
+  userId: string;
+  cartItems: Item[];
+}
 
 const purchaseAPI = {
-  addToCart: (body: { product_id: string; buy_count: number }) =>
-    http.post<TSuccessApiResponse<TPurchase>>("/purchases/add-to-cart", body),
-  getCart: (params: { status: TPurchaseListStatus }) =>
-    http.get<TSuccessApiResponse<TPurchase[]>>("/purchases", {
-      params: {
-        status: params.status,
-      },
-    }),
-  buyProducts: (body: { product_id: string; buy_count: number }[]) =>
-    http.post<TSuccessApiResponse<TPurchase[]>>("/purchases/buy-products", body),
-  updateCart: (body: { product_id: string; buy_count: number }) =>
-    http.put<TPurchase>("/purchases/update-purchase", body),
-  deletePurchaseFromCart: (purchaseIds: string[]) =>
-    http.delete<TSuccessApiResponse<{ deleted_count: number }>>("/purchases", {
-      data: purchaseIds,
-    }),
+  addToCart: (body: AddCart) => axiosClient.post("/order/add-to-cart", body),
+  getCart: (userId: string) => axiosClient.get("/order/cart/" + userId),
+  updateCart: (body: { productid: string; buy_count: number }) => axiosClient.put("/order/update-cart", body),
+  deleteCart: (userId: string, productids: string[]) =>
+    axiosClient.delete(`/order/delete-cart`, { data: { userId, productids } }),
+  checkout: (body: TCheckout) => axiosClient.post("/order/checkout", body),
 };
 
 export default purchaseAPI;

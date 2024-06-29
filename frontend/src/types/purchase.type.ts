@@ -1,14 +1,16 @@
 import { TProduct } from "./product.type";
+import { TAddress } from "./user.types";
 
-export type TPurchaseStatus = -1 | 1 | 2 | 3 | 4 | 5;
-export type TPurchaseListStatus = TPurchaseStatus | 0;
+export type TPurchaseListStatus = TOrderStatus | "ALL";
+
+export type TOrderStatus = "CANCELED" | "WAITING" | "DELIVERING" | "WAIT_RECEIVED" | "DELIVERED" | "RETURN";
 
 export type TPurchase = {
-  _id: string;
+  id: string;
   buy_count: number;
   price: number;
   price_before_discount: number;
-  status: TPurchaseStatus;
+  status: TOrderStatus;
   product: TProduct;
   createdAt: string;
   updatedAt: string;
@@ -23,7 +25,7 @@ export type TVoucherType = "SHOP" | "USER";
 export type TDiscountType = "PERCENTAGE" | "FIXED";
 
 export type TVoucher = {
-  _id: string;
+  id: string;
   type: TVoucherType;
   code: string;
   discount: number;
@@ -34,4 +36,19 @@ export type TVoucher = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+};
+
+export type TCheckout = {
+  totalPrice: number;
+  userId: string;
+  orderDetails: {
+    productId: string;
+    buy_count: number;
+    status: TOrderStatus;
+    price: number;
+    price_before_discount: number;
+  }[];
+  voucherId: string;
+  addressId: string;
+  paymentMethod: string;
 };

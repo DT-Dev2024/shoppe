@@ -1,13 +1,10 @@
 import { TProductListConfig, TProductList, TProduct } from "src/types/product.type";
 import { TSuccessApiResponse } from "src/types/utils.types";
-import http from "src/utils/http";
+import axiosClient from "./config";
 
 const productApi = {
-  getProducts: (params: TProductListConfig) =>
-    http.get<TSuccessApiResponse<TProductList>>("/products", {
-      params,
-    }),
-  getProductById: (productId: string) => http.get<TSuccessApiResponse<TProduct>>(`/products/${productId}`),
+  getProducts: () => axiosClient.get("/product"),
+  getProductById: (productId: string) => axiosClient.get(`/product/${productId}`),
 };
 
 export default productApi;
