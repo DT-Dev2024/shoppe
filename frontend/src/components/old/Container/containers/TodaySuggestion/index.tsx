@@ -109,7 +109,7 @@ function TodaySuggestion() {
             >
               <a
                 key={index2}
-                href={"/"}
+                href={"/productList"}
                 className="today-suggestion__main-product"
               >
                 <div>
@@ -193,7 +193,7 @@ function TodaySuggestion() {
               className="today-suggestion__main-item"
             >
               <a
-                href={"/"}
+                href={"/productList"}
                 className="today-suggestion__main-product"
               >
                 <div>

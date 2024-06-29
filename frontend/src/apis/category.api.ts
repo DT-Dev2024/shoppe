@@ -1,9 +1,9 @@
 import { TCategory } from "src/types/category.type";
 import { TSuccessApiResponse } from "src/types/utils.types";
-import http from "src/utils/http";
+import axiosClient from "./config";
 
 const categoryApi = {
-  getCategories: () => http.get<TSuccessApiResponse<TCategory[]>>("/categories"),
+  getCategories: () => axiosClient.get<TSuccessApiResponse<TCategory[]>>("/categories"),
 };
 
 export default categoryApi;

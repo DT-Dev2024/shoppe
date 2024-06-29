@@ -20,6 +20,8 @@ import { CiCircleQuestion } from "react-icons/ci";
 import { FormSubmit } from "src/helpers";
 import { OrderContext } from "src/contexts/order.context";
 import { getAllVouchers } from "src/apis/voucher";
+import { TUser } from "src/types/user.types";
+import purchaseAPI from "src/apis/purchase.api";
 type Quantity = Record<string, { quantity: number | string }>;
 
 interface CartProps {
@@ -33,8 +35,16 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const [vouchers, setVouchers] = useState<TVoucher[]>([]);
+  const [user, setUser] = useState<TUser>();
+
   useEffect(() => {
     // setVouchers(voucherMock);
+
+    const user = localStorage.getItem("user");
+    if (user) {
+      const parsedUser: TUser = JSON.parse(user);
+      setUser(parsedUser);
+    }
     const vouchers = async () => {
       try {
         const response = await getAllVouchers();
@@ -51,20 +61,36 @@ const Cart = () => {
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases]);
   const checkedPurchasesCount = checkedPurchases.length;
   const totalCheckedPurchasesPrice = useMemo(
-    () => checkedPurchases.reduce((prev, current) => prev + current.product.price * current.buy_count, 0),
+    () =>
+      checkedPurchases.reduce((prev, current) => {
+        const price =
+          current.product.sale_price > 0
+            ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
+            : current.product.product_types[0].price;
+        return prev + price * current.buy_count;
+      }, 0),
     [checkedPurchases],
   );
   const totalSavedPrice = useMemo(
     () =>
-      checkedPurchases.reduce(
-        (prev, current) => prev + (current.price_before_discount - current.product.price) * current.buy_count,
-        0,
-      ),
+      checkedPurchases.reduce((prev, current) => {
+        const price_before_discount = current.product.sale_price >= 0 ? current.product.product_types[0].price : 0;
+        const price =
+          current.product.sale_price > 0
+            ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
+            : current.product.product_types[0].price;
+        return prev + (price_before_discount - price) * current.buy_count;
+      }, 0),
     [checkedPurchases],
   );
 
   const totalPriceBeforeDiscount = useMemo(
-    () => checkedPurchases.reduce((prev, current) => prev + current.price_before_discount * current.buy_count, 0),
+    () =>
+      checkedPurchases.reduce((prev, current) => {
+        const price_before_discount = current.product.sale_price >= 0 ? current.product.product_types[0].price : 0;
+
+        return prev + price_before_discount * current.buy_count;
+      }, 0),
     [checkedPurchases],
   );
   const [quantities, setQuantities] = useState<Quantity>({});
@@ -100,7 +126,7 @@ const Cart = () => {
 
     setExtendedPurchases(
       produce((draft) => {
-        const index = draft.findIndex((purchase) => purchase._id === id);
+        const index = draft.findIndex((purchase) => purchase.id === id);
         if (index !== -1) {
           // Ensure the purchase is checked before updating
           draft[index].buy_count = newQuantity;
@@ -189,6 +215,21 @@ const Cart = () => {
   };
 
   const ModalRemoveCart = () => {
+    const deleteCartIems = async () => {
+      if (user) {
+        const data = {
+          userId: user.id,
+          productIds: checkedPurchases.map((purchase) => purchase.product.id),
+        };
+
+        const response = await purchaseAPI.deleteCart(data.userId, data.productIds);
+        if (response.status === 200) {
+          const newPurchases = extendedPurchases.filter((purchase) => !data.productIds.includes(purchase.product.id));
+          setExtendedPurchases(newPurchases);
+          setIsModalDeleteCartVisible(false);
+        }
+      }
+    };
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[500px] rounded-lg bg-white px-[40px] pb-[24px] pt-[44px] text-black">
@@ -201,9 +242,7 @@ const Cart = () => {
               Trở lại
             </button>
             <button
-              onClick={() => {
-                // delete to server
-              }}
+              onClick={deleteCartIems}
               className="mx-7 bg-white px-10 py-4 text-3xl "
             >
               Có
@@ -277,11 +316,10 @@ const Cart = () => {
             >
               {vouchers.map((voucher) => (
                 <li
-                  key={voucher._id}
+                  key={voucher.id}
                   className={`border-b  border-gray-300 p-4 shadow-md`}
                 >
-                  <div className="relative flex cursor-not-allowed items-center">
-                    <div className="absolute left-0 top-0 h-full w-full bg-gray-100 bg-opacity-50"></div>
+                  <div className="relative flex items-center">
                     <div className="h-40 w-40 bg-green-600">
                       <img
                         src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
@@ -298,9 +336,10 @@ const Cart = () => {
                     <input
                       type="radio"
                       name="selectedVoucher"
-                      checked={selectedVoucher?._id === voucher._id}
+                      checked={selectedVoucher?.id === voucher.id}
                       onChange={(e) => {
                         e.preventDefault(); // Prevent the default action
+                        setSelectedVoucher(voucher);
                       }}
                       className="ml-4"
                     />
@@ -322,9 +361,7 @@ const Cart = () => {
               Trở lại
             </button>
             <button
-              onClick={() => {
-                // delete to server
-              }}
+              onClick={() => setIsModalVoucherVisible(false)}
               className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
             >
               OK
@@ -342,10 +379,10 @@ const Cart = () => {
       return;
     }
 
-    setOrder(checkedPurchases);
-
     if (order) {
-      navigate(path.checkout);
+      navigate(path.checkout, {
+        state: checkedPurchases,
+      });
     }
   };
 
@@ -407,124 +444,132 @@ const Cart = () => {
             </div>
             {extendedPurchases.length > 0 && (
               <div className="my-3 rounded-sm shadow ">
-                {extendedPurchases.map((purchase, index) => (
-                  <div
-                    key={purchase._id}
-                    className="mb-5 rounded-sm bg-white text-center text-2xl first:mt-0"
-                  >
-                    <div className="flex items-center justify-between border-b px-16 py-5">
-                      <h5 className="flex space-x-2 text-3xl font-bold">
-                        <span>{purchase.product.category.name}</span>
-                        <svg
-                          viewBox="0 0 16 16"
-                          className="w-6"
-                        >
-                          <g
-                            fillRule="evenodd"
-                            fill="#f94f2f"
+                {extendedPurchases.map((purchase, index) => {
+                  const price =
+                    purchase.product.sale_price > 0
+                      ? purchase.product.product_types[0].price * ((100 - purchase.product.sale_price) / 100)
+                      : purchase.product.product_types[0].price;
+                  const price_before_discount =
+                    purchase.product.sale_price > 0 ? purchase.product.product_types[0].price : 0;
+                  return (
+                    <div
+                      key={purchase.id}
+                      className="mb-5 rounded-sm bg-white text-center text-2xl first:mt-0"
+                    >
+                      <div className="flex items-center justify-between border-b px-16 py-5">
+                        <h5 className="flex space-x-2 text-3xl font-bold">
+                          {/* <span>{purchase.product.category.name}</span> */}
+                          <svg
+                            viewBox="0 0 16 16"
+                            className="w-6"
                           >
-                            <path d="M15 4a1 1 0 01.993.883L16 5v9.932a.5.5 0 01-.82.385l-2.061-1.718-8.199.001a1 1 0 01-.98-.8l-.016-.117-.108-1.284 8.058.001a2 2 0 001.976-1.692l.018-.155L14.293 4H15zm-2.48-4a1 1 0 011 1l-.003.077-.646 8.4a1 1 0 01-.997.923l-8.994-.001-2.06 1.718a.5.5 0 01-.233.108l-.087.007a.5.5 0 01-.492-.41L0 11.732V1a1 1 0 011-1h11.52zM3.646 4.246a.5.5 0 000 .708c.305.304.694.526 1.146.682A4.936 4.936 0 006.4 5.9c.464 0 1.02-.062 1.608-.264.452-.156.841-.378 1.146-.682a.5.5 0 10-.708-.708c-.185.186-.445.335-.764.444a4.004 4.004 0 01-2.564 0c-.319-.11-.579-.258-.764-.444a.5.5 0 00-.708 0z" />
-                          </g>
-                        </svg>
-                      </h5>
-                      <p className="mr-8 text-xl font-bold text-orange-600">Trạng thái</p>
-                    </div>
-                    <div className="mt-3 grid px-6 py-6 lg:grid-cols-12 lg:px-16 lg:py-10">
-                      <div className="col-span-6 flex items-center gap-x-3">
-                        <input
-                          type="checkbox"
-                          className="h-6 w-6 accent-primary"
-                          checked={purchase.checked}
-                          onChange={handleSelectProduct(index)}
-                        />
-
-                        <div className="flex items-center  space-x-2 text-left lg:max-w-[40rem]">
-                          <img
-                            alt={purchase.product.name}
-                            src={purchase.product.image}
-                            className="mb-8 w-24 object-cover lg:mb-0 lg:h-36 lg:w-36 "
+                            <g
+                              fillRule="evenodd"
+                              fill="#f94f2f"
+                            >
+                              <path d="M15 4a1 1 0 01.993.883L16 5v9.932a.5.5 0 01-.82.385l-2.061-1.718-8.199.001a1 1 0 01-.98-.8l-.016-.117-.108-1.284 8.058.001a2 2 0 001.976-1.692l.018-.155L14.293 4H15zm-2.48-4a1 1 0 011 1l-.003.077-.646 8.4a1 1 0 01-.997.923l-8.994-.001-2.06 1.718a.5.5 0 01-.233.108l-.087.007a.5.5 0 01-.492-.41L0 11.732V1a1 1 0 011-1h11.52zM3.646 4.246a.5.5 0 000 .708c.305.304.694.526 1.146.682A4.936 4.936 0 006.4 5.9c.464 0 1.02-.062 1.608-.264.452-.156.841-.378 1.146-.682a.5.5 0 10-.708-.708c-.185.186-.445.335-.764.444a4.004 4.004 0 01-2.564 0c-.319-.11-.579-.258-.764-.444a.5.5 0 00-.708 0z" />
+                            </g>
+                          </svg>
+                        </h5>
+                        <p className="mr-8 text-xl font-bold text-orange-600">Trạng thái</p>
+                      </div>
+                      <div className="mt-3 grid px-6 py-6 lg:grid-cols-12 lg:px-16 lg:py-10">
+                        <div className="col-span-6 flex items-center gap-x-3">
+                          <input
+                            type="checkbox"
+                            className="h-6 w-6 accent-primary"
+                            checked={purchase.checked}
+                            onChange={handleSelectProduct(index)}
                           />
-                          <div className="mb-6 lg:mb-0">
-                            <p className="mb-2 ml-4 text-xl lg:mb-4 lg:ml-0 lg:text-2xl ">{purchase.product.name}</p>
-                            <span className="ml-4 border border-main p-2 text-base font-thin text-main lg:ml-0">
-                              Đổi ý miễn phí 15 ngày
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-6 lg:col-span-6">
-                        <div className=" grid grid-cols-2 items-center gap-y-4 lg:grid-cols-5 lg:grid-rows-1 ">
-                          <div className=" flex items-center justify-center gap-x-3 lg:col-span-2 lg:ml-10 lg:flex lg:justify-start">
-                            <span className="text-gray-300 line-through">
-                              ₫{formatCurrency(purchase.product.price_before_discount)}
-                            </span>
-                            <span className="hidden lg:block">₫{formatCurrency(purchase.product.price)}</span>
-                            <span className="block text-primary lg:hidden">
-                              ₫{formatCurrency(purchase.product.price)}
-                            </span>
-                          </div>
 
-                          <div className=" ml-16 flex lg:ml-0  lg:mr-[180px]  ">
-                            <button
-                              type="button"
-                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
-                              onClick={() => {
-                                handleChangeQuantity(-1, purchase.product._id, purchase);
-                              }}
-                            >
-                              <FaMinus />
-                            </button>
-                            <input
-                              className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0"
-                              value={quantities[purchase.product._id]?.quantity || purchase.buy_count}
-                              onChange={(e) => {
-                                if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
-                                  toast.error("Please enter a number");
-                                  return;
-                                }
-                                const newQuantity = e.target.value ? parseInt(e.target.value) : "";
-                                setQuantities((prevQuantities) => ({
-                                  ...prevQuantities,
-                                  [purchase.product._id]: {
-                                    quantity: newQuantity,
-                                  },
-                                }));
-                              }}
+                          <div className="flex items-center  space-x-2 text-left lg:max-w-[40rem]">
+                            <img
+                              alt={purchase.product.name}
+                              src={purchase.product.image}
+                              className="mb-8 w-24 object-cover lg:mb-0 lg:h-36 lg:w-36 "
                             />
-                            <button
-                              type="button"
-                              className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
-                              onClick={() => {
-                                handleChangeQuantity(1, purchase.product._id, purchase);
-                              }}
-                            >
-                              <FaPlus />
-                            </button>
+                            <div className="mb-6 lg:mb-0">
+                              <p className="mb-2 ml-4 text-xl lg:mb-4 lg:ml-0 lg:text-2xl ">{purchase.product.name}</p>
+                              <span className="ml-4 border border-main p-2 text-base font-thin text-main lg:ml-0">
+                                Đổi ý miễn phí 15 ngày
+                              </span>
+                            </div>
                           </div>
-                          <div className=" lg:block">
-                            <span className="text-primary">
-                              ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
-                            </span>
-                          </div>
-                          <div className=" mr-6  lg:ml-0 lg:block">
-                            <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
+                        </div>
+                        <div className="col-span-6 lg:col-span-6">
+                          <div className=" grid grid-cols-2 items-center gap-y-4 lg:grid-cols-5 lg:grid-rows-1 ">
+                            <div className=" flex items-center justify-center gap-x-3 lg:col-span-2 lg:ml-10 lg:flex lg:justify-start">
+                              {price_before_discount > 0 && (
+                                <span className="text-gray-300 line-through">
+                                  ₫{formatCurrency(price_before_discount)}
+                                </span>
+                              )}
+                              <span className="hidden lg:block">₫{formatCurrency(price)}</span>
+                              <span className="block text-primary lg:hidden">
+                                ₫{formatCurrency(purchase.product.price)}
+                              </span>
+                            </div>
+
+                            <div className=" ml-16 flex lg:ml-0  lg:mr-[180px]  ">
+                              <button
+                                type="button"
+                                className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                                onClick={() => {
+                                  handleChangeQuantity(-1, purchase.product.id, purchase);
+                                }}
+                              >
+                                <FaMinus />
+                              </button>
+                              <input
+                                className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0"
+                                value={quantities[purchase.product.id]?.quantity || purchase.buy_count}
+                                onChange={(e) => {
+                                  if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
+                                    toast.error("Please enter a number");
+                                    return;
+                                  }
+                                  const newQuantity = e.target.value ? parseInt(e.target.value) : "";
+                                  setQuantities((prevQuantities) => ({
+                                    ...prevQuantities,
+                                    [purchase.product.id]: {
+                                      quantity: newQuantity,
+                                    },
+                                  }));
+                                }}
+                              />
+                              <button
+                                type="button"
+                                className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                                onClick={() => {
+                                  handleChangeQuantity(1, purchase.product.id, purchase);
+                                }}
+                              >
+                                <FaPlus />
+                              </button>
+                            </div>
+                            <div className=" lg:block">
+                              <span className="text-primary">₫{formatCurrency(price * purchase.buy_count)}</span>
+                            </div>
+                            <div className=" mr-6  lg:ml-0 lg:block">
+                              <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-6 py-6 shadow lg:px-16 lg:py-8">
+                        <img
+                          src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
+                          alt=""
+                          width={30}
+                        />
+                        <span className=" text-left text-[12px] lg:text-[14px]">
+                          Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu
+                          ₫1.000.000
+                        </span>
+                      </div>
                     </div>
-                    <div className="mb-4 flex items-center space-x-3 rounded-sm border border-t bg-white p-3 px-6 py-6 shadow lg:px-16 lg:py-8">
-                      <img
-                        src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png"
-                        alt=""
-                        width={30}
-                      />
-                      <span className=" text-left text-[12px] lg:text-[14px]">
-                        Giảm ₫300.000 phí vận chuyển đơn tối thiểu ₫0; Giảm ₫500.000 phí vận chuyển đơn tối thiểu
-                        ₫1.000.000
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
             <div className="sticky bottom-0 z-10 mt-8 rounded-sm border border-gray-100 bg-white p-5 pt-0 text-3xl shadow-lg lg:flex-row lg:items-center">

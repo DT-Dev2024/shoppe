@@ -103,7 +103,7 @@ function Modal() {
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://play.google.com/store/apps/details?id=com.shopee.vn&referrer=af_tranid%3D48q29QFeIlcFvhfPK1EQVQ%26pid%3Dweb_referral%26af_web_id%3Dbdd50c1b-f561-4699-aacb-46cef157b1b6-c"
+                  href="https://play.google.com/store/apps/details?id=com.shopee.vn&referrer=af_tranid%3D48q29QFeIlcFvhfPK1EQVQ%26pid%3Dweb_referral%26af_webid%3Dbdd50c1b-f561-4699-aacb-46cef157b1b6-c"
                   className="gift-banner__popup__main-left-part__link"
                 >
                   <img

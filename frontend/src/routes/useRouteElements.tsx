@@ -64,7 +64,7 @@ export default function useRoutesElement() {
           ),
         },
         {
-          path: path.productDetail,
+          path: `${path.productDetail}/:id`,
           element: (
             <Suspense>
               <ProductDetails />

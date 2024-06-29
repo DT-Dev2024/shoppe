@@ -237,8 +237,6 @@ function DataSourceContextProvider({ children }: { children: React.ReactNode }) 
       const { data: data3 } = await axios.get(API3_URL);
       const response = await api.get(`${API}/ui`);
 
-      const historyListInfo = await api.get("/");
-
       // Format data
       const resultData1 = [...data1, ...data2, ...data3];
       const resultData2 = {

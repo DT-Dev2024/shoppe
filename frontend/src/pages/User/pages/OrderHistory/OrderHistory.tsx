@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { ordersStatus, TOrderHisotry } from "src/types/order.type";
+import { OrderContext } from "src/contexts/order.context";
+import { TOrderHisotry } from "src/types/order.type";
 import { formatCurrency } from "src/utils/formatNumber";
 const tabs: string[] = [
   "Tất cả",
@@ -13,36 +14,35 @@ const tabs: string[] = [
 ];
 
 const OrderItem = ({ order }: { order: TOrderHisotry }) => {
-  //convert to vietnamese currency
   const { product } = order;
 
   return (
-    <div className="p-4 mb-4 bg-white border rounded-lg shadow-md">
-      <div className="flex items-center justify-between pb-2 border-b">
+    <div className="mb-4 rounded-lg border bg-white p-4 shadow-md">
+      <div className="flex items-center justify-between border-b pb-2">
         <h5 className="text-2xl font-bold">{product.category.name}</h5>
-        <p className="text-xl font-bold text-orange-600 uppercase">{tabs[order.status]}</p>
+        <p className="text-xl font-bold uppercase text-orange-600">{tabs[order.status]}</p>
       </div>
 
-      <div className="flex items-center justify-between pb-6 mt-3 border-b lg:pb-10">
+      <div className="mt-3 flex items-center justify-between border-b pb-6 lg:pb-10">
         <div className="flex">
           <img
-            className="object-cover w-32 h-40 rounded-lg"
+            className="h-40 w-32 rounded-lg object-cover"
             src={product.image}
             alt={product.name}
           />
-          <div className="space-y-6 p-2 lg:text-[16px] text-[14px]   text-gray-600">
-            <p className="leading-snug line-clamp-2 lg:w-full w-[155px]">{product.name}</p>
+          <div className="space-y-6 p-2 text-[14px] text-gray-600   lg:text-[16px]">
+            <p className="line-clamp-2 w-[155px] leading-snug lg:w-full">{product.name}</p>
             <p>Phân loại: </p>
             <p>x{order.buy_count}</p>
           </div>
         </div>
-        <div className="text-right leading-snug lg:text-[16px] text-[14px]">
+        <div className="text-right text-[14px] leading-snug lg:text-[16px]">
           <span className="text-gray-500 line-through">₫{formatCurrency(product.price)}</span>
           <span className="font-bold text-orange-600"> ₫{formatCurrency(product.price_before_discount)}</span>
         </div>
       </div>
-      <div className="mt-2 lg:mt-4 flex justify-end text-[14px]">
-        <span className="flex my-4 mr-2 text-3xl">
+      <div className="mt-2 flex justify-end text-[14px] lg:mt-4">
+        <span className="my-4 mr-2 flex text-3xl">
           <svg
             width={16}
             height={17}
@@ -64,57 +64,62 @@ const OrderItem = ({ order }: { order: TOrderHisotry }) => {
               fill="#fff"
             />
           </svg>
-          <span className="ml-4 lg:text-[16px] text-[14px]">Thành tiền:</span> <span className="ml-2  text-[16px] text-orange-600">₫{formatCurrency(product.price_before_discount)}</span>
+          <span className="ml-4 text-[14px] lg:text-[16px]">Thành tiền:</span>{" "}
+          <span className="ml-2  text-[16px] text-orange-600">₫{formatCurrency(product.price_before_discount)}</span>
         </span>
       </div>
 
-      <div className="mt-2 lg:mt-4 flex justify-end text-[14px]">
-        <button className="lg:px-16 px-6 py-5 mr-4 lg:text-[16px] text-[14px] text-white bg-orange-600 rounded-lg">Mua Lại</button>
-        <button className="px-4 py-2 lg:text-[16px] text-[14px] text-gray-700 bg-white border rounded-lg">Liên Hệ Người Bán</button>
+      <div className="mt-2 flex justify-end text-[14px] lg:mt-4">
+        <button className="mr-4 rounded-lg bg-orange-600 px-6 py-5 text-[14px] text-white lg:px-16 lg:text-[16px]">
+          Mua Lại
+        </button>
+        <button className="rounded-lg border bg-white px-4 py-2 text-[14px] text-gray-700 lg:text-[16px]">
+          Liên Hệ Người Bán
+        </button>
       </div>
     </div>
   );
 };
 
 const OrderList: React.FC = () => {
-  const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(ordersStatus);
+  const { order } = useContext(OrderContext);
+  const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(order);
 
   const [activeTab, setActiveTab] = React.useState<string>(tabs[0]);
   const [onSearch, setOnSearch] = React.useState<boolean>(false);
   return (
     <div>
       <div className="flex justify-center">
-       <div className="grid w-full grid-cols-1 grid-cols-2 gap-2 lg:grid-cols-7">
-  {tabs.map((tab, index) => (
-    <button
-      key={tab}
-      onClick={() => {
-        setActiveTab(tab);
-        if (index === 0) {
-          setOrderFilter(ordersStatus);
-        } else {
-          setOrderFilter(ordersStatus.filter((order) => order.status === index));
-        }
-      }}
-      className={`${
-        activeTab === tab ? "border-b border-b-orange-600 text-orange-600" : ""
-      } bg-white py-4 text-[16px]`}
-    >
-      {tab}
-    </button>
-  ))}
-</div>
-
+        <div className="grid w-full grid-cols-1 grid-cols-2 gap-2 lg:grid-cols-7">
+          {tabs.map((tab, index) => (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                if (index === 0) {
+                  setOrderFilter(order);
+                } else {
+                  setOrderFilter(order.filter((order) => order.status === index));
+                }
+              }}
+              className={`${
+                activeTab === tab ? "border-b border-b-orange-600 text-orange-600" : ""
+              } bg-white py-4 text-[16px]`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
       <form
         action=""
-        className="flex items-center w-full p-4 mt-4 bg-gray-100 border rounded"
+        className="mt-4 flex w-full items-center rounded border bg-gray-100 p-4"
       >
         <CiSearch className={`text-3xl ${onSearch ? "font-bold text-black" : ""}`} />
 
         <input
           type="text"
-          className="w-full pl-4 text-xl bg-transparent focus:outline-none"
+          className="w-full bg-transparent pl-4 text-xl focus:outline-none"
           placeholder="Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm"
           onFocus={() => setOnSearch(true)}
           onBlur={() => setOnSearch(false)}
@@ -124,7 +129,7 @@ const OrderList: React.FC = () => {
         {orderFilter.length > 0 ? (
           orderFilter.map((order) => (
             <OrderItem
-              key={order._id}
+              key={order.id}
               order={order}
             />
           ))
