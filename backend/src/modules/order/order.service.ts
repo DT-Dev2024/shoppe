@@ -112,6 +112,16 @@ export class OrderService {
   }
 
   async addToCart(cart: CreateCartDto) {
+    const product = await this.prismaService.products.findFirst({
+      where: {
+        id: cart.cartItems[0].productId,
+      },
+      include: {
+        product_types: true,
+      },
+    });
+    cart.cartItems[0].price = product.product_types[0].price -
+      product.product_types[0].price * (product.sale_price / 100);
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
         const findCart = await prisma.cart.findFirst({
@@ -159,7 +169,15 @@ export class OrderService {
         userId,
       },
       include: {
-        cart_items: true,
+        cart_items: {
+          include: {
+            product: {
+              include: {
+                product_types: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -184,9 +202,6 @@ export class OrderService {
           cartId: cart.id,
           productId: updateCart.cartItem.productId,
           buy_count: updateCart.cartItem.buy_count,
-          price: updateCart.cartItem.price,
-          price_before_discount: updateCart.cartItem.price_before_discount,
-          status: updateCart.cartItem.status,
         },
       });
     }
@@ -194,10 +209,8 @@ export class OrderService {
     await this.prismaService.cart_item.update({
       where: { id: existingCartItem.id },
       data: {
+        productId: updateCart.cartItem.productId,
         buy_count: updateCart.cartItem.buy_count,
-        price: updateCart.cartItem.price,
-        price_before_discount: updateCart.cartItem.price_before_discount,
-        status: updateCart.cartItem.status,
       },
     });
 
@@ -229,5 +242,13 @@ export class OrderService {
     });
 
     return deletedCartItems;
+  }
+
+  async getOrdersHistory(userId: string) {
+    return await this.prismaService.orders.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 }

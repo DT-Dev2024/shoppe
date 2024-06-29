@@ -91,7 +91,7 @@ export class OrderController {
   @Get('payment')
   @ApiBearerAuth('token')
   async payment() {
-    return ApiResponse.buildCollectionApiResponse(
+    return ApiResponse.buildApiResponse(
       await this.orderService.getPayment(),
       200,
       'Orders retrieved successfully',
@@ -101,7 +101,7 @@ export class OrderController {
   @Post('payment')
   @ApiBearerAuth('token')
   async paymentMethod(@Body() payment: CreatePaymentDto) {
-    return ApiResponse.buildCollectionApiResponse(
+    return ApiResponse.buildApiResponse(
       await this.orderService.UpdatePayment(payment),
       200,
       'Orders retrieved successfully',
@@ -110,7 +110,7 @@ export class OrderController {
 
   @Post('add-to-cart')
   @ApiBearerAuth('token')
-  async addToCart(cart: CreateCartDto) {
+  async addToCart(@Body() cart: CreateCartDto) {
     const result = await this.orderService.addToCart(cart);
     if (result) {
       return ApiResponse.buildApiResponse(
@@ -141,7 +141,7 @@ export class OrderController {
   @Get('cart/:userId')
   @ApiBearerAuth('token')
   async getCart(@Param('userId') userId: string) {
-    return ApiResponse.buildCollectionApiResponse(
+    return ApiResponse.buildApiResponse(
       await this.orderService.getCart(userId),
       200,
       'Cart retrieved successfully',
@@ -151,10 +151,20 @@ export class OrderController {
   @Delete('cart')
   @ApiBearerAuth('token')
   async deleteCart(deleteCart: DeleteCartDto) {
-    return ApiResponse.buildCollectionApiResponse(
+    return ApiResponse.buildApiResponse(
       await this.orderService.deleteCart(deleteCart),
       200,
       'Cart deleted successfully',
+    );
+  }
+
+  @Get('order-history/:userId')
+  @ApiBearerAuth('token')
+  async getOrdersHistory(@Param('userId') userId: string) {
+    return ApiResponse.buildApiResponse(
+      await this.orderService.getOrdersHistory(userId),
+      200,
+      'Cart retrieved successfully',
     );
   }
 }

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SignInDto } from './dto/sign-in.dto';
+import { Roles } from 'src/utils/constants';
 
 @Injectable()
 export class AuthService {
@@ -52,5 +54,23 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async adminLogin(params: SignInDto) {
+    const user = await this.prismaService.users.findUnique({
+      where: { phone: params.phone },
+      include: { address: true, orders: true },
+    });
+
+    if (user.roles == Roles.ADMIN) {
+      const payload = { username: user.phone, sub: user.id };
+      delete user.password;
+      return {
+        user: user,
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    }
+
+    return null;
   }
 }
