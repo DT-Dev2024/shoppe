@@ -120,7 +120,7 @@ export class OrderService {
         product_types: true,
       },
     });
-    cart.cartItems[0].price =
+    cart.cartItems[0].price = product.product_types[0].price -
       product.product_types[0].price * (product.sale_price / 100);
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
