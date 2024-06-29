@@ -2,7 +2,6 @@ import { HttpStatus } from '@nestjs/common';
 
 export class ApiResponse {
   static buildApiResponse(data: any, status: HttpStatus, message: string) {
-    console.log(data);
     return {
       status,
       message,

@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, MouseEvent } from "react";
 
 export type FormSubmit = FormEvent<HTMLFormElement>;
-export type InputChange = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLSelectElement>;
+export type InputChange = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
 export const updateWebsiteTitle = (title: string) => {
   document.title = title;

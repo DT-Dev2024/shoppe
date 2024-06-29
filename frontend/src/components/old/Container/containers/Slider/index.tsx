@@ -60,7 +60,7 @@ function Slider() {
       return (
         <a
           key={index}
-          href={"/"}
+          href={"/productList"}
           className="slider__favourite-selections__link"
         >
           <img

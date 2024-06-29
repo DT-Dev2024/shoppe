@@ -88,7 +88,7 @@ function ShopeeMall() {
           return id !== shopeeMallMainProductListItemsLength ? (
             <a
               key={index}
-              href={"/"}
+              href={"/productList"}
               className="shopee-mall__main__product-item__link"
             >
               <img

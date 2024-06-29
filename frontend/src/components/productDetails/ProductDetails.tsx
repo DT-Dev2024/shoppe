@@ -1,13 +1,36 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./ProductDetails.css";
 // import { Helmet } from "react-helmet-async";
-import { useState } from "react";
-import { FaCartArrowDown } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaCartArrowDown, FaMinus, FaPlus } from "react-icons/fa";
 import QuantityController from "./QuantityControllerProps/QuantityControllerProps";
+import { useNavigate, useParams } from "react-router-dom";
+import productApi from "src/apis/product.api";
+import { TProduct } from "src/types/product.type";
+import { formatCurrency } from "src/utils/formatNumber";
+import purchaseAPI, { AddCart } from "src/apis/purchase.api";
+import { TUser } from "src/types/user.types";
+import { TExtendedPurchases } from "src/types/purchase.type";
 
 const ProductDetails = () => {
   const [currentImageState, setCurrentImageState] = useState<HTMLImageElement | null>(null);
+  const [product, setProduct] = useState<TProduct>();
+  const { id } = useParams();
+  const [user, setUser] = useState<TUser>();
 
+  useEffect(() => {
+    // fetchProductById(id);
+    const getProduct = async () => {
+      const response = (await productApi.getProductById(id || "")) as any;
+
+      if (response) setProduct(response as TProduct);
+    };
+
+    getProduct();
+
+    const user = localStorage.getItem("user");
+    if (user) setUser(JSON.parse(user) as TUser);
+  }, [id]);
   const handleEnterZoomMode = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     setCurrentImageState(e.currentTarget);
   };
@@ -36,8 +59,55 @@ const ProductDetails = () => {
     }
   };
 
+  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
+  const handleAddToCart = async () => {
+    console.log("Add to cart");
+    const data: AddCart = {
+      userId: user?.id || "",
+      cartItems: [
+        {
+          productId: product?.id || "",
+          buy_count: quantity,
+        },
+      ],
+    };
+    const rs = await purchaseAPI.addToCart(data);
+    if (rs) {
+      await purchaseAPI.getCart(user?.id || "");
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    const data: TExtendedPurchases = {
+      product: {
+        ...product,
+        price:
+          product.sale_price > 0
+            ? product.product_types[0].price * ((100 - product.sale_price) / 100)
+            : product.product_types[0].price,
+      },
+      buy_count: quantity,
+      price:
+        product.sale_price > 0
+          ? product.product_types[0].price * ((100 - product.sale_price) / 100)
+          : product.product_types[0].price,
+      checked: false,
+      disabled: false,
+      price_before_discount: product.sale_price > 0 ? product.product_types[0].price : 0,
+      id: product.id,
+      createdAt: "",
+      status: "WAITING",
+      updatedAt: "",
+    };
+
+    navigate("/checkout", { state: [data] });
+  };
+  const productQuantity = Math.floor(Math.random() * 1000) + 1;
+  const reviews = Math.floor(Math.random() * 1000) + 1;
   return (
-    <div className="mt-40 bg-gray-200 py-6">
+    <div className="mt-40 bg-gray-200 py-6 pt-12">
       <div className="bg-white p-4 shadow">
         <div className="container">
           <div className="lg:grid lg:grid-cols-12 lg:gap-9">
@@ -105,11 +175,13 @@ const ProductDetails = () => {
             </div>
             <div className="mt-5 block lg:col-span-7">
               {/* <h1 className="text-xl font-medium uppercase">{product.name}</h1> */}
-              <h1 className="text-[24px] font-medium uppercase">Điện thoại di động thông minh mới nhất</h1>
+              <h1 className="text-[24px] font-medium uppercase">{product?.name}</h1>
               <div className="mt-4 flex items-center">
                 <div className="flex items-center">
                   {/* <span className="mr-1 border-b border-b-primary text-primary">{product.rating}</span> */}
-                  <span className="mr-1 border-b text-[16px] font-medium text-[rgb(238,77,45)]">5 Sao</span>
+                  <span className="mr-1 border-b text-[16px] font-medium text-[rgb(238,77,45)]">
+                    {product?.product_feeback.star} Sao
+                  </span>
                   {/* <ProductRating
                     rating={product.rating}
                     activeClassName="fill-primary text-primary h-4 w-4"
@@ -118,33 +190,32 @@ const ProductDetails = () => {
                 </div>
                 <div className="mx-4 h-6 w-[2px] bg-gray-300"></div>
                 <div>
-                  <span className="text-[16px] font-medium">{Math.floor(Math.random() * 10) + 1}</span>
+                  <span className="text-[16px] font-medium">{reviews}</span>
                   <span className="ml-1 text-[14px] font-medium text-gray-500"> Đánh giá</span>
                 </div>
                 <div className="mx-4 h-6 w-[2px] bg-gray-300"></div>
                 <div>
                   {/* <span>{formatNumberToSocialStyle(product.sold)}</span> */}
-                  <span className="text-[16px] font-medium">{Math.floor(Math.random() * 10) + 1}</span>
+                  <span className="text-[16px] font-medium">{product?.product_feeback.sold}</span>
                   <span className="ml-1 text-[14px] font-medium text-gray-500">Đã bán</span>
                 </div>
               </div>
               <div className="mb-2 mt-4 flex items-center gap-x-6 bg-gray-50 px-5 py-2">
-                <div className="text-[18px] text-gray-500 line-through">
-                  {/* ₫{formatCurrency(product.price_before_discount)}
-                   */}
-                  150.000đ
-                </div>
-                <div className="text-xl font-light text-[rgb(238,77,45)] sm:text-xl">
-                  {/* ₫{formatCurrency(product.price)} */}
-                  200.000đ
-                </div>
-                <div className="rounded-sm bg-[rgb(238,77,45)] px-1 py-1 text-[14px] font-semibold uppercase text-white">
-                  {/* {calculateSalePercent(
-                    product.price_before_discount,
-                    product.price
-                  )}{" "} */}
-                  giảm 30%
-                </div>
+                {product && product?.sale_price > 0 ? (
+                  <div className="text-xl font-light text-[rgb(238,77,45)] sm:text-xl">
+                    ₫{formatCurrency(product?.product_types[0].price * ((100 - product.sale_price) / 100) || 0)}
+                  </div>
+                ) : (
+                  <div className="text-[18px] text-gray-500 line-through">
+                    ₫{formatCurrency(product?.sale_price || 0)}
+                  </div>
+                )}
+
+                {product && product?.sale_price > 0 && (
+                  <div className="rounded-sm bg-[rgb(238,77,45)] px-1 py-1 text-[14px] font-semibold uppercase text-white">
+                    giảm {product?.sale_price}%
+                  </div>
+                )}
               </div>
 
               <div className="mt-6 flex items-center ">
@@ -199,24 +270,47 @@ const ProductDetails = () => {
               <div className="mt-4 flex items-center ">
                 <div className="mr-5 text-[15px] capitalize text-gray-500">Số lượng</div>
                 <div className="text-3xl">
-                  <QuantityController />
+                  {/* <QuantityController /> */}
+                  <div className=" ml-16 flex lg:ml-0  lg:mr-[180px]  ">
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                      onClick={() => {
+                        setQuantity((prevQuantity) => prevQuantity - 1);
+                      }}
+                    >
+                      <FaMinus />
+                    </button>
+                    <span className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                      onClick={() => {
+                        setQuantity((prevQuantity) => prevQuantity + 1);
+                      }}
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
                 </div>
                 {/* <p className="text-2xl font-medium">20</p> */}
                 <div className="ml-6 text-[15px] text-gray-500">
                   {/* {product.quantity} sản phẩm có sẵn */}
-                  {Math.floor(Math.random() * 1000) + 1} sản phẩm có sẵn
+                  {productQuantity} sản phẩm có sẵn
                 </div>
               </div>
               <div className="mt-6 sm:flex sm:items-center sm:gap-x-4">
                 <button
-                  // onClick={handleAddToCart}
+                  onClick={handleAddToCart}
                   className="flex h-[60px] w-full items-center justify-center rounded-sm border border-[rgb(238,77,45)] bg-[rgb(252,222,216)] px-5 capitalize text-[rgb(238,77,45)] shadow-sm hover:bg-[rgb(255,160,142)] sm:w-auto"
                 >
                   <FaCartArrowDown className="mr-4 text-xl" />
                   <p className="text-[16px]">Thêm vào giỏ hàng</p>
                 </button>
                 <button
-                  // onClick={handleBuyNow}
+                  onClick={handleBuyNow}
                   className="mt-5 flex h-[60px] w-full min-w-[5rem] items-center justify-center rounded-sm bg-[rgb(238,77,45)] px-5 capitalize text-white shadow-sm outline-none hover:bg-[rgb(255,117,89)] sm:mt-0 sm:w-auto"
                 >
                   <p className="text-[16px]">Mua ngay</p>

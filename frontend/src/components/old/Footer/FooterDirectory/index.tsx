@@ -35,7 +35,7 @@ function FooterDirectory() {
                 className="footer__directory__item__part"
               >
                 <a
-                  href={"/"}
+                  href={"/productList"}
                   className="footer__directory__item__part__heading"
                 >
                   {heading?.innerHTML}
@@ -49,7 +49,7 @@ function FooterDirectory() {
                       return (
                         <a
                           key={index3}
-                          href={"/"}
+                          href={"/productList"}
                           className="footer__directory__item__part__item"
                         >
                           {data3.innerHTML}

@@ -8,9 +8,8 @@ type ProductProps = {
   product: TProduct;
 };
 const Product = ({ product }: ProductProps) => {
-  product;
   return (
-    <Link to={`/${generateSlug({ name: product.name, id: product._id })}`}>
+    <Link to={`/productDetails/${product.id}`}>
       <div className="overflow-hidden rounded-sm bg-white shadow transition-all duration-200 hover:translate-y-[-0.09rem] hover:shadow-md">
         <div className="relative w-full pt-[100%]">
           <img
@@ -20,25 +19,33 @@ const Product = ({ product }: ProductProps) => {
           />
         </div>
         <div className="overflow-hidden p-2">
-          <div className="line-clamp-2 min-h-[2rem] text-xs">{product.name}</div>
+          <div className="line-clamp-2 min-h-[2rem] text-[14px]">{product.name}</div>
           <div className="mt-3 flex items-center gap-x-1">
-            <div className="max-w-[50%] truncate text-gray-500 line-through">
-              <span className="text-xs">₫</span>
-              <span className="text-sm">{formatCurrency(product.price_before_discount)}</span>
-            </div>
-            <div className="truncate text-primary">
-              <span className="text-xs">₫</span>
-              <span className="text-sm">{formatCurrency(product.price)}</span>
-            </div>
+            {product.sale_price !== 0 ? (
+              <>
+                <div className="text-[12px] text-gray-500 line-through">
+                  <span className="text-[12px]">₫</span>
+                  <span>{formatCurrency(product.product_types[0].price)}</span>
+                </div>
+                <div className="rounded-sm bg-red-500 px-1 text-[14px] text-white">
+                  ₫{formatCurrency((product.product_types[0].price * (100 - product.sale_price)) / 100)}
+                </div>
+              </>
+            ) : (
+              <div className="text-[12px]">
+                <span className="text-[12px]">₫</span>
+                <span>{formatCurrency(product.product_types[0].price)}</span>
+              </div>
+            )}
           </div>
           <div className="mt-3 flex items-center justify-between gap-x-2">
             <ProductRating
-              rating={product.rating}
+              rating={product.product_feeback.star ?? 0}
               activeClassName="w-3 h-3 fill-[#ffca11] text-[#ffca11]"
               nonActiveClassName="w-3 h-3 fill-gray-300 text-gray-300"
             ></ProductRating>
-            <div className="flex gap-x-1 text-sm">
-              <span>{formatNumberToSocialStyle(product.sold)}</span>
+            <div className="flex gap-x-1 text-[11px]">
+              <span>{formatNumberToSocialStyle(product.product_feeback.sold ?? 0)}</span>
               <span>Đã bán</span>
             </div>
           </div>
