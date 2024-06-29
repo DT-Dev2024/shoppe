@@ -4,7 +4,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { VscTriangleDown } from "react-icons/vsc";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import { BsExclamationCircle } from "react-icons/bs";
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -16,12 +16,14 @@ import { path } from "src/constants/path.enum";
 import { CartContext } from "src/contexts/cart.context";
 import { TPurchase, TVoucher } from "src/types/purchase.type";
 import { formatCurrency } from "src/utils/formatNumber";
+
+import _ from "lodash";
 import { CiCircleQuestion } from "react-icons/ci";
 import { FormSubmit } from "src/helpers";
 import { OrderContext } from "src/contexts/order.context";
 import { getAllVouchers } from "src/apis/voucher";
 import { TUser } from "src/types/user.types";
-import purchaseAPI from "src/apis/purchase.api";
+import purchaseAPI, { UpdateItem } from "src/apis/purchase.api";
 type Quantity = Record<string, { quantity: number | string }>;
 
 interface CartProps {
@@ -55,10 +57,25 @@ const Cart = () => {
     };
     vouchers();
   }, []);
+  const [quantities, setQuantities] = useState<Quantity>({});
 
   const { extendedPurchases, setExtendedPurchases } = useContext(CartContext);
+  useEffect(() => {
+    if (extendedPurchases) {
+      // setTotal(parseFloat(data.getCart.total));
+      extendedPurchases.forEach((item) => {
+        setQuantities((prevQuantities) => ({
+          ...prevQuantities,
+          [item.id]: {
+            quantity: item.buy_count,
+          },
+        }));
+      });
+    }
+  }, [extendedPurchases]);
   // Đại diện cho những purchase được checked
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases]);
+
   const checkedPurchasesCount = checkedPurchases.length;
   const totalCheckedPurchasesPrice = useMemo(
     () =>
@@ -67,7 +84,9 @@ const Cart = () => {
           current.product.sale_price > 0
             ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
             : current.product.product_types[0].price;
-        return prev + price * current.buy_count;
+        const quantity = parseInt(quantities[current.id]?.quantity as string);
+
+        return prev + price * (quantity > current.buy_count ? current.buy_count : quantity);
       }, 0),
     [checkedPurchases],
   );
@@ -79,7 +98,8 @@ const Cart = () => {
           current.product.sale_price > 0
             ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
             : current.product.product_types[0].price;
-        return prev + (price_before_discount - price) * current.buy_count;
+        const quantity = parseInt(quantities[current.id]?.quantity as string);
+        return prev + (price_before_discount - price) * (quantity > current.buy_count ? current.buy_count : quantity);
       }, 0),
     [checkedPurchases],
   );
@@ -88,12 +108,46 @@ const Cart = () => {
     () =>
       checkedPurchases.reduce((prev, current) => {
         const price_before_discount = current.product.sale_price >= 0 ? current.product.product_types[0].price : 0;
+        const quantity = parseInt(quantities[current.id]?.quantity as string);
+        console.log("price_before_discount", price_before_discount);
+        console.log("quantity", quantity);
 
-        return prev + price_before_discount * current.buy_count;
+        return prev + price_before_discount * (quantity > current.buy_count ? current.buy_count : quantity);
       }, 0),
     [checkedPurchases],
   );
-  const [quantities, setQuantities] = useState<Quantity>({});
+
+  const debouncedUpdateQuantity = useCallback(
+    // "userId": "string",
+    // "cartItem": {
+    //   "productId": "string",
+    //   "buy_count": 0
+    // }
+    _.debounce(async (productId: string, buy_count: number, purchaseId: string, userId: string) => {
+      const data: UpdateItem = {
+        userId,
+        cartItem: {
+          productId,
+          buy_count,
+        },
+      };
+      const rs = await purchaseAPI.updateCart(data);
+
+      if (rs.status === 200) {
+        setExtendedPurchases(
+          produce((draft) => {
+            const index = draft.findIndex((purchase) => purchase.id === purchaseId);
+            console.log("index", index);
+            if (index !== -1) {
+              // Ensure the purchase is checked before updating
+              draft[index].buy_count = buy_count;
+            }
+          }),
+        );
+      }
+    }, 2000),
+    [],
+  );
 
   const handleSelectProduct = (productIndex: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setExtendedPurchases(
@@ -123,16 +177,7 @@ const Cart = () => {
         quantity: newQuantity,
       },
     }));
-
-    setExtendedPurchases(
-      produce((draft) => {
-        const index = draft.findIndex((purchase) => purchase.id === id);
-        if (index !== -1) {
-          // Ensure the purchase is checked before updating
-          draft[index].buy_count = newQuantity;
-        }
-      }),
-    );
+    if (user) debouncedUpdateQuantity(id, newQuantity, id, user.id);
   };
   const [isModalEmptyVisible, setIsModalEmptyVisible] = useState(false);
   const [isModalDeleteCartVisible, setIsModalDeleteCartVisible] = useState(false);
@@ -380,8 +425,15 @@ const Cart = () => {
     }
 
     if (order) {
+      const data = checkedPurchases.map((purchase) => {
+        const quantity = quantities[purchase.product.id]?.quantity || purchase.buy_count;
+        return {
+          ...purchase,
+          buy_count: parseInt(quantity as string),
+        };
+      });
       navigate(path.checkout, {
-        state: checkedPurchases,
+        state: data,
       });
     }
   };
@@ -515,14 +567,14 @@ const Cart = () => {
                                 type="button"
                                 className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
                                 onClick={() => {
-                                  handleChangeQuantity(-1, purchase.product.id, purchase);
+                                  handleChangeQuantity(-1, purchase.id, purchase);
                                 }}
                               >
                                 <FaMinus />
                               </button>
                               <input
                                 className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0"
-                                value={quantities[purchase.product.id]?.quantity || purchase.buy_count}
+                                value={quantities[purchase.id]?.quantity || purchase.buy_count}
                                 onChange={(e) => {
                                   if (e.target.value !== "" && isNaN(parseInt(e.target.value))) {
                                     toast.error("Please enter a number");
@@ -531,7 +583,7 @@ const Cart = () => {
                                   const newQuantity = e.target.value ? parseInt(e.target.value) : "";
                                   setQuantities((prevQuantities) => ({
                                     ...prevQuantities,
-                                    [purchase.product.id]: {
+                                    [purchase.id]: {
                                       quantity: newQuantity,
                                     },
                                   }));
@@ -541,14 +593,19 @@ const Cart = () => {
                                 type="button"
                                 className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
                                 onClick={() => {
-                                  handleChangeQuantity(1, purchase.product.id, purchase);
+                                  handleChangeQuantity(1, purchase.id, purchase);
                                 }}
                               >
                                 <FaPlus />
                               </button>
                             </div>
                             <div className=" lg:block">
-                              <span className="text-primary">₫{formatCurrency(price * purchase.buy_count)}</span>
+                              <span className="text-primary">
+                                ₫
+                                {formatCurrency(
+                                  price * (parseInt(quantities[purchase.id]?.quantity as string) || purchase.buy_count),
+                                )}
+                              </span>
                             </div>
                             <div className=" mr-6  lg:ml-0 lg:block">
                               <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
