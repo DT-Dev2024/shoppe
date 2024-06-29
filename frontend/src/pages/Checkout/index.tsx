@@ -1,5 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useContext, useEffect, useState } from "react";
 import { CiCircleQuestion } from "react-icons/ci";
 import { FaLocationDot } from "react-icons/fa6";
 import purchaseAPI from "src/apis/purchase.api";
@@ -99,147 +98,11 @@ const Checkout = () => {
     if (!addressEdit) return;
     setAddressEdit({ ...addressEdit, [name]: value });
   };
-
-  const listRef = useRef(null);
-  const transformAndCheckExpiry = (utcDateString: string) => {
-    const expiryDate = new Date(utcDateString);
-    const currentDate = new Date();
-
-    const formattedDate = `${expiryDate.getDate().toString().padStart(2, "0")}.${(expiryDate.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}.${expiryDate.getFullYear()}`;
-
-    const isToday = expiryDate.toDateString() === currentDate.toDateString();
-    const isPast = expiryDate < currentDate;
-
-    if (isToday) {
-      const hoursUntilExpiry = Math.round((expiryDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60));
-      if (hoursUntilExpiry > 0) {
-        return `Sắp hết hạn. Còn ${hoursUntilExpiry} giờ.`;
-      } else {
-        return `Đã hết hạn. Hãy chọn mã khác.`;
-      }
-    } else if (isPast) {
-      return `HSD: ${formattedDate}`;
-    }
-  };
-  const [vouchers, setVouchers] = useState<TVoucher[]>([]);
-  useEffect(() => {
-    // setVouchers(voucherMock);
-    const vouchers = async () => {
-      try {
-        const response = await getAllVouchers();
-        setVouchers(response.data);
-      } catch (error) {
-        console.error("Error fetching vouchers:", error);
-      }
-    };
-    vouchers();
-  }, []);
-  const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
-  const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
-
-  const ModalVoucher = () => {
-    return (
-      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
-          <div className="p-3 lg:p-10 lg:pb-4">
-            <div className="flex justify-between">
-              <h1 className="text-2xl">Chọn Shopee Voucher</h1>
-              <p className="flex items-center text-xl text-gray-500">
-                Hỗ trợ
-                <CiCircleQuestion />
-              </p>
-            </div>
-            <form
-              action=""
-              className="mb-6 mt-5  flex items-center gap-3 bg-[#f8f8f8] p-4 text-xl"
-            >
-              <label
-                htmlFor="voucher"
-                className="w-60 text-2xl"
-              >
-                Mã Voucher
-              </label>
-              <input
-                id="voucher"
-                type="text"
-                placeholder="Mã Shoppe Voucher"
-                className="w-full border border-gray-300 p-4"
-              />
-              <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
-            </form>
-            <p className="mb-2 text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
-            <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
-
-            <ul
-              ref={listRef}
-              className="
-                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
-                grid
-                max-h-[330px]
-                grid-cols-1 gap-4 overflow-y-auto
-              "
-            >
-              {vouchers.map((voucher) => (
-                <li
-                  key={voucher.id}
-                  className={`border-b  border-gray-300 p-4 shadow-md`}
-                >
-                  <div className="relative flex items-center">
-                    <div className="h-40 w-40 bg-green-600">
-                      <img
-                        src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-
-                    <div className="flex-1 pl-3">
-                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
-                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                    </div>
-                    <input
-                      type="radio"
-                      name="selectedVoucher"
-                      checked={selectedVoucher?.id === voucher.id}
-                      onChange={(e) => {
-                        e.preventDefault(); // Prevent the default action
-                        setSelectedVoucher(voucher);
-                      }}
-                      className="ml-4"
-                    />
-                  </div>
-                  <p className="mt-4 flex items-center text-[13px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1 " />
-                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex h-[64px] items-center justify-end border-t">
-            <button
-              onClick={() => setIsModalVoucherVisible(false)}
-              className="mr-2 rounded  border-2 px-12 py-3 text-xl text-[#b6b6b6] "
-            >
-              Trở lại
-            </button>
-            <button
-              onClick={() => setIsModalVoucherVisible(false)}
-              className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const Item = ({ item }: { item: TExtendedPurchases }) => {
+    const price =
+      item.product.sale_price > 0
+        ? item.product.product_types[0].price * ((100 - item.product.sale_price) / 100)
+        : item.product.product_types[0].price;
     return (
       <div
         key={item.id}
@@ -282,11 +145,11 @@ const Checkout = () => {
           </div>
 
           <span className="col-span-3 my-auto ml-6 text-[13px] lg:col-span-2 lg:ml-0 lg:block lg:text-[15px]">
-            ₫{formatCurrency(item.product.price)}
+            ₫{formatCurrency(price)}
           </span>
           <span className="m-auto   text-[13px] lg:text-[15px]">{item.buy_count}</span>
           <span className="pr  col-span-4 my-auto pr-4 text-right text-[13px] lg:col-span-2 lg:pr-10 lg:text-[15px]">
-            ₫{formatCurrency(item.buy_count * item.product.price)}
+            ₫{formatCurrency(item.buy_count * price)}
           </span>
         </div>
         <div className="grid border-y border-dotted px-4 py-2 lg:grid-cols-2 lg:px-8 lg:py-4">
@@ -353,7 +216,7 @@ const Checkout = () => {
         <p className="flex items-center justify-between px-4 py-6 text-[14px] lg:justify-end lg:px-0 lg:py-10 lg:pr-12 lg:text-[16px]">
           <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
           <span className="text-[17px] text-main lg:text-[20px]">
-            ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
+            ₫{formatCurrency(item.buy_count * price + shippingFee)}
           </span>
         </p>
       </div>
@@ -450,48 +313,7 @@ const Checkout = () => {
     );
   };
 
-  const [tabActive, setTabActive] = useState<keyof typeof PaymentMethod | null>("PAY_OFFLINE");
-  const [selectedPayment, setSelectedPayment] = useState<{ key: keyof typeof PaymentMethod; value: string } | null>({
-    key: "PAY_OFFLINE",
-    value: payments.PAY_OFFLINE,
-  });
-  const handlePaymentSelection = (method: keyof typeof PaymentMethod) => {
-    setTabActive(method); // Assuming setTabActive updates the UI to show the active tab
-    setSelectedPayment({ key: method, value: payments[method] });
-  };
-
-  const handleOrder = async () => {
-    if (checkoutOrder) {
-      const total =
-        checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
-        checkoutOrder.length * shippingFee +
-        (selectedVoucher?.discount || 0);
-
-      const data: TCheckout = {
-        totalPrice: total,
-        userId: user?.id || "",
-        orderDetails: checkoutOrder.map((item) => ({
-          productId: item.product.id,
-          buy_count: item.buy_count,
-          status: item.status,
-          price:
-            item.product.sale_price > 0
-              ? item.product.product_types[0].price * ((100 - item.product.sale_price) / 100)
-              : item.product.product_types[0].price,
-          price_before_discount: item.product.sale_price > 0 ? item.product.product_types[0].price : 0,
-        })),
-        voucherId: selectedVoucher?.id || "",
-        addressId: address?.id || "",
-        paymentMethod: selectedPayment?.key || "PAY_OFFLINE",
-      };
-      const rs = await purchaseAPI.checkout(data);
-      if (rs) {
-        window.history.replaceState(null, "");
-      }
-    }
-  };
-
-  if (checkoutOrder && checkoutOrder.length === 0) {
+  const EditFormAddress = () => {
     return (
       <div>
         <Helmet>
@@ -504,7 +326,7 @@ const Checkout = () => {
         <div className="flex items-center justify-center text-center text-4xl">Giỏ hàng trống</div>
       </div>
     );
-  }
+  };
   return (
     <div>
       <Helmet>
@@ -759,13 +581,7 @@ const Checkout = () => {
             <li className="grid grid-cols-2 items-center text-[15px]">
               <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
               <span className="text-right">
-                ₫
-                {formatCurrency(
-                  checkoutOrder.reduce(
-                    (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
-                    0,
-                  ),
-                )}
+                ₫{formatCurrency(order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0))}
               </span>
             </li>
             <li className="grid grid-cols-2 items-center text-[15px]">
@@ -777,11 +593,8 @@ const Checkout = () => {
               <span className="text-right text-3xl text-main lg:text-4xl">
                 ₫
                 {formatCurrency(
-                  checkoutOrder.reduce(
-                    (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
-                    0,
-                  ) +
-                    checkoutOrder.length * shippingFee,
+                  order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0) +
+                    order.length * shippingFee,
                 )}
               </span>
             </li>
