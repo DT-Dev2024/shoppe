@@ -171,7 +171,11 @@ export class OrderService {
       include: {
         cart_items: {
           include: {
-            product: true,
+            product: {
+              include: {
+                product_types: true,
+              },
+            },
           },
         },
       },
