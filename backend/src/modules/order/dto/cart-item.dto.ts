@@ -11,4 +11,6 @@ export class CartItemDto {
   @IsInt()
   @IsNotEmpty()
   buy_count: number;
+
+  price: number;
 }

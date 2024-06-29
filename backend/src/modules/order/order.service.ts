@@ -112,6 +112,16 @@ export class OrderService {
   }
 
   async addToCart(cart: CreateCartDto) {
+    const product = await this.prismaService.products.findFirst({
+      where: {
+        id: cart.cartItems[0].productId,
+      },
+      include: {
+        product_types: true,
+      },
+    });
+    cart.cartItems[0].price =
+      product.product_types[0].price * (product.sale_price / 100);
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
         const findCart = await prisma.cart.findFirst({
