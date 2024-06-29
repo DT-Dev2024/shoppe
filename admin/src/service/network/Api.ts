@@ -25,7 +25,7 @@ export const requestGetListProduct = () => ApiClient.get(`api/product`);
 export const requestUploadImage = (payload: any) =>
   ApiClient.post(`${URL_IMAGE}/upload`, payload);
 export const requestAddProduct = (payload: any) =>
-  ApiClient.post(`api/v1/admin/product`, payload);
+  ApiClient.post(`api/product`, payload);
 
 export const requestUpdateProduct = (payload: any) =>
   ApiClient.put(`api/v1/admin/product/${payload.id}`, payload.body);

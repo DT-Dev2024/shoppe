@@ -19,6 +19,7 @@ import {
   Select,
   Table,
   Upload,
+  Image,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -52,6 +53,8 @@ import ButtonBottomModal from "./component/ButtonBottomModal";
 import FormItem from "antd/lib/form/FormItem";
 import Editor from "../../component/Editor";
 import { uploadImageToCloud } from "../../util/uploadImageToServer";
+import { TProduct } from "../../types/Product";
+import { UploadFile } from "antd/lib/upload/interface";
 const { Option } = Select;
 
 const ProductScreen = () => {
@@ -73,12 +76,43 @@ const ProductScreen = () => {
   const [page, setPage] = useState(1);
   const [detailImage, setDetailImage] = useState<any>([]);
   const [description, setDescription] = useState<string>("");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
   // const [listCategory, setListCategory] = useState<any>([]);
   // const [itemCategory, setItemCategory] = useState<any>([]);
   const [loadMore, setLoadMore] = useState<any>(false);
-  const handleDetailImagesChange = ({ fileList }: { fileList: any[] }) => {
-    setDetailImage(fileList.slice(-5)); // Limit to 5 images
+  // const handleDetailImagesChange = ({ fileList }: { fileList: any[] }) => {
+  //   setDetailImage(fileList.slice(-5)); // Limit to 5 images
+  // };
+  const handleDetailImagesChange = ({
+    fileList,
+  }: {
+    fileList: UploadFile<any>[];
+  }) => {
+    setDetailImage(fileList);
   };
+
+  const handlePreview = async (file: any) => {
+    const fileView: any = await urlToBase64(file);
+    console.log(fileView);
+    setPreviewImage(fileView);
+    setPreviewOpen(true);
+  };
+
+  async function urlToBase64(url: string) {
+    // Fetch image data from URL
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    // Convert blob to base64
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   const sanitizeContent = (content: string) => {
     const div = document.createElement("div");
     div.innerHTML = content;
@@ -98,12 +132,6 @@ const ProductScreen = () => {
       const res = await requestGetListProduct();
       reactotron.logImportant!("LIST_PRODUCT", res);
       if (res) {
-        const listProduct = res.data;
-        listProduct.forEach((item: any) => {
-          item.price = item.product_types[0]?.price || 0;
-        });
-        console.log(listProduct);
-
         setIsLoading(false);
         setListProduct(res.data);
         setTotalPage(res.total);
@@ -135,6 +163,13 @@ const ProductScreen = () => {
       });
       return;
     }
+    const handleChangeList = ({
+      fileList,
+    }: {
+      fileList: UploadFile<any>[];
+    }) => {
+      setDetailImage(fileList);
+    };
 
     if (info.file.status === "done" || info.file.status === "error") {
       // Get this url from response in real world.
@@ -160,10 +195,35 @@ const ProductScreen = () => {
         const res = await uploadImageToCloud(apiKey, imageBase64, name);
         console.log(res);
         if (res) {
-          let payload = {
+          const listUrlImageDetail: string[] = [];
+          // upload detail images
+          await Promise.all(
+            detailImage.map(async (item: any) => {
+              const imageBase64 = item.originFileObj;
+              const name = item.name;
+              const res = await uploadImageToCloud(apiKey, imageBase64, name);
+              listUrlImageDetail.push(res);
+            })
+          );
+          console.log(listUrlImageDetail);
+
+          // Generate random feedback data
+          const feedbackStar = parseFloat(
+            (Math.random() * 0.5 + 4.5).toFixed(1)
+          );
+          console.log(listUrlImageDetail);
+
+          let payload: TProduct = {
             name: values.name,
             image: res,
-
+            description: description,
+            detailImage: listUrlImageDetail,
+            sale_price: +values.sale_price,
+            feedback: {
+              star: feedbackStar, // Generates a float between 1.0 and 5.0
+              comment: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500, // Generates an integer between 2500 and 100000
+              sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
+            },
             price: +values.price,
           };
           const response = await requestAddProduct(payload);
@@ -325,7 +385,7 @@ const ProductScreen = () => {
             },
           }}
           expandable={{
-            expandedRowRender: (item: any) => (
+            expandedRowRender: (item: TProduct) => (
               <div style={{ backgroundColor: "white" }}>
                 <Card
                   style={{
@@ -343,15 +403,16 @@ const ProductScreen = () => {
                           price: item.price,
                           sale_price: item.sale_price,
                           icon_url: item.image,
-                          detailImage: item.detailImage,
-                          description: item.description,
                         });
                         setVisible(2);
                         setUpload({
                           ...upload,
                           imageUrl: item.image,
-                          detailImage: item.detailImage,
                         });
+                        console.log(item);
+                        setDetailImage(item.detailImage);
+                        console.log(detailImage);
+                        setDescription(item.description);
                         // setItemCategory(item.category);
                       }}
                       type="text"
@@ -529,12 +590,28 @@ const ProductScreen = () => {
               listType="picture-card"
               fileList={detailImage}
               onChange={handleDetailImagesChange}
+              onPreview={handlePreview}
               multiple
               beforeUpload={beforeUpload}
             >
               {detailImage.length >= 5 ? null : uploadButton}
             </Upload>
           </Form.Item>
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: "none" }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible: boolean) => {
+                  setPreviewOpen(visible);
+                  if (!visible) {
+                    setPreviewImage("");
+                  }
+                },
+              }}
+              src={previewImage}
+            />
+          )}
           <FormItem>
             <Editor value={description} onChange={setDescription} />
           </FormItem>
