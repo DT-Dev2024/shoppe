@@ -230,4 +230,12 @@ export class OrderService {
 
     return deletedCartItems;
   }
+
+  async getOrdersHistory(userId: string) {
+    return await this.prismaService.orders.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
 }

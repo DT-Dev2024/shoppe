@@ -157,4 +157,14 @@ export class OrderController {
       'Cart deleted successfully',
     );
   }
+
+  @Get('order-history/:userId')
+  @ApiBearerAuth('token')
+  async getOrdersHistory(@Param('userId') userId: string) {
+    return ApiResponse.buildApiResponse(
+      await this.orderService.getOrdersHistory(userId),
+      200,
+      'Cart retrieved successfully',
+    );
+  }
 }

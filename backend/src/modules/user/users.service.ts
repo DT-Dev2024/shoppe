@@ -83,7 +83,7 @@ export class UsersService {
             where: { usersId: address.userId },
             data: { default: false },
           });
-          return await prisma.addresses.create({
+          await prisma.addresses.create({
             data: {
               name: address.name,
               phone: address.phone,
@@ -92,9 +92,13 @@ export class UsersService {
               usersId: address.userId,
             },
           });
+          return await prisma.users.findUnique({
+            where: { id: address.userId },
+            include: { address: true },
+          });
         });
       } else {
-        return await this.prismaService.addresses.create({
+        await this.prismaService.addresses.create({
           data: {
             name: address.name,
             phone: address.phone,
@@ -102,6 +106,11 @@ export class UsersService {
             default: address.default,
             usersId: address.userId,
           },
+        });
+
+        return await this.prismaService.users.findUnique({
+          where: { id: address.userId },
+          include: { address: true },
         });
       }
     }
