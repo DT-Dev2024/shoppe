@@ -159,7 +159,11 @@ export class OrderService {
         userId,
       },
       include: {
-        cart_items: true,
+        cart_items: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
   }
