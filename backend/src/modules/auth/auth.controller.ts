@@ -42,4 +42,20 @@ export class AuthController {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }
   }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('admin-login')
+  async adminLogin(@Body() signInDto: SignInDto) {
+    const token = await this.authService.adminLogin(signInDto);
+    if (token) {
+      return ApiResponse.buildApiResponse(
+        token,
+        200,
+        'User logged in successfully',
+      );
+    } else {
+      return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
+    }
+  }
 }
