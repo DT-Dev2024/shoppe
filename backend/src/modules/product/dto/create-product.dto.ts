@@ -5,6 +5,7 @@ import {
   IsArray,
   ValidateNested,
   IsNumber,
+  IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProductFeedbackDTO } from './product-feeback';
@@ -26,11 +27,11 @@ export class CreateProductDto {
   @ApiProperty()
   @IsString()
   description: string;
-  @ApiProperty({ type: () => [ProductType] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ProductType)
-  product_types: ProductType[];
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
 
   @ApiProperty({ required: false, description: 'Giảm giá theo %' })
   @IsNumber()

@@ -127,13 +127,13 @@ export class OrderService {
     const product = await this.prismaService.products.findFirst({
       where: {
         id: cart.cartItems[0].productId,
-      },
-      include: {
-        product_types: true,
-      },
+      }
+      // ,
+      // include: {
+      //   product_types: true,
+      // },
     });
-    cart.cartItems[0].price = product.product_types[0].price -
-      product.product_types[0].price * (product.sale_price / 100);
+    cart.cartItems[0].price = product.price - (product.price * product.sale_price) / 100
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
         const findCart = await prisma.cart.findFirst({
@@ -184,9 +184,9 @@ export class OrderService {
         cart_items: {
           include: {
             product: {
-              include: {
-                product_types: true,
-              },
+              // include: {
+              //   product_types: true,
+              // },
             },
           },
         },
@@ -207,7 +207,7 @@ export class OrderService {
     const existingCartItem = cart.cart_items.find(
       (item) => item.productId === updateCart.cartItem.productId,
     );
-
+    console.log(existingCartItem)
     if (!existingCartItem) {
       return await this.prismaService.cart_item.create({
         data: {
@@ -221,7 +221,6 @@ export class OrderService {
     await this.prismaService.cart_item.update({
       where: { id: existingCartItem.id },
       data: {
-        productId: updateCart.cartItem.productId,
         buy_count: updateCart.cartItem.buy_count,
       },
     });

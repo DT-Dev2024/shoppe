@@ -64,9 +64,10 @@ model products {
   detailImage     String[]
   name            String
   description     String
+  price           Float              @default(0)
   sale_price      Float
   updated_at      DateTime?          @updatedAt @db.Date
-  product_types   products_type[]
+  // product_types   products_type[]
   shop            shops?             @relation(fields: [shopId], references: [id])
   shopId          String?            @db.ObjectId
   product_feeback product_feeback?
@@ -86,18 +87,18 @@ model product_feeback {
   updated_at DateTime? @updatedAt @db.Date
 }
 
-model products_type {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  price      Float
-  store      Int       @default(1000)
-  created_at DateTime? @default(now()) @db.Date
-  updated_at DateTime? @updatedAt @db.Date
-  deleted_at DateTime? @db.Date
+// model products_type {
+//   id         String    @id @default(auto()) @map("_id") @db.ObjectId
+//   name       String
+//   price      Float
+//   store      Int       @default(1000)
+//   created_at DateTime? @default(now()) @db.Date
+//   updated_at DateTime? @updatedAt @db.Date
+//   deleted_at DateTime? @db.Date
 
-  products   products? @relation(fields: [productsId], references: [id])
-  productsId String?   @db.ObjectId
-}
+//   products   products? @relation(fields: [productsId], references: [id])
+//   productsId String?   @db.ObjectId
+// }
 
 model users {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
@@ -109,7 +110,7 @@ model users {
   created_at DateTime?   @default(now()) @db.Date
   updated_at DateTime?   @updatedAt @db.Date
   roles      roles       @default(USER)
-  orders     orders?
+  orders     orders[]
   cart       cart?
 }
 
@@ -137,7 +138,7 @@ model ui_home_data_source {
 model orders {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   user           users?           @relation(fields: [userId], references: [id])
-  userId         String?          @unique @db.ObjectId
+  userId         String?          @db.ObjectId
   order_discount order_discounts?
   order_details  order_details[]
   address_id     String           @db.ObjectId
