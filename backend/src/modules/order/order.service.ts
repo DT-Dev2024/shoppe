@@ -25,6 +25,18 @@ export class OrderService {
       },
     });
 
+    if (order) {
+      await this.prismaService.cart.update({
+        where: {
+          userId : createOrderDto.userId
+        },
+        data:{
+          cart_items : {
+            deleteMany : {}
+          }
+        }
+      })
+    }
     return order ? order : null;
   }
 

@@ -21,7 +21,16 @@ import { DeleteCartDto } from './dto/delete-cart.dto';
 @ApiTags('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
-
+  @Delete('delete-cart')
+  @ApiBearerAuth('token')
+  async deleteCart(@Body() deleteCart: DeleteCartDto) {
+    return ApiResponse.buildApiResponse(
+      await this.orderService.deleteCart(deleteCart),
+      200,
+      'Cart deleted successfully',
+    );
+  }
+  
   @Post('checkout')
   @ApiBearerAuth('token')
   async create(@Body() createOrderDto: CreateOrderDto) {
@@ -145,16 +154,6 @@ export class OrderController {
       await this.orderService.getCart(userId),
       200,
       'Cart retrieved successfully',
-    );
-  }
-
-  @Delete('cart')
-  @ApiBearerAuth('token')
-  async deleteCart(deleteCart: DeleteCartDto) {
-    return ApiResponse.buildApiResponse(
-      await this.orderService.deleteCart(deleteCart),
-      200,
-      'Cart deleted successfully',
     );
   }
 
