@@ -10,6 +10,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   Modal,
   PageHeader,
@@ -48,6 +49,9 @@ import {
 } from "../../util/funcUtils";
 import { Header } from "../dashboard/component/Header";
 import ButtonBottomModal from "./component/ButtonBottomModal";
+import FormItem from "antd/lib/form/FormItem";
+import Editor from "../../component/Editor";
+import { uploadImageToCloud } from "../../util/uploadImageToServer";
 const { Option } = Select;
 
 const ProductScreen = () => {
@@ -67,33 +71,51 @@ const ProductScreen = () => {
   const [status, setStatus] = useState("");
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [listCategory, setListCategory] = useState<any>([]);
-  const [itemCategory, setItemCategory] = useState<any>([]);
+  const [detailImage, setDetailImage] = useState<any>([]);
+  const [description, setDescription] = useState<string>("");
+  // const [listCategory, setListCategory] = useState<any>([]);
+  // const [itemCategory, setItemCategory] = useState<any>([]);
   const [loadMore, setLoadMore] = useState<any>(false);
+  const handleDetailImagesChange = ({ fileList }: { fileList: any[] }) => {
+    setDetailImage(fileList.slice(-5)); // Limit to 5 images
+  };
+  const sanitizeContent = (content: string) => {
+    const div = document.createElement("div");
+    div.innerHTML = content;
+    const imgs = div.getElementsByTagName("img");
+    Array.from(imgs).forEach((img) => {
+      img.style.maxWidth = "100%";
+      img.style.height = "auto";
+    });
+    return div.innerHTML;
+  };
+
   const LIMIT = 8;
+
   const getData = async () => {
     setIsLoading(true);
-    const payload = {
-      page: page,
-      limit: LIMIT,
-      from: fromDaytoDay[0],
-      to: fromDaytoDay[1],
-      name: search,
-      sort_by: handleConvertValueQuerySortProduct(status),
-    };
     try {
-      const res = await requestGetListProduct(payload);
+      const res = await requestGetListProduct();
       reactotron.logImportant!("LIST_PRODUCT", res);
       if (res) {
+        const listProduct = res.data;
+        listProduct.forEach((item: any) => {
+          item.price = item.product_types[0]?.price || 0;
+        });
+        console.log(listProduct);
+
         setIsLoading(false);
         setListProduct(res.data);
-        setTotalPage(res.meta.pagination.total);
+        setTotalPage(res.total);
       }
     } catch (error) {}
   };
 
   const beforeUpload = (file: any) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    const isJpgOrPng =
+      file.type === "image/jpeg" ||
+      file.type === "image/png" ||
+      file.type === "image/webp";
     if (!isJpgOrPng) {
       message.error("Xảy ra lỗi! Bạn chỉ có thể upload ảnh có dạng JPG/PNG!");
     }
@@ -132,13 +154,16 @@ const ProductScreen = () => {
     try {
       if (values?.icon_url?.fileList && visible == 1) {
         reactotron.logImportant!("ADD");
-        formData.append("file", values.icon_url.fileList[0].originFileObj);
-        const res = await requestUploadImage(formData);
+        const apiKey = "00ec1251d5a79a3c69c0dfe013e86412";
+        const imageBase64 = values.icon_url.fileList[0].originFileObj;
+        const name = values.icon_url.fileList[0].name;
+        const res = await uploadImageToCloud(apiKey, imageBase64, name);
+        console.log(res);
         if (res) {
           let payload = {
             name: values.name,
-            image: res.data.path,
-            category_id: listCategory[values.category]._id,
+            image: res,
+
             price: +values.price,
           };
           const response = await requestAddProduct(payload);
@@ -161,7 +186,7 @@ const ProductScreen = () => {
             body: {
               name: values.name,
               image: res.data.path,
-              category_id: listCategory[values.category]._id,
+              // category_id: listCategory[values.category]._id,
               price: +values.price,
             },
           };
@@ -182,7 +207,7 @@ const ProductScreen = () => {
           body: {
             name: values.name || item.name,
             image: values?.icon_url,
-            category_id: listCategory[values.category]._id,
+            // category_id: listCategory[values.category]._id,
             price: +values.price || item.price,
           },
         };
@@ -210,23 +235,6 @@ const ProductScreen = () => {
     } catch (error) {}
   };
 
-  const getListCateory = async () => {
-    setIsLoading(true);
-    const payload = {
-      page: 1,
-      limit: 1000,
-      from: "",
-      to: "",
-      name: "",
-    };
-    try {
-      const res = await requestGetListCategory(payload);
-      if (res) {
-        setListCategory(res.data);
-      }
-    } catch (error) {}
-  };
-
   const uploadButton = (
     <div>
       {upload.loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -242,11 +250,12 @@ const ProductScreen = () => {
       showToast("Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.");
     });
   }, [search, fromDaytoDay, status, page]);
-  useEffect(() => {
-    getListCateory();
-  }, []);
+  // useEffect(() => {
+  //   getListCateory();
+  // }, []);z
 
-  reactotron.logImportant!("itemCategory", itemCategory);
+  // reactotron.logImportant!("itemCategory", itemCategory);
+
   return (
     <div style={{ marginTop: 10 }}>
       <PageHeader
@@ -332,14 +341,18 @@ const ProductScreen = () => {
                         form.setFieldsValue({
                           name: item.name,
                           price: item.price,
+                          sale_price: item.sale_price,
                           icon_url: item.image,
+                          detailImage: item.detailImage,
+                          description: item.description,
                         });
                         setVisible(2);
                         setUpload({
                           ...upload,
-                          imageUrl: URL_IMAGE + "/" + item.image,
+                          imageUrl: item.image,
+                          detailImage: item.detailImage,
                         });
-                        setItemCategory(item.category);
+                        // setItemCategory(item.category);
                       }}
                       type="text"
                       size="large"
@@ -383,11 +396,9 @@ const ProductScreen = () => {
                     <Col flex={1}>
                       <h4>Tên sản phẩm: {item.name}</h4>
                     </Col>
+
                     <Col flex={1}>
-                      <h4>Danh mục: {item.category.name}</h4>
-                    </Col>
-                    <Col flex={1}>
-                      <h4>Giá: {(formatPrice(item.price) || 0) + UNIT}</h4>
+                      <h4>Giá gốc: {(formatPrice(item.price) || 0) + UNIT}</h4>
                     </Col>
                     <Col flex={1}>
                       <h4>
@@ -425,7 +436,10 @@ const ProductScreen = () => {
           initialValues={{
             name: null,
             price: null,
+            sale_price: null,
             icon_url: null,
+            detailImages: [],
+            description: null,
           }}
           scrollToFirstError
         >
@@ -458,51 +472,23 @@ const ProductScreen = () => {
             <Input placeholder="Giá sản phẩm" />
           </Form.Item>
           <Form.Item
-            label="Danh mục"
-            name="category"
+            label="Giảm giá(%)"
+            name="sale_price"
             rules={[
               {
                 required: true,
-                message: "Vui lòng chọn danh mục sản phẩm!",
+                message: "Vui lòng nhập giá giảm theo %!",
+              },
+              {
+                type: "number",
+                min: 0,
+                max: 100,
+                message: "Giá giảm theo % phải là 0 đến 100",
               },
             ]}
           >
-            <Select
-              value={itemCategory?.name}
-              allowClear
-              placeholder={"Chọn danh mục"}
-              style={{ marginTop: 8 }}
-              onChange={(value) => {
-                setItemCategory(listCategory[value]);
-              }}
-              onPopupScroll={(event: any) => {
-                let isEndOfList =
-                  event.target.scrollTop >= 0.8 * event.target.scrollHeight;
-                if (isEndOfList && page != totalPage) {
-                  if (!loadMore) {
-                    setPage((prev: any) => (prev = page + 1));
-                    return;
-                  }
-                  setPage(page);
-                }
-              }}
-            >
-              {listCategory.map((item: any, index: number) => {
-                return (
-                  <Option value={index}>
-                    {
-                      <Col>
-                        <h3>
-                          [{index + 1}]{item.name}
-                        </h3>
-                      </Col>
-                    }
-                  </Option>
-                );
-              })}
-            </Select>
+            <InputNumber placeholder="Giảm giá" />
           </Form.Item>
-
           <Form.Item
             label="Ảnh sản phẩm"
             name="icon_url"
@@ -538,6 +524,26 @@ const ProductScreen = () => {
               )}
             </Upload>
           </Form.Item>
+          <Form.Item label="Ảnh chi tiết" name="detail_images">
+            <Upload
+              listType="picture-card"
+              fileList={detailImage}
+              onChange={handleDetailImagesChange}
+              multiple
+              beforeUpload={beforeUpload}
+            >
+              {detailImage.length >= 5 ? null : uploadButton}
+            </Upload>
+          </Form.Item>
+          <FormItem>
+            <Editor value={description} onChange={setDescription} />
+          </FormItem>
+          {/* <div
+            className="description"
+            style={{ maxWidth: "100%" }}
+            dangerouslySetInnerHTML={{ __html: sanitizeContent(description) }}
+          /> */}
+
           <ButtonBottomModal
             isLoadingButton={false}
             onCancel={() => {

@@ -158,15 +158,9 @@ export const COLUMNS_ADMIN = [
 export const COLUMNS_PRODUCT = [
   {
     title: "Mã sản phẩm",
-    dataIndex: "_id",
-    key: "_id",
-    render: (_id: any) => <h4>{_id}</h4>,
-  },
-  {
-    title: "Danh mục sản phẩm",
-    dataIndex: "category",
-    key: "category",
-    render: (category: any) => <h4>{category.name}</h4>,
+    dataIndex: "id",
+    key: "id",
+    render: (id: any) => <h4>{id}</h4>,
   },
   {
     width: "150px",
@@ -177,7 +171,7 @@ export const COLUMNS_PRODUCT = [
       <div style={{ display: "flex", justifyContent: "center" }}>
         <img
           crossOrigin="anonymous"
-          src={`${URL_IMAGE}/${image}`}
+          src={`${image}`}
           style={{
             width: "60px",
             height: "60px",
@@ -198,7 +192,17 @@ export const COLUMNS_PRODUCT = [
     title: "Giá sản phẩm",
     dataIndex: "price",
     key: "price",
-    render: (price: any) => <h4>{(formatPrice(price) || 0) + "$"}</h4>,
+    render: (price: number, record: { sale_price: number }) => (
+      <h4>{formatPrice(price - price * (record.sale_price / 100)) + " VND"}</h4>
+    ),
+  },
+  {
+    title: "Giảm giá",
+    dataIndex: "sale_price",
+    key: "sale_price",
+    render: (sale_price: number) => (
+      <h4>{sale_price ? `${formatPrice(sale_price)}%` : "0%"}</h4>
+    ),
   },
   {
     title: "Ngày tạo",

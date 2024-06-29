@@ -1,19 +1,30 @@
-import { requestUploadImage } from "../service/network/Api";
+import axios from "axios";
 
 interface ImageUploadResponse {
-  filename: string;
-  path: string;
-  url: string;
+  data: {
+    url: string;
+  };
 }
-export const uploadImageToServer = async (
-  file: any
-): Promise<ImageUploadResponse> => {
+
+export const uploadImageToCloud = async (
+  apiKey: string,
+  image: string,
+  name: string
+): Promise<string> => {
   try {
-    const dataImage = new FormData();
-    dataImage.append("file", file?.originFileObj);
-    const resUploadImage = await requestUploadImage(dataImage);
-    return resUploadImage.data as ImageUploadResponse;
+    const nameImage = Date.now + name;
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("name", nameImage);
+
+    const response = await axios.post<ImageUploadResponse>(
+      `https://api.imgbb.com/1/upload?key=${apiKey}`,
+      formData
+    );
+
+    return response.data.data.url;
   } catch (error) {
+    console.error("Error uploading image: ", error);
     throw error;
   }
 };

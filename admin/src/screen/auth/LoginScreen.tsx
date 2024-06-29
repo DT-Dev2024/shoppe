@@ -23,13 +23,14 @@ export default function LoginScreen() {
   const handleOnSubmit = async (values: any) => {
     const { username, password } = values;
     const payload = {
-      identifier: username,
+      phone: username,
       password: password,
     };
     try {
       const res = await requestLogin(payload);
       if (res?.code !== 401) {
-        Cookies.set(SESSION, res.data.token);
+        console.log(res.data.access_token);
+        Cookies.set(SESSION, res.data.access_token);
         // const userInfo = await requestGetProfile();
         reactotron.logImportant!("userInfo", res);
         showToast("Đăng nhập thành công");

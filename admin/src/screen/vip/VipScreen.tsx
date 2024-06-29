@@ -40,9 +40,10 @@ import {
 } from "../../service/network/Api";
 import DateUtil from "../../util/DateUtil";
 import { formatPrice, showToast } from "../../util/funcUtils";
-import { uploadImageToServer } from "../../util/uploadImageToServer";
+// import { uploadImageToServer } from "../../util/uploadImageToServer";
 import { Header } from "../dashboard/component/Header";
 import ButtonBottomModal from "../product/component/ButtonBottomModal";
+import path from "path";
 
 const { Option } = Select;
 
@@ -122,7 +123,7 @@ const VipScreen = (props: any) => {
       sort_by: undefined,
     };
     try {
-      const res = await requestGetListProduct(payload);
+      const res = await requestGetListProduct();
       reactotron.logImportant!("LIST_PRODUCT", res);
       if (res) {
         setLoadMore(false);
@@ -163,7 +164,10 @@ const VipScreen = (props: any) => {
     // case upload image
     else if (file.file.status !== "removed") {
       try {
-        const res = await uploadImageToServer(file.file);
+        // const res = await uploadImageToServer(file.file);'
+        const res = {
+          path: "uploads/1643714526.png",
+        };
         console.log("res: ", res);
         listImages[index].fileList = [
           {

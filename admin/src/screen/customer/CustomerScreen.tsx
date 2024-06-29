@@ -141,7 +141,7 @@ const CustomerScreen = () => {
     setLoadMore(true);
     try {
       // const res = await requestGetListProductVip(key);
-      const res = await requestGetListProduct({ limit: 1000 });
+      const res = await requestGetListProduct();
       if (res) {
         setListProduct(res?.data);
       }

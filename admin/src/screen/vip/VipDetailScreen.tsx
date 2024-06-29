@@ -107,7 +107,7 @@ const VipDetailScreen = () => {
       sort_by: undefined,
     };
     try {
-      const res = await requestGetListProduct(payload);
+      const res = await requestGetListProduct();
       reactotron.logImportant!("LIST_PRODUCT", res);
       if (res) {
         setLoadMore(false);

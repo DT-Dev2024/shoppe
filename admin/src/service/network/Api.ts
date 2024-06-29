@@ -1,7 +1,7 @@
 import { ApiClient, BASE_URL_DEV, URL_IMAGE } from "../ApiService";
 
 export const requestLogin = (payload: any) =>
-  ApiClient.post(`api/v1/admin/login`, payload);
+  ApiClient.post(`api/auth/admin-login`, payload);
 export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
 export const requestGetTransaction = (payload: any) =>
   ApiClient.get(`api/v1/admin/transaction`, payload);
@@ -21,8 +21,7 @@ export const requestDeleteAccountAdmin = (id: any) =>
   ApiClient.delete(`${BASE_URL_DEV}/api/v1/admin/${id}`);
 export const requestAddNewAccount = (payload: any) =>
   ApiClient.post(`${BASE_URL_DEV}/api/v1/admin/`, payload);
-export const requestGetListProduct = (payload?: any) =>
-  ApiClient.get(`api/v1/admin/product`, payload);
+export const requestGetListProduct = () => ApiClient.get(`api/product`);
 export const requestUploadImage = (payload: any) =>
   ApiClient.post(`${URL_IMAGE}/upload`, payload);
 export const requestAddProduct = (payload: any) =>
@@ -171,5 +170,5 @@ export const requestDeleteListUser = (payload: any) =>
 export const requestDeleteListOrder = (payload: any) =>
   ApiClient.put(`api/v2/admin/order/delete-order`, payload);
 
-export const requestLogHistory = (payload:any) =>
+export const requestLogHistory = (payload: any) =>
   ApiClient.get(`/api/v1/admin/history`, payload);
