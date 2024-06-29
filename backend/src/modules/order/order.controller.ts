@@ -110,7 +110,7 @@ export class OrderController {
 
   @Post('add-to-cart')
   @ApiBearerAuth('token')
-  async addToCart(cart: CreateCartDto) {
+  async addToCart(@Body() cart: CreateCartDto) {
     const result = await this.orderService.addToCart(cart);
     if (result) {
       return ApiResponse.buildApiResponse(

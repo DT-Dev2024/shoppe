@@ -184,9 +184,6 @@ export class OrderService {
           cartId: cart.id,
           productId: updateCart.cartItem.productId,
           buy_count: updateCart.cartItem.buy_count,
-          price: updateCart.cartItem.price,
-          price_before_discount: updateCart.cartItem.price_before_discount,
-          status: updateCart.cartItem.status,
         },
       });
     }
@@ -194,10 +191,8 @@ export class OrderService {
     await this.prismaService.cart_item.update({
       where: { id: existingCartItem.id },
       data: {
+        productId: updateCart.cartItem.productId,
         buy_count: updateCart.cartItem.buy_count,
-        price: updateCart.cartItem.price,
-        price_before_discount: updateCart.cartItem.price_before_discount,
-        status: updateCart.cartItem.status,
       },
     });
 
