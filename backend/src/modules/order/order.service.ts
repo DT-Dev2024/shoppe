@@ -297,8 +297,19 @@ export class OrderService {
         return order;
       });
 
-      console.log('Order Histories:', orderHistories[0].order_details);
-      return orderHistories;
+      // console.log('Order Histories:', orderHistories);
+      const combinedOrderDetailsArray = orderHistories.flatMap(
+        (order) => order.order_details,
+      );
+      const combinedOrderDetailsObject = combinedOrderDetailsArray.reduce(
+        (acc, detail) => {
+          acc[detail.id] = detail;
+          return acc;
+        },
+        {},
+      );
+
+      return combinedOrderDetailsObject;
     } catch (error) {
       console.error('Error fetching order history:', error);
       throw error;

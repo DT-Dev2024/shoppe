@@ -5,7 +5,7 @@ export type TProduct = {
   description: string;
   price: number;
   sale_price: number;
-  feedback: TFeedback;
+  feedback?: TFeedback;
   created_at?: string;
 };
 
