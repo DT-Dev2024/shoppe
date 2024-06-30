@@ -765,8 +765,8 @@ const Checkout = () => {
                 return (
                   <li
                     key={index}
-                    className={`cursor-pointer border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] ${
-                      isActive ? "bg-main text-white" : "text-black"
+                    className={`cursor-pointer border px-5 py-2 text-[15px] ${
+                      isActive ? "border-main text-main" : "border-gray-400 text-black"
                     }`}
                   >
                     <button onClick={() => handlePaymentSelection(method as keyof typeof PaymentMethod)}>
