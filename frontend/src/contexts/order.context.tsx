@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import purchaseAPI from "src/apis/purchase.api";
-import { TOrderHisotry } from "src/types/order.type";
+import { ordersStatus, TOrderHisotry } from "src/types/order.type";
 
 interface OrderContextInterface {
   order: TOrderHisotry[];
@@ -20,10 +20,10 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchExtendedPurchases = async () => {
       // fetch extended purchases
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const response = await purchaseAPI.getCart(user.id);
-      console.log("response", response.data);
+      const response = await purchaseAPI.getHistory(user.id);
+      console.log(Object.values(response.data));
       if (response.status === 200) {
-        setOrder(response.data ?? []);
+        setOrder(Object.values(response.data) ?? []);
       }
     };
 

@@ -19,7 +19,6 @@ function HeaderSearchPart() {
 
   const { extendedPurchases } = useContext(CartContext) as AuthContextInterface;
   // const { order, setOrder } = useContext(OrderContext);
-  console.log("extendedPurchases", extendedPurchases);
 
   const { headerSearchHistoryKeywordsListInfo, headerSearchHistoryListInfo } = useDataSourceContext() as IDataSource;
   const renderHistoryKeywordsList = (datas: string[]) =>
@@ -111,7 +110,7 @@ function HeaderSearchPart() {
     <div className="header__search-part">
       <button
         onClick={() => navigate(path.home)}
-        className="header__shopee-logo"
+        className="header__shopee-logo -mt-3"
       >
         <svg
           viewBox="0 0 192 65"
@@ -155,7 +154,7 @@ function HeaderSearchPart() {
         </div>
       </div>
 
-      <div className="header__cart">
+      <div className="header__cart -mt-3">
         <a
           href={path.cart}
           className="header__cart__link relative"
@@ -167,7 +166,7 @@ function HeaderSearchPart() {
             </span>
           )}
         </a>
-        <div className="header__cart-popup header__cart-popup--no-goods">
+        <div className="header__cart-popup header__cart-popup--no-goods overflow-y-auto shadow-xl">
           {extendedPurchases.length > 0 ? (
             <>
               {extendedPurchases.map((item, index) => {
@@ -183,24 +182,18 @@ function HeaderSearchPart() {
                       height={80}
                       width={80}
                     ></img>
-                    {/* <div className="header__cart-popup__item__info">
-                      <span className="header__cart-popup__item__info__name">{item.product.name}</span>
-                      <span className="header__cart-popup__item__info__price">{item.product.price}</span>
-                    </div> */}
                     <span className="flex-1">{name}</span>
-                    <span className="mr-3 text-main">{formatCurrency(item.price)}</span>
+                    <span className="mr-3 text-main">₫{formatCurrency(item.price)}</span>
                   </div>
                 );
               })}
             </>
           ) : (
-            <div>
-              <div>
-                <img
-                  src={HeaderCartImage}
-                  className="header__cart-popup__no-cart-img"
-                ></img>
-              </div>
+            <div className="flex flex-col py-16">
+              <img
+                src={HeaderCartImage}
+                className="header__cart-popup__no-cart-img"
+              ></img>
               <span className="header__cart-popup__no-cart-text">Chưa có sản phẩm</span>
             </div>
           )}

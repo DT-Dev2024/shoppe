@@ -179,7 +179,7 @@ function Slider() {
         <div className="slider__main">
           <div className="slider__main__motion-part">
             <a
-              href="https://shopee.vn/m/freeship-xtra"
+              href="/productList"
               ref={motionPartLinkRef}
               className="slider__main__motion-part__link"
             >
@@ -213,7 +213,7 @@ function Slider() {
           <div className="slider__main__no-motion-part">
             <div>
               <a
-                href="https://shopee.vn/m/shopeefarm"
+                href="/productList"
                 className="slider__main__no-motion-part__link"
               >
                 <img
@@ -225,7 +225,7 @@ function Slider() {
             </div>
             <div>
               <a
-                href="https://shopee.vn/m/uu-dai-vietcombank"
+                href="/productList"
                 className="slider__main__no-motion-part__link"
               >
                 <img

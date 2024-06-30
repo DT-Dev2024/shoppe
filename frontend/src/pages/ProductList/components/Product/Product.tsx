@@ -1,9 +1,7 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import ProductRating from "src/components/ProductRating";
 import { TProduct } from "src/types/product.type";
 import { formatCurrency, formatNumberToSocialStyle } from "src/utils/formatNumber";
-import { generateSlug } from "src/utils/slugify";
 type ProductProps = {
   product: TProduct;
 };
@@ -25,16 +23,16 @@ const Product = ({ product }: ProductProps) => {
               <>
                 <div className="text-[12px] text-gray-500 line-through">
                   <span className="text-[12px]">₫</span>
-                  <span>{formatCurrency(product.product_types[0].price)}</span>
+                  <span>{formatCurrency(product.price)}</span>
                 </div>
                 <div className="rounded-sm bg-red-500 px-1 text-[14px] text-white">
-                  ₫{formatCurrency((product.product_types[0].price * (100 - product.sale_price)) / 100)}
+                  ₫{formatCurrency((product.price * (100 - product.sale_price)) / 100)}
                 </div>
               </>
             ) : (
               <div className="text-[12px]">
                 <span className="text-[12px]">₫</span>
-                <span>{formatCurrency(product.product_types[0].price)}</span>
+                <span>{formatCurrency(product.price)}</span>
               </div>
             )}
           </div>

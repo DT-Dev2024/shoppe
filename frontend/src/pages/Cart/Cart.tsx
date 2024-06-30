@@ -1,12 +1,12 @@
 import { produce } from "immer";
 
-import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { VscTriangleDown } from "react-icons/vsc";
-import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { BsExclamationCircle } from "react-icons/bs";
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { BsExclamationCircle } from "react-icons/bs";
 import { FaMinus, FaPlus } from "react-icons/fa";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { VscTriangleDown } from "react-icons/vsc";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import EmptyCartIcon from "src/assets/img/empty-cart.png";
@@ -19,11 +19,11 @@ import { formatCurrency } from "src/utils/formatNumber";
 
 import _ from "lodash";
 import { CiCircleQuestion } from "react-icons/ci";
-import { FormSubmit } from "src/helpers";
-import { OrderContext } from "src/contexts/order.context";
-import { getAllVouchers } from "src/apis/voucher";
-import { TUser } from "src/types/user.types";
 import purchaseAPI, { UpdateItem } from "src/apis/purchase.api";
+import { getAllVouchers } from "src/apis/voucher";
+import LoadingSmall from "src/components/Loading/LoadingSmall";
+import { OrderContext } from "src/contexts/order.context";
+import { TUser } from "src/types/user.types";
 type Quantity = Record<string, { quantity: number | string }>;
 
 interface CartProps {
@@ -82,8 +82,8 @@ const Cart = () => {
       checkedPurchases.reduce((prev, current) => {
         const price =
           current.product.sale_price > 0
-            ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
-            : current.product.product_types[0].price;
+            ? current.product.price * ((100 - current.product.sale_price) / 100)
+            : current.product.price;
         const quantity = parseInt(quantities[current.id]?.quantity as string);
 
         return prev + price * (quantity > current.buy_count ? current.buy_count : quantity);
@@ -93,11 +93,11 @@ const Cart = () => {
   const totalSavedPrice = useMemo(
     () =>
       checkedPurchases.reduce((prev, current) => {
-        const price_before_discount = current.product.sale_price >= 0 ? current.product.product_types[0].price : 0;
+        const price_before_discount = current.product.sale_price >= 0 ? current.product.price : 0;
         const price =
           current.product.sale_price > 0
-            ? current.product.product_types[0].price * ((100 - current.product.sale_price) / 100)
-            : current.product.product_types[0].price;
+            ? current.product.price * ((100 - current.product.sale_price) / 100)
+            : current.product.price;
         const quantity = parseInt(quantities[current.id]?.quantity as string);
         return prev + (price_before_discount - price) * (quantity > current.buy_count ? current.buy_count : quantity);
       }, 0),
@@ -107,23 +107,18 @@ const Cart = () => {
   const totalPriceBeforeDiscount = useMemo(
     () =>
       checkedPurchases.reduce((prev, current) => {
-        const price_before_discount = current.product.sale_price >= 0 ? current.product.product_types[0].price : 0;
+        const price_before_discount = current.product.sale_price >= 0 ? current.product.price : 0;
         const quantity = parseInt(quantities[current.id]?.quantity as string);
-        console.log("price_before_discount", price_before_discount);
-        console.log("quantity", quantity);
 
         return prev + price_before_discount * (quantity > current.buy_count ? current.buy_count : quantity);
       }, 0),
     [checkedPurchases],
   );
 
+  const [loading, setLoading] = useState(false);
   const debouncedUpdateQuantity = useCallback(
-    // "userId": "string",
-    // "cartItem": {
-    //   "productId": "string",
-    //   "buy_count": 0
-    // }
     _.debounce(async (productId: string, buy_count: number, purchaseId: string, userId: string) => {
+      setLoading(true);
       const data: UpdateItem = {
         userId,
         cartItem: {
@@ -131,21 +126,21 @@ const Cart = () => {
           buy_count,
         },
       };
+
       const rs = await purchaseAPI.updateCart(data);
 
       if (rs.status === 200) {
         setExtendedPurchases(
           produce((draft) => {
             const index = draft.findIndex((purchase) => purchase.id === purchaseId);
-            console.log("index", index);
             if (index !== -1) {
-              // Ensure the purchase is checked before updating
               draft[index].buy_count = buy_count;
             }
           }),
         );
       }
-    }, 2000),
+      setLoading(false);
+    }, 1000),
     [],
   );
 
@@ -177,7 +172,7 @@ const Cart = () => {
         quantity: newQuantity,
       },
     }));
-    if (user) debouncedUpdateQuantity(id, newQuantity, id, user.id);
+    if (user) debouncedUpdateQuantity(item.product.id, newQuantity, id, user.id);
   };
   const [isModalEmptyVisible, setIsModalEmptyVisible] = useState(false);
   const [isModalDeleteCartVisible, setIsModalDeleteCartVisible] = useState(false);
@@ -258,23 +253,32 @@ const Cart = () => {
       </div>
     );
   };
-
-  const ModalRemoveCart = () => {
-    const deleteCartIems = async () => {
-      if (user) {
-        const data = {
+  const deleteCartIems = async (id?: string) => {
+    if (user) {
+      setLoading(true);
+      let data;
+      if (!id) {
+        data = {
           userId: user.id,
           productIds: checkedPurchases.map((purchase) => purchase.product.id),
         };
-
-        const response = await purchaseAPI.deleteCart(data.userId, data.productIds);
-        if (response.status === 200) {
-          const newPurchases = extendedPurchases.filter((purchase) => !data.productIds.includes(purchase.product.id));
-          setExtendedPurchases(newPurchases);
-          setIsModalDeleteCartVisible(false);
-        }
+      } else {
+        data = {
+          userId: user.id,
+          productIds: [id],
+        };
       }
-    };
+      const response = await purchaseAPI.deleteCart(data.userId, data.productIds);
+      if (response.status === 200) {
+        const newPurchases = extendedPurchases.filter((purchase) => !data.productIds.includes(purchase.product.id));
+        setExtendedPurchases(newPurchases);
+        setIsModalDeleteCartVisible(false);
+      }
+      setLoading(false);
+    }
+  };
+
+  const ModalRemoveCart = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[500px] rounded-lg bg-white px-[40px] pb-[24px] pt-[44px] text-black">
@@ -287,7 +291,7 @@ const Cart = () => {
               Trở lại
             </button>
             <button
-              onClick={deleteCartIems}
+              onClick={() => deleteCartIems()}
               className="mx-7 bg-white px-10 py-4 text-3xl "
             >
               Có
@@ -449,6 +453,7 @@ const Cart = () => {
       </Helmet>
 
       <div className="">
+        {loading && <LoadingSmall />}
         {isModalEmptyVisible && <EmptySelectModal />}
         {isModalDeleteCartVisible && <ModalRemoveCart />}
         {isModalPurchaseEmptyVisible && <ModalPurchaseEmpty />}
@@ -499,10 +504,9 @@ const Cart = () => {
                 {extendedPurchases.map((purchase, index) => {
                   const price =
                     purchase.product.sale_price > 0
-                      ? purchase.product.product_types[0].price * ((100 - purchase.product.sale_price) / 100)
-                      : purchase.product.product_types[0].price;
-                  const price_before_discount =
-                    purchase.product.sale_price > 0 ? purchase.product.product_types[0].price : 0;
+                      ? purchase.product.price * ((100 - purchase.product.sale_price) / 100)
+                      : purchase.product.price;
+                  const price_before_discount = purchase.product.sale_price > 0 ? purchase.product.price : 0;
                   return (
                     <div
                       key={purchase.id}
@@ -608,7 +612,12 @@ const Cart = () => {
                               </span>
                             </div>
                             <div className=" mr-6  lg:ml-0 lg:block">
-                              <button className="bg-none text-black transition-all hover:text-primary">Xóa</button>
+                              <button
+                                onClick={() => deleteCartIems(purchase.product.id)}
+                                className="bg-none text-black transition-all hover:text-primary"
+                              >
+                                Xóa
+                              </button>
                             </div>
                           </div>
                         </div>

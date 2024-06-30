@@ -1,4 +1,25 @@
-const reviews = [
+// {
+//   id: 1,
+//   username: "arronferry",
+//   avatar: "https://down-vn.img.susercontent.com/file/vn-11134233-7r98o-lvx474jg5asb4b_tn",
+//   date: "2024-06-06 07:01",
+//   productType: "Màu cam",
+//   rating: 5,
+//   comment:
+//     "Đóng gói kỹ , giao hàng nhanh , chất lượng chắc chắn , shop nhiệt tình , nói chung ko có chỗ chê. Shop hỗ trợ nhiệt tình 10 điểm nhaaaaaaaa",
+// },
+
+export interface Review {
+  id: number;
+  username: string;
+  avatar: string;
+  date: string;
+  productType: string;
+  rating: number;
+  comment: string;
+}
+
+const reviews: Review[] = [
   {
     id: 1,
     username: "arronferry",
