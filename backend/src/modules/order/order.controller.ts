@@ -30,7 +30,7 @@ export class OrderController {
       'Cart deleted successfully',
     );
   }
-  
+
   @Post('checkout')
   @ApiBearerAuth('token')
   async create(@Body() createOrderDto: CreateOrderDto) {
@@ -94,26 +94,6 @@ export class OrderController {
       order,
       200,
       'Order deleted successfully',
-    );
-  }
-
-  @Get('payment')
-  @ApiBearerAuth('token')
-  async payment() {
-    return ApiResponse.buildApiResponse(
-      await this.orderService.getPayment(),
-      200,
-      'Orders retrieved successfully',
-    );
-  }
-
-  @Post('payment')
-  @ApiBearerAuth('token')
-  async paymentMethod(@Body() payment: CreatePaymentDto) {
-    return ApiResponse.buildApiResponse(
-      await this.orderService.UpdatePayment(payment),
-      200,
-      'Orders retrieved successfully',
     );
   }
 
