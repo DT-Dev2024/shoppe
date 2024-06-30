@@ -17,11 +17,12 @@ export class ProductService {
         image: createProductDto.image,
         sale_price: createProductDto.sale_price,
         detailImage: createProductDto.detailImage,
-        product_types: {
-          createMany: {
-            data: createProductDto.product_types,
-          },
-        },
+        price : createProductDto.price,
+        // product_types: {
+        //   createMany: {
+        //     data: createProductDto.product_types,
+        //   },
+        // },
         product_feeback: {
           create: createProductDto.feedback,
         },
@@ -32,7 +33,7 @@ export class ProductService {
   async findAll() {
     const products = await this.prismaService.products.findMany({
       include: {
-        product_types: true,
+        // product_types: true,
         product_feeback: true,
       },
     });
@@ -45,7 +46,7 @@ export class ProductService {
   async findOne(id: string) {
     return await this.prismaService.products.findUnique({
       where: { id },
-      include: { product_types: true, product_feeback: true },
+      include: {  product_feeback: true },
     });
   }
 
@@ -58,11 +59,12 @@ export class ProductService {
         image: updateProductDto.image,
         sale_price: updateProductDto.sale_price,
         detailImage: updateProductDto.detailImage,
-        product_types: {
-          createMany: {
-            data: updateProductDto.product_types,
-          },
-        },
+        price : updateProductDto.price,
+        // product_types: {
+        //   createMany: {
+        //     data: updateProductDto.product_types,
+        //   },
+        // },
         product_feeback: {
           create: updateProductDto.feedback,
         },

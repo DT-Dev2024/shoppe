@@ -6,6 +6,7 @@ import { CreatePaymentDto } from './dto/payment.dto';
 import { CreateCartDto } from './dto/cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { DeleteCartDto } from './dto/delete-cart.dto';
+import { OrderHistoryRes } from './dto/order-history.dto';
 
 @Injectable()
 export class OrderService {
@@ -128,13 +129,13 @@ export class OrderService {
       where: {
         id: cart.cartItems[0].productId,
       },
-      include: {
-        product_types: true,
-      },
+      // ,
+      // include: {
+      //   product_types: true,
+      // },
     });
     cart.cartItems[0].price =
-      product.product_types[0].price -
-      product.product_types[0].price * (product.sale_price / 100);
+      product.price - (product.price * product.sale_price) / 100;
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
         const findCart = await prisma.cart.findFirst({
@@ -185,9 +186,9 @@ export class OrderService {
         cart_items: {
           include: {
             product: {
-              include: {
-                product_types: true,
-              },
+              // include: {
+              //   product_types: true,
+              // },
             },
           },
         },
@@ -208,7 +209,7 @@ export class OrderService {
     const existingCartItem = cart.cart_items.find(
       (item) => item.productId === updateCart.cartItem.productId,
     );
-
+    console.log(existingCartItem);
     if (!existingCartItem) {
       return await this.prismaService.cart_item.create({
         data: {
@@ -222,7 +223,6 @@ export class OrderService {
     await this.prismaService.cart_item.update({
       where: { id: existingCartItem.id },
       data: {
-        productId: updateCart.cartItem.productId,
         buy_count: updateCart.cartItem.buy_count,
       },
     });
@@ -258,17 +258,50 @@ export class OrderService {
   }
 
   async getOrdersHistory(userId: string) {
-    return await this.prismaService.orders.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        order_details: {
-          include: {
-            product: true,
+    let orderHistories = [];
+    try {
+      const orders = await this.prismaService.orders.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          order_details: {
+            include: {
+              product: true,
+            },
           },
         },
-      },
-    });
+      });
+
+      orderHistories = orders.map((order) => {
+        order.order_details = order.order_details.map((detail: any) => {
+          // Assuming product has `price` and `sale_price` attributes
+          if (
+            detail.product &&
+            detail.product.price &&
+            detail.product.sale_price
+          ) {
+            detail.price =
+              (detail.product.price -
+                (detail.product.sale_price * detail.product.price) / 100) *
+              detail.buy_count;
+            detail.price_before_discount =
+              detail.product.price * detail.buy_count;
+          } else {
+            detail.price_before_discount =
+              detail.product.price * detail.buy_count;
+          }
+
+          return detail;
+        });
+        return order;
+      });
+
+      console.log('Order Histories:', orderHistories[0].order_details);
+      return orderHistories;
+    } catch (error) {
+      console.error('Error fetching order history:', error);
+      throw error;
+    }
   }
 }
