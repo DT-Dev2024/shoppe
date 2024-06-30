@@ -8,7 +8,7 @@ export enum OrderStatus {
   CANCELED = 'CANCELED',
   RETURN = 'RETURN',
 }
-export class CreateOrderDetailsDto {
+export class OrderHistoryRes {
   @ApiProperty()
   @IsString()
   product: CreateProductDto;
