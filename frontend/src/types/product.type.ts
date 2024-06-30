@@ -8,9 +8,9 @@ export type TProduct = {
   sale_price: number;
   sold: number;
   view: number;
+  detailImage: string[];
   name: string;
   description: string;
-  product_types: TProductType[];
   product_feeback: TProductFeedback;
   category: {
     id: string;
@@ -39,17 +39,6 @@ export type TProductList = {
     limit: number;
     page_size: number;
   };
-};
-
-export type TProductType = {
-  id: string;
-  name: string;
-  price: number;
-  store: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  productsId: string;
 };
 
 export type TProductListConfig = {
