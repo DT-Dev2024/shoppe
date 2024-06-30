@@ -28,14 +28,14 @@ export class OrderService {
     if (order) {
       await this.prismaService.cart.update({
         where: {
-          userId : createOrderDto.userId
+          userId: createOrderDto.userId,
         },
-        data:{
-          cart_items : {
-            deleteMany : {}
-          }
-        }
-      })
+        data: {
+          cart_items: {
+            deleteMany: {},
+          },
+        },
+      });
     }
     return order ? order : null;
   }
@@ -132,7 +132,8 @@ export class OrderService {
         product_types: true,
       },
     });
-    cart.cartItems[0].price = product.product_types[0].price -
+    cart.cartItems[0].price =
+      product.product_types[0].price -
       product.product_types[0].price * (product.sale_price / 100);
     try {
       const result = await this.prismaService.$transaction(async (prisma) => {
@@ -260,6 +261,13 @@ export class OrderService {
     return await this.prismaService.orders.findMany({
       where: {
         userId,
+      },
+      include: {
+        order_details: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
   }
