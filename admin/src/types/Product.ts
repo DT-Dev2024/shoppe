@@ -1,4 +1,5 @@
 export type TProduct = {
+  id?: string;
   image: string;
   detailImage: string[];
   name: string;

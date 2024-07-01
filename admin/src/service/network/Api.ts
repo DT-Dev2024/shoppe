@@ -28,9 +28,9 @@ export const requestAddProduct = (payload: any) =>
   ApiClient.post(`api/product`, payload);
 
 export const requestUpdateProduct = (payload: any) =>
-  ApiClient.put(`api/v1/admin/product/${payload.id}`, payload.body);
+  ApiClient.patch(`api/product/${payload.id}`, payload.body);
 export const requestDeleteProduct = (id: any) =>
-  ApiClient.delete(`api/v1/admin/product/${id}`);
+  ApiClient.delete(`api/product/${id}`);
 export const requestGetListOrder = (payload: any) =>
   ApiClient.get(`api/v1/admin/order`, payload);
 export const requestRemoveOrder = (id: any) =>
