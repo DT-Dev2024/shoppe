@@ -37,9 +37,9 @@ const ProductList = () => {
           data-react-helmet="true"
         />
       </Helmet>
-      <div className="mx-auto mt-52 w-[120rem]">
+      <div className="mx-auto mt-52 px-4 lg:w-[120rem] lg:px-0">
         {productsData && (
-          <div className="grid gap-6 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
             {productsData.map((product) => (
               <div
                 className="col-span-1"

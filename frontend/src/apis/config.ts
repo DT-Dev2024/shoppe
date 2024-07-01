@@ -1,7 +1,7 @@
 import axios from "axios";
 import queryString from "query-string";
 
-const API = "http://103.72.99.224:3000/api/";
+const API = import.meta.env.VITE_SERVER_URL + "/";
 
 const axiosClient = axios.create({
   baseURL: API,

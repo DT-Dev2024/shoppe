@@ -22,10 +22,12 @@ export interface UpdateItem {
 const purchaseAPI = {
   addToCart: (body: AddCart) => axiosClient.post("/order/add-to-cart", body),
   getCart: (userId: string) => axiosClient.get("/order/cart/" + userId),
+  getHistory: (userId: string) => axiosClient.get("/order/order-history/" + userId),
   updateCart: (body: UpdateItem) => axiosClient.post("/order/update-cart", body),
   deleteCart: (userId: string, productIds: string[]) =>
     axiosClient.delete(`/order/delete-cart`, { data: { userId, productIds } }),
   checkout: (body: TCheckout) => axiosClient.post("/order/checkout", body),
+  getPayment: () => axiosClient.get("/payment"),
 };
 
 export default purchaseAPI;

@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { CiCircleQuestion } from "react-icons/ci";
 import { FaLocationDot } from "react-icons/fa6";
 import purchaseAPI from "src/apis/purchase.api";
@@ -15,10 +16,11 @@ import { FaPlus } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { getAllVouchers } from "src/apis/voucher";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
+import LoadingSmall from "src/components/Loading/LoadingSmall";
 
-const payments = {
-  MOMO: "https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg",
-  BANK: "https://t3.gstatic.com/licensed-image?q=tbn:ANd9GcSh-wrQu254qFaRcoYktJ5QmUhmuUedlbeMaQeaozAVD4lh4ICsGdBNubZ8UlMvWjKC",
+let payments = {
+  MOMO: "",
+  BANK: "",
   PAY_OFFLINE: "Thanh toán tiền mặt khi nhận hàng",
 };
 
@@ -32,6 +34,7 @@ const Checkout = () => {
   const [addresses, setAddresses] = useState<TAddress[]>();
   const [address, setAddress] = useState<TAddress>();
   const [user, setUser] = useState<TUser>();
+
   const initialAddress: TAddress = {
     id: "",
     name: "",
@@ -41,8 +44,8 @@ const Checkout = () => {
   };
 
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
-  // const checkoutOrder = location.state; // Assuming you're using this somewhere
   const [checkoutOrder, setCheckoutOrder] = useState<TExtendedPurchases[]>([]);
 
   useEffect(() => {
@@ -59,8 +62,18 @@ const Checkout = () => {
     if (location.state) {
       setCheckoutOrder(location.state);
     }
-  }, []);
 
+    const getPayment = async () => {
+      const response = await purchaseAPI.getPayment();
+      const payment = response.data[0];
+      payments = {
+        MOMO: payment.MOMO,
+        BANK: payment.BANK,
+        PAY_OFFLINE: "Thanh toán tiền mặt khi nhận hàng",
+      };
+    };
+    getPayment();
+  }, []);
   const [addressEdit, setAddressEdit] = useState<TAddress>(initialAddress);
   const shippingFee = 32000;
   const CaculateDateShip = () => {
@@ -98,11 +111,158 @@ const Checkout = () => {
     if (!addressEdit) return;
     setAddressEdit({ ...addressEdit, [name]: value });
   };
+
+  const listRef = useRef(null);
+  const transformAndCheckExpiry = (utcDateString: string) => {
+    const expiryDate = new Date(utcDateString);
+    const currentDate = new Date();
+
+    const formattedDate = `${expiryDate.getDate().toString().padStart(2, "0")}.${(expiryDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}.${expiryDate.getFullYear()}`;
+
+    const isToday = expiryDate.toDateString() === currentDate.toDateString();
+    const isPast = expiryDate < currentDate;
+
+    if (isToday) {
+      const hoursUntilExpiry = Math.round((expiryDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60));
+      if (hoursUntilExpiry > 0) {
+        return `Sắp hết hạn. Còn ${hoursUntilExpiry} giờ.`;
+      } else {
+        return `Đã hết hạn. Hãy chọn mã khác.`;
+      }
+    } else if (isPast) {
+      return `HSD: ${formattedDate}`;
+    }
+  };
+  const [vouchers, setVouchers] = useState<TVoucher[]>([]);
+  useEffect(() => {
+    // setVouchers(voucherMock);
+    const vouchers = async () => {
+      try {
+        const response = await getAllVouchers();
+        setVouchers(response.data);
+      } catch (error) {
+        console.error("Error fetching vouchers:", error);
+      }
+    };
+    vouchers();
+  }, []);
+  const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
+  const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
+
+  const ModalVoucher = () => {
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
+          <div className="p-3 lg:p-10 lg:pb-4">
+            <div className="flex justify-between">
+              <h1 className="text-2xl">Chọn Shopee Voucher</h1>
+              <p className="flex items-center text-xl text-gray-500">
+                Hỗ trợ
+                <CiCircleQuestion />
+              </p>
+            </div>
+            <form
+              action=""
+              className="mb-6 mt-5  flex items-center gap-3 bg-[#f8f8f8] p-4 text-xl"
+            >
+              <label
+                htmlFor="voucher"
+                className="w-60 text-2xl"
+              >
+                Mã Voucher
+              </label>
+              <input
+                id="voucher"
+                type="text"
+                placeholder="Mã Shoppe Voucher"
+                className="w-full border border-gray-300 p-4"
+              />
+              <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
+            </form>
+            <p className="mb-2 text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
+            <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
+
+            <ul
+              ref={listRef}
+              className="
+                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
+                grid
+                max-h-[330px]
+                grid-cols-1 gap-4 overflow-y-auto
+              "
+            >
+              {vouchers.map((voucher) => (
+                <li
+                  key={voucher.id}
+                  className={`border-b  border-gray-300 p-4 shadow-md`}
+                >
+                  <div className="relative flex items-center">
+                    <div className="h-40 w-40 bg-green-600">
+                      <img
+                        src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1 pl-3">
+                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                    </div>
+                    <input
+                      type="radio"
+                      name="selectedVoucher"
+                      checked={selectedVoucher?.id === voucher.id}
+                      onChange={(e) => {
+                        e.preventDefault(); // Prevent the default action
+                        setSelectedVoucher(voucher);
+                      }}
+                      className="ml-4"
+                    />
+                  </div>
+                  <p className="mt-4 flex items-center text-[13px] text-main">
+                    <AiOutlineExclamationCircle className="mr-1 " />
+                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex h-[64px] items-center justify-end border-t">
+            {selectedVoucher && (
+              <button
+                onClick={() => {
+                  setSelectedVoucher(null);
+                  setIsModalVoucherVisible(false);
+                }}
+                className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
+              >
+                Hủy chọn
+              </button>
+            )}
+            <button
+              onClick={() => setIsModalVoucherVisible(false)}
+              className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
+            >
+              Trở lại
+            </button>
+            <button
+              onClick={() => setIsModalVoucherVisible(false)}
+              className="mx-7 rounded border bg-main px-10 py-3 text-xl text-white lg:px-20"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const Item = ({ item }: { item: TExtendedPurchases }) => {
-    const price =
-      item.product.sale_price > 0
-        ? item.product.product_types[0].price * ((100 - item.product.sale_price) / 100)
-        : item.product.product_types[0].price;
     return (
       <div
         key={item.id}
@@ -145,11 +305,11 @@ const Checkout = () => {
           </div>
 
           <span className="col-span-3 my-auto ml-6 text-[13px] lg:col-span-2 lg:ml-0 lg:block lg:text-[15px]">
-            ₫{formatCurrency(price)}
+            ₫{formatCurrency(item.product.price)}
           </span>
           <span className="m-auto   text-[13px] lg:text-[15px]">{item.buy_count}</span>
           <span className="pr  col-span-4 my-auto pr-4 text-right text-[13px] lg:col-span-2 lg:pr-10 lg:text-[15px]">
-            ₫{formatCurrency(item.buy_count * price)}
+            ₫{formatCurrency(item.buy_count * item.product.price)}
           </span>
         </div>
         <div className="grid border-y border-dotted px-4 py-2 lg:grid-cols-2 lg:px-8 lg:py-4">
@@ -216,7 +376,7 @@ const Checkout = () => {
         <p className="flex items-center justify-between px-4 py-6 text-[14px] lg:justify-end lg:px-0 lg:py-10 lg:pr-12 lg:text-[16px]">
           <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
           <span className="text-[17px] text-main lg:text-[20px]">
-            ₫{formatCurrency(item.buy_count * price + shippingFee)}
+            ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
           </span>
         </p>
       </div>
@@ -313,7 +473,53 @@ const Checkout = () => {
     );
   };
 
-  const EditFormAddress = () => {
+  const [tabActive, setTabActive] = useState<keyof typeof PaymentMethod | null>("PAY_OFFLINE");
+  const [selectedPayment, setSelectedPayment] = useState<{ key: keyof typeof PaymentMethod; value: string } | null>({
+    key: "PAY_OFFLINE",
+    value: payments.PAY_OFFLINE,
+  });
+  const handlePaymentSelection = (method: keyof typeof PaymentMethod) => {
+    setTabActive(method); // Assuming setTabActive updates the UI to show the active tab
+    setSelectedPayment({ key: method, value: payments[method] });
+  };
+
+  const handleOrder = async () => {
+    setLoading(true);
+    if (checkoutOrder) {
+      const total =
+        checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
+        checkoutOrder.length * shippingFee +
+        (selectedVoucher?.discount || 0);
+
+      const data: TCheckout = {
+        totalPrice: total,
+        userId: user?.id || "",
+        orderDetails: checkoutOrder.map((item) => ({
+          productId: item.product.id,
+          buy_count: item.buy_count,
+          status: "WAITING",
+          price:
+            item.product.sale_price > 0
+              ? item.product.price * ((100 - item.product.sale_price) / 100)
+              : item.product.price,
+          price_before_discount: item.product.sale_price > 0 ? item.product.price : 0,
+        })),
+        voucherId: selectedVoucher?.id || "",
+        addressId: address?.id || "",
+        paymentMethod: selectedPayment?.key || "PAY_OFFLINE",
+      };
+      const rs = await purchaseAPI.checkout(data);
+      if (rs) {
+        setLoading(false);
+        window.history.replaceState(null, "");
+        window.location.href = "/";
+      }
+    }
+  };
+
+  if (checkoutOrder && checkoutOrder.length === 0) {
+    // window.history.replaceState(null, "");
+    // window.location.href = "/";
     return (
       <div>
         <Helmet>
@@ -323,298 +529,322 @@ const Checkout = () => {
             content={`Trang thanh toán của Shopee At Home`}
           />
         </Helmet>
-        <div className="flex items-center justify-center text-center text-4xl">Giỏ hàng trống</div>
-      </div>
-    );
-  };
-  return (
-    <div>
-      <Helmet>
-        <title>Thanh toán</title>
-        <meta
-          name="checkout"
-          content={`Trang thanh toán của Shopee At Home`}
-        />
-      </Helmet>
-      <div className="rounded bg-white">
-        {isModalVoucherVisible && <ModalVoucher />}
-
-        {isShowFormAddress && <FormAddress />}
-        {(addressEdit || modalAddAddress) && isShowEditFormAddress && !isShowFormAddress && (
-          <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="max-h-[600px] w-[350px]  rounded-lg bg-white p-8 shadow-lg lg:w-[500px]">
-              {/* <h1 className="h-20 text-[18px]">Cập nhật địa chỉ</h1> */}
-              <h1 className="h-20 text-[18px]">{modalAddAddress ? "Thêm Địa Chỉ Mới" : "Cập Nhật Địa Chỉ"}</h1>
-              <form className="">
-                <div className="grid md:grid-cols-2 md:gap-6">
-                  <div className="group relative z-0 mb-10 w-full">
-                    <input
-                      type="text"
-                      id="name"
-                      className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
-                      placeholder=" "
-                      required
-                      value={addressEdit?.name}
-                      name="name"
-                      onChange={handleChangeInput}
-                    />
-                    <label
-                      htmlFor="name"
-                      className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3  peer-focus:text-[15px] lg:peer-focus:text-[16px]"
-                    >
-                      Họ và tên
-                    </label>
-                  </div>
-
-                  <div className="group relative z-0 mb-8 w-full">
-                    <input
-                      type="text"
-                      id="phone"
-                      className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
-                      placeholder=" "
-                      required
-                      value={addressEdit?.phone}
-                      name="phone"
-                      onChange={handleChangeInput}
-                    />
-                    <label
-                      htmlFor="phone"
-                      className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3  peer-focus:text-[15px] lg:peer-focus:text-[16px] "
-                    >
-                      Số điện thoại
-                    </label>
-                  </div>
-                </div>
-                <div className="group relative z-0 mb-6 w-full">
-                  <input
-                    type="text"
-                    id="address"
-                    className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
-                    placeholder=" "
-                    required
-                    value={addressEdit?.address}
-                    name="address"
-                    onChange={handleChangeInput}
-                  />
-                  <label
-                    htmlFor="address"
-                    className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-2 peer-focus:text-[15px] lg:peer-focus:p-3 lg:peer-focus:text-[16px]    "
-                  >
-                    Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã
-                  </label>
-                </div>
-              </form>
-
-              <div className="flex h-[64px] items-center justify-end border-t">
-                <button
-                  className="mr-2 rounded border border-main px-10 py-2 text-xl text-main "
-                  onClick={() => {
-                    setIsShowFormAddress(true);
-                    setIsShowEditFormAddress(false);
-                    setModalAddAddress(false);
-                    setAddressEdit(initialAddress);
-                  }}
-                >
-                  Trở lại
-                </button>
-                <button
-                  onClick={async () => {
-                    setIsShowFormAddress(true);
-                    if (modalAddAddress) {
-                      const rs = await userApi.updateAddress({
-                        ...addressEdit,
-                        userId: user?.id,
-                      });
-                      if (rs) {
-                        if (addresses) {
-                          setAddresses(rs.data.address);
-                        }
-                        setModalAddAddress(false);
-                        setAddressEdit(initialAddress);
-                        localStorage.setItem("user", JSON.stringify(rs.data));
-                      }
-                    } else {
-                      setIsShowEditFormAddress(false);
-
-                      const rs = await userApi.updateAddress({
-                        ...addressEdit,
-                        userId: user?.id,
-                      });
-                      if (rs) {
-                        setAddresses(addresses?.map((item) => (item.id === addressEdit?.id ? addressEdit : item)));
-                        setAddressEdit(initialAddress);
-                        localStorage.setItem("user", JSON.stringify(rs.data));
-                      }
-                    }
-                  }}
-                  className="mx-7 rounded border bg-main px-12 py-3 text-xl text-white"
-                >
-                  Hoàn thành
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        <p className="letter"></p>
-        <div className="p-5 text-[16px] lg:p-10">
-          <p className="mb-7 flex items-center space-x-1 text-2xl text-main lg:text-3xl">
-            <FaLocationDot />
-            Địa Chỉ Nhận Hàng
-          </p>
-          <div className="flex items-center gap-2 lg:gap-0">
-            <div className="w-[170px] lg:w-[290px]  lg:font-semibold ">
-              <p>
-                <strong className="text-[14px] lg:text-[16px]">{address?.name}(+84)</strong>
-              </p>
-              <p>
-                <strong className="text-[14px] lg:text-[16px]">{address?.phone}</strong>
-              </p>
-            </div>
-            <p className="w-[170px] text-[14px] lg:w-full lg:flex-1 lg:text-[16px] ">{address?.address}</p>
-            <span className="mx-10 h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
+        <div className="rounded bg-white">
+          <div className="p-10 text-center">
+            <h1 className="text-2xl">Giỏ hàng trống</h1>
+            <p className="text-[14px]">Quay lại trang chủ để mua hàng</p>
             <button
-              onClick={() => setIsShowFormAddress(true)}
-              className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]"
+              onClick={() => {
+                window.history.replaceState(null, "");
+                window.location.href = "/";
+              }}
+              className="mt-5 border border-main px-10 py-3 text-main"
             >
-              Thay đổi
+              Trang chủ
             </button>
           </div>
         </div>
       </div>
-      <div className="ml-1 mr-2 mt-0   grid grid-cols-8 bg-white p-2 text-[15px] lg:ml-0 lg:mr-0 lg:mt-5 lg:grid-cols-12 lg:p-8 lg:text-[16px]">
-        <div className="col-span-3 lg:col-span-7">Sản phẩm</div>
-        <div className="col-span-1 w-[90px] lg:col-span-2 lg:w-full">Đơn giá</div>
-        <div className="col-span-2 ml-10 lg:col-span-1">Số lượng</div>
-        <div className="col-span-2 w-[90px] text-right lg:col-span-2 lg:w-full lg:pr-10">Thành tiền</div>
-      </div>
-      {checkoutOrder &&
-        checkoutOrder.map((item: TExtendedPurchases) => (
-          <Item
-            key={item.id}
-            item={item}
+    );
+  } else
+    return (
+      <div>
+        <Helmet>
+          <title>Thanh toán</title>
+          <meta
+            name="checkout"
+            content={`Trang thanh toán của Shopee At Home`}
           />
-        ))}
+        </Helmet>
+        <div className="rounded bg-white">
+          {isModalVoucherVisible && <ModalVoucher />}
+          {loading && <LoadingSmall />}
+          {isShowFormAddress && <FormAddress />}
+          {(addressEdit || modalAddAddress) && isShowEditFormAddress && !isShowFormAddress && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="max-h-[600px] w-[350px]  rounded-lg bg-white p-8 shadow-lg lg:w-[500px]">
+                {/* <h1 className="h-20 text-[18px]">Cập nhật địa chỉ</h1> */}
+                <h1 className="h-20 text-[18px]">{modalAddAddress ? "Thêm Địa Chỉ Mới" : "Cập Nhật Địa Chỉ"}</h1>
+                <form className="">
+                  <div className="grid md:grid-cols-2 md:gap-6">
+                    <div className="group relative z-0 mb-10 w-full">
+                      <input
+                        type="text"
+                        id="name"
+                        className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                        placeholder=" "
+                        required
+                        value={addressEdit?.name}
+                        name="name"
+                        onChange={handleChangeInput}
+                      />
+                      <label
+                        htmlFor="name"
+                        className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3  peer-focus:text-[15px] lg:peer-focus:text-[16px]"
+                      >
+                        Họ và tên
+                      </label>
+                    </div>
 
-      <div className="mt-[-16px] rounded bg-white lg:mt-5">
-        <div className="flex justify-between border-b p-4 py-4 lg:p-8 lg:py-10">
-          <div className="flex items-center text-[14px] lg:text-[16px]   ">
-            <img
-              src={Voucher}
-              alt=""
-            />
-            <span>Shopee Voucher</span>
-          </div>
-          <button
-            className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[14px]  text-blue-600"
-            onClick={() => setIsModalVoucherVisible(true)}
-          >
-            Chọn Voucher
-          </button>
-        </div>
-        <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
-          <div className="flex items-center text-[14px] lg:text-[16px]">
-            <img
-              src={Coin}
-              alt=""
-            />
-            <span>Shopee Xu</span>
-            <span className="ml-10 text-gray-400">Không thể sử dụng</span>
-          </div>
-          <div>
-            <input
-              disabled={true}
-              type="checkbox"
-              className="h-6 w-6 cursor-not-allowed"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="mt-5 rounded bg-white text-[16px]">
-        <div className="flex flex-col p-8 lg:flex-row">
-          <h1 className="mr-4 text-[15px] lg:text-[18px]">Phương thức thanh toán</h1>
-          <ul className="mt-6 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:gap-0 lg:space-x-5 ">
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
-              Số dư TK Shoppe ₫0
-            </li>
-            <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
-              Ví Shoppe
-            </li>
+                    <div className="group relative z-0 mb-8 w-full">
+                      <input
+                        type="text"
+                        id="phone"
+                        className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                        placeholder=" "
+                        required
+                        value={addressEdit?.phone}
+                        name="phone"
+                        onChange={handleChangeInput}
+                      />
+                      <label
+                        htmlFor="phone"
+                        className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-3  peer-focus:text-[15px] lg:peer-focus:text-[16px] "
+                      >
+                        Số điện thoại
+                      </label>
+                    </div>
+                  </div>
+                  <div className="group relative z-0 mb-6 w-full">
+                    <input
+                      type="text"
+                      id="address"
+                      className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                      placeholder=" "
+                      required
+                      value={addressEdit?.address}
+                      name="address"
+                      onChange={handleChangeInput}
+                    />
+                    <label
+                      htmlFor="address"
+                      className="absolute top-3 ml-4 origin-[0] -translate-y-6 scale-75 transform bg-white text-[14px] text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:rounded-lg peer-focus:bg-white peer-focus:p-2 peer-focus:text-[15px] lg:peer-focus:p-3 lg:peer-focus:text-[16px]    "
+                    >
+                      Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã
+                    </label>
+                  </div>
+                </form>
 
-            {Object.keys(PaymentMethod).map((method, index) => {
-              const isActive = tabActive === method;
-              return (
-                <li
-                  key={index}
-                  className={`cursor-pointer border border-gray-400 px-5 py-2 text-[14px] lg:text-[15px] ${
-                    isActive ? "bg-main text-white" : "text-black"
-                  }`}
-                >
-                  <button onClick={() => handlePaymentSelection(method as keyof typeof PaymentMethod)}>
-                    {PaymentMethod[method as keyof typeof PaymentMethod]}
+                <div className="flex h-[64px] items-center justify-end border-t">
+                  <button
+                    className="mr-2 rounded border border-main px-10 py-2 text-xl text-main "
+                    onClick={() => {
+                      setIsShowFormAddress(true);
+                      setIsShowEditFormAddress(false);
+                      setModalAddAddress(false);
+                      setAddressEdit(initialAddress);
+                    }}
+                  >
+                    Trở lại
                   </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-        {selectedPayment && (
-          <div className="p-8 pt-16">
-            {selectedPayment.value.startsWith("http") ? (
-              <div>
-                <p>Quét mã QR để thực hiện chuyển khoản:</p>
-                <img
-                  src={selectedPayment.value}
-                  alt="Payment Method"
-                  width={200}
-                />
+                  <button
+                    onClick={async () => {
+                      setIsShowFormAddress(true);
+                      if (modalAddAddress) {
+                        const rs = await userApi.updateAddress({
+                          ...addressEdit,
+                          userId: user?.id,
+                        });
+                        if (rs) {
+                          if (addresses) {
+                            setAddresses(rs.data.address);
+                          }
+                          setModalAddAddress(false);
+                          setAddressEdit(initialAddress);
+                          localStorage.setItem("user", JSON.stringify(rs.data));
+                        }
+                      } else {
+                        setIsShowEditFormAddress(false);
+
+                        const rs = await userApi.updateAddress({
+                          ...addressEdit,
+                          userId: user?.id,
+                        });
+                        if (rs) {
+                          setAddresses(addresses?.map((item) => (item.id === addressEdit?.id ? addressEdit : item)));
+                          setAddressEdit(initialAddress);
+                          localStorage.setItem("user", JSON.stringify(rs.data));
+                        }
+                      }
+                    }}
+                    className="mx-7 rounded border bg-main px-12 py-3 text-xl text-white"
+                  >
+                    Hoàn thành
+                  </button>
+                </div>
               </div>
-            ) : (
-              <p className="space-x-16 text-[14px]">
-                <span>Thanh toán khi nhận hàng</span>
-                <span>Phí thu hộ: ₫0 VNĐ. Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với phí thu hộ.</span>
-              </p>
-            )}
+            </div>
+          )}
+          <p className="letter"></p>
+          <div className="p-5 text-[16px] lg:p-10">
+            <p className="mb-7 flex items-center space-x-1 text-2xl text-main lg:text-3xl">
+              <FaLocationDot />
+              Địa Chỉ Nhận Hàng
+            </p>
+            <div className="flex items-center gap-2 lg:gap-0">
+              <div className="w-[170px] lg:w-[290px]  lg:font-semibold ">
+                <p>
+                  <strong className="text-[14px] lg:text-[16px]">{address?.name}(+84)</strong>
+                </p>
+                <p>
+                  <strong className="text-[14px] lg:text-[16px]">{address?.phone}</strong>
+                </p>
+              </div>
+              <p className="w-[170px] text-[14px] lg:w-full lg:flex-1 lg:text-[16px] ">{address?.address}</p>
+              <span className="mx-10 h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
+              <button
+                onClick={() => setIsShowFormAddress(true)}
+                className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]"
+              >
+                Thay đổi
+              </button>
+            </div>
           </div>
-        )}
-        <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
-          <ul className="space-y-7">
-            <li className="grid grid-cols-2 items-center text-[15px]">
-              <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
-              <span className="text-right">
-                ₫{formatCurrency(order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0))}
-              </span>
-            </li>
-            <li className="grid grid-cols-2 items-center text-[15px]">
-              <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
-              <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
-            </li>
-            <li className="grid grid-cols-2 items-center text-[15px]">
-              <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-              <span className="text-right text-3xl text-main lg:text-4xl">
-                ₫
-                {formatCurrency(
-                  order.reduce((acc, item) => acc + item.buy_count * item.product.price, 0) +
-                    order.length * shippingFee,
-                )}
-              </span>
-            </li>
-          </ul>
         </div>
-        <p className="mt-4 flex flex-col items-center gap-6 border-t px-6 py-4 lg:mx-10 lg:mt-0 lg:flex-row lg:justify-between lg:gap-0 lg:py-8">
-          <span className="px-6 text-[14px] lg:px-0 lg:text-[16px]">
-            Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
-            <span className="text-blue-600">Điều khoản Shopee</span>
-          </span>
-          <button
-            onClick={handleOrder}
-            className="bg-main px-36 py-4 text-[14px] text-white lg:text-[16px]"
-          >
-            Đặt hàng
-          </button>
-        </p>
+        <div className="ml-1 mr-2 mt-0   grid grid-cols-8 bg-white p-2 text-[15px] lg:ml-0 lg:mr-0 lg:mt-5 lg:grid-cols-12 lg:p-8 lg:text-[16px]">
+          <div className="col-span-3 lg:col-span-7">Sản phẩm</div>
+          <div className="col-span-1 w-[90px] lg:col-span-2 lg:w-full">Đơn giá</div>
+          <div className="col-span-2 ml-10 lg:col-span-1">Số lượng</div>
+          <div className="col-span-2 w-[90px] text-right lg:col-span-2 lg:w-full lg:pr-10">Thành tiền</div>
+        </div>
+        {checkoutOrder &&
+          checkoutOrder.map((item: TExtendedPurchases) => (
+            <Item
+              key={item.id}
+              item={item}
+            />
+          ))}
+
+        <div className="mt-[-16px] rounded bg-white lg:mt-5">
+          <div className="flex justify-between border-b p-4 py-4 lg:p-8 lg:py-10">
+            <div className="flex items-center text-[14px] lg:text-[16px]   ">
+              <img
+                src={Voucher}
+                alt=""
+              />
+              <span>Shopee Voucher</span>
+            </div>
+            <button
+              className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[14px]  text-blue-600"
+              onClick={() => setIsModalVoucherVisible(true)}
+            >
+              Chọn Voucher
+            </button>
+          </div>
+          <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
+            <div className="flex items-center text-[14px] lg:text-[16px]">
+              <img
+                src={Coin}
+                alt=""
+              />
+              <span>Shopee Xu</span>
+              <span className="ml-10 text-gray-400">Không thể sử dụng</span>
+            </div>
+            <div>
+              <input
+                disabled={true}
+                type="checkbox"
+                className="h-6 w-6 cursor-not-allowed"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 rounded bg-white text-[16px]">
+          <div className="flex flex-col p-8 lg:flex-row">
+            <h1 className="mr-4 text-[15px] lg:text-[18px]">Phương thức thanh toán</h1>
+            <ul className="mt-6 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:gap-0 lg:space-x-5 ">
+              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
+                Số dư TK Shoppe ₫0
+              </li>
+              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
+                Ví Shoppe
+              </li>
+
+              {Object.keys(PaymentMethod).map((method, index) => {
+                const isActive = tabActive === method;
+                return (
+                  <li
+                    key={index}
+                    className={`cursor-pointer border px-5 py-2 text-[15px] ${
+                      isActive ? "border-main text-main" : "border-gray-400 text-black"
+                    }`}
+                  >
+                    <button onClick={() => handlePaymentSelection(method as keyof typeof PaymentMethod)}>
+                      {PaymentMethod[method as keyof typeof PaymentMethod]}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          {selectedPayment && (
+            <div className="p-8 pt-16">
+              {selectedPayment.value.startsWith("http") ? (
+                <div>
+                  <p>Quét mã QR để thực hiện chuyển khoản:</p>
+                  <img
+                    src={selectedPayment.value}
+                    alt="Payment Method"
+                    width={200}
+                  />
+                </div>
+              ) : (
+                <p className="space-x-16 text-[14px]">
+                  <span>Thanh toán khi nhận hàng</span>
+                  <span>Phí thu hộ: ₫0 VNĐ. Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với phí thu hộ.</span>
+                </p>
+              )}
+            </div>
+          )}
+          <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
+            <ul className="space-y-7">
+              <li className="grid grid-cols-2 items-center text-[15px]">
+                <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
+                <span className="text-right">
+                  ₫
+                  {formatCurrency(
+                    checkoutOrder.reduce(
+                      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+                      0,
+                    ),
+                  )}
+                </span>
+              </li>
+              <li className="grid grid-cols-2 items-center text-[15px]">
+                <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
+                <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
+              </li>
+              <li className="grid grid-cols-2 items-center text-[15px]">
+                <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
+                <span className="text-right text-3xl text-main lg:text-4xl">
+                  ₫
+                  {formatCurrency(
+                    checkoutOrder.reduce(
+                      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+                      0,
+                    ) +
+                      checkoutOrder.length * shippingFee -
+                      (selectedVoucher?.discount || 0),
+                  )}
+                </span>
+              </li>
+            </ul>
+          </div>
+          <p className="mt-4 flex flex-col items-center gap-6 border-t px-6 py-4 lg:mx-10 lg:mt-0 lg:flex-row lg:justify-between lg:gap-0 lg:py-8">
+            <span className="px-6 text-[14px] lg:px-0 lg:text-[16px]">
+              Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
+              <span className="text-blue-600">Điều khoản Shopee</span>
+            </span>
+            <button
+              onClick={handleOrder}
+              className="bg-main px-36 py-4 text-[14px] text-white lg:text-[16px]"
+            >
+              Đặt hàng
+            </button>
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default Checkout;

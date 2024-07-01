@@ -186,14 +186,14 @@ const ProductScreen = () => {
     reactotron.logImportant!("values", values);
     // return;
     let formData = new FormData();
+    const apiKey = "00ec1251d5a79a3c69c0dfe013e86412";
     try {
       if (values?.icon_url?.fileList && visible == 1) {
         reactotron.logImportant!("ADD");
-        const apiKey = "00ec1251d5a79a3c69c0dfe013e86412";
+
         const imageBase64 = values.icon_url.fileList[0].originFileObj;
         const name = values.icon_url.fileList[0].name;
         const res = await uploadImageToCloud(apiKey, imageBase64, name);
-        console.log(res);
         if (res) {
           const listUrlImageDetail: string[] = [];
           // upload detail images
@@ -236,19 +236,43 @@ const ProductScreen = () => {
         }
         return;
       }
+
       if (values?.icon_url?.fileList && upload?.imageUrl) {
         reactotron.logImportant!("UPDATE1");
-        formData.append("file", values.icon_url.fileList[0].originFileObj);
-        const res = await requestUploadImage(formData);
+        const imageBase64 = values.icon_url.fileList[0].originFileObj;
+        const name = values.icon_url.fileList[0].name;
+        const res = await uploadImageToCloud(apiKey, imageBase64, name);
         if (res) {
-          let payloadUpdate = {
-            id: item._id,
-            body: {
-              name: values.name,
-              image: res.data.path,
-              // category_id: listCategory[values.category]._id,
-              price: +values.price,
-            },
+          const listUrlImageDetail: string[] = [];
+          // upload detail images
+          await Promise.all(
+            detailImage.map(async (item: any) => {
+              const imageBase64 = item.originFileObj;
+              const name = item.name;
+              const res = await uploadImageToCloud(apiKey, imageBase64, name);
+              listUrlImageDetail.push(res);
+            })
+          );
+          console.log(listUrlImageDetail);
+
+          // Generate random feedback data
+          const feedbackStar = parseFloat(
+            (Math.random() * 0.5 + 4.5).toFixed(1)
+          );
+          console.log(listUrlImageDetail);
+
+          let payloadUpdate: TProduct = {
+            name: values.name,
+            image: res,
+            description: description,
+            detailImage: listUrlImageDetail,
+            sale_price: +values.sale_price,
+            // feedback: {
+            //   star: feedbackStar, // Generates a float between 1.0 and 5.0
+            //   comment: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500, // Generates an integer between 2500 and 100000
+            //   sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
+            // },
+            price: +values.price,
           };
           const response = await requestUpdateProduct(payloadUpdate);
           if (response) {

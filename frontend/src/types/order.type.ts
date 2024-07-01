@@ -1,7 +1,7 @@
 import { TProduct } from "./product.type";
 
-export type TOrderHistoryStatus = 1 | 2 | 3 | 4 | 5;
-export type TOrderHistoryListStatus = TOrderHistoryStatus | 0;
+export type TOrderHistoryStatus = "WAITING" | "DELIVERING" | "WAIT_RECEIVED" | "DELIVERED" | "CANCELED" | "RETURN";
+export type TOrderHistoryListStatus = TOrderHistoryStatus | "ALL";
 
 export type TOrderHisotry = {
   id: string;
@@ -39,7 +39,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 150000,
     id: "1",
     price_before_discount: 200000,
-    status: 1 as TOrderHistoryStatus,
+    status: "WAITING",
     updatedAt: "2022-02-22T07:00:00.000Z",
     product: {
       id: "1",
@@ -59,6 +59,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-02-22T07:00:00.000Z",
       updatedAt: "2022-02-22T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -67,7 +79,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 200000,
     id: "3",
     price_before_discount: 250000,
-    status: 1 as TOrderHistoryStatus,
+    status: "WAITING",
     updatedAt: "2022-02-22T07:00:00.000Z",
     product: {
       id: "3",
@@ -87,6 +99,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-02-22T07:00:00.000Z",
       updatedAt: "2022-02-22T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -95,7 +119,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 500000,
     id: "8",
     price_before_discount: 600000,
-    status: 1 as TOrderHistoryStatus,
+    status: "WAITING",
     updatedAt: "2022-01-12T07:00:00.000Z",
     product: {
       id: "8",
@@ -115,6 +139,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-01-12T07:00:00.000Z",
       updatedAt: "2022-01-12T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 
@@ -125,7 +161,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 300000,
     id: "4",
     price_before_discount: 350000,
-    status: 2 as TOrderHistoryStatus,
+    status: "DELIVERING",
     updatedAt: "2022-03-15T07:00:00.000Z",
     product: {
       id: "4",
@@ -145,6 +181,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-03-15T07:00:00.000Z",
       updatedAt: "2022-03-15T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -153,7 +201,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 450000,
     id: "9",
     price_before_discount: 500000,
-    status: 2 as TOrderHistoryStatus,
+    status: "DELIVERING",
     updatedAt: "2022-03-18T07:00:00.000Z",
     product: {
       id: "9",
@@ -173,6 +221,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-03-18T07:00:00.000Z",
       updatedAt: "2022-03-18T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -181,7 +241,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 100000,
     id: "10",
     price_before_discount: 120000,
-    status: 2 as TOrderHistoryStatus,
+    status: "DELIVERING",
     updatedAt: "2022-04-01T07:00:00.000Z",
     product: {
       id: "10",
@@ -201,6 +261,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-04-01T07:00:00.000Z",
       updatedAt: "2022-04-01T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 
@@ -211,7 +283,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 120000,
     id: "5",
     price_before_discount: 150000,
-    status: 3 as TOrderHistoryStatus,
+    status: "WAIT_RECEIVED",
     updatedAt: "2022-04-10T07:00:00.000Z",
     product: {
       id: "5",
@@ -231,6 +303,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-04-10T07:00:00.000Z",
       updatedAt: "2022-04-10T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 
@@ -240,7 +324,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 180000,
     id: "12",
     price_before_discount: 200000,
-    status: 3 as TOrderHistoryStatus,
+    status: "WAIT_RECEIVED",
     updatedAt: "2022-05-05T07:00:00.000Z",
     product: {
       id: "12",
@@ -260,6 +344,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-05-05T07:00:00.000Z",
       updatedAt: "2022-05-05T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 
@@ -270,7 +366,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 450000,
     id: "6",
     price_before_discount: 500000,
-    status: 4 as TOrderHistoryStatus,
+    status: "DELIVERED",
     updatedAt: "2022-05-20T07:00:00.000Z",
     product: {
       id: "6",
@@ -290,6 +386,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-05-20T07:00:00.000Z",
       updatedAt: "2022-05-20T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -298,7 +406,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 800000,
     id: "13",
     price_before_discount: 900000,
-    status: 4 as TOrderHistoryStatus,
+    status: "DELIVERED",
     updatedAt: "2022-06-15T07:00:00.000Z",
     product: {
       id: "13",
@@ -318,6 +426,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-06-15T07:00:00.000Z",
       updatedAt: "2022-06-15T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -326,7 +446,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 500000,
     id: "14",
     price_before_discount: 600000,
-    status: 4 as TOrderHistoryStatus,
+    status: "DELIVERED",
     updatedAt: "2022-07-01T07:00:00.000Z",
     product: {
       id: "14",
@@ -346,6 +466,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-07-01T07:00:00.000Z",
       updatedAt: "2022-07-01T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 
@@ -356,7 +488,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 200000,
     id: "7",
     price_before_discount: 250000,
-    status: 5 as TOrderHistoryStatus,
+    status: "CANCELED",
     updatedAt: "2022-06-05T07:00:00.000Z",
     product: {
       id: "7",
@@ -376,6 +508,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-06-05T07:00:00.000Z",
       updatedAt: "2022-06-05T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -384,7 +528,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 800000,
     id: "15",
     price_before_discount: 900000,
-    status: 5 as TOrderHistoryStatus,
+    status: "CANCELED",
     updatedAt: "2022-07-20T07:00:00.000Z",
     product: {
       id: "15",
@@ -393,6 +537,7 @@ export const ordersStatus: TOrderHisotry[] = [
       price_before_discount: 450000,
       image: "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-ll86dohx6hmefa_tn",
       quantity: 10,
+
       category: {
         id: "3",
         name: "Electronics",
@@ -404,6 +549,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-07-20T07:00:00.000Z",
       updatedAt: "2022-07-20T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
   {
@@ -412,7 +569,7 @@ export const ordersStatus: TOrderHisotry[] = [
     price: 600000,
     id: "16",
     price_before_discount: 700000,
-    status: 5 as TOrderHistoryStatus,
+    status: "RETURN",
     updatedAt: "2022-08-05T07:00:00.000Z",
     product: {
       id: "16",
@@ -432,6 +589,18 @@ export const ordersStatus: TOrderHisotry[] = [
       images: [],
       createdAt: "2022-08-05T07:00:00.000Z",
       updatedAt: "2022-08-05T07:00:00.000Z",
+      sale_price: 0,
+      detailImage: ["https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/orderlist/5fafbb923393b712b964.png"],
+      product_feeback: {
+        id: "",
+        star: 0,
+        comment: "",
+        sold: 0,
+        productId: "",
+        created_at: "",
+        updated_at: "",
+        deleted_at: "",
+      },
     },
   },
 ];

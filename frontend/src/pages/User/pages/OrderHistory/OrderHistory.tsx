@@ -1,34 +1,49 @@
 import React, { useContext, useState } from "react";
 import { CiSearch } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
+import { LoadingPage } from "src/components/Loading/Loading";
 import { OrderContext } from "src/contexts/order.context";
 import { TOrderHisotry } from "src/types/order.type";
 import { formatCurrency } from "src/utils/formatNumber";
-const tabs: string[] = [
-  "Tất cả",
-  "Chờ thanh toán",
-  "Vận chuyển",
-  "Chờ giao hàng",
-  "Hoàn thành",
-  "Đã hủy",
-  "Trả hàng/Hoàn tiền",
-];
+// const tabs: string[] = [
+//   "Tất cả",
+//   "Chờ thanh toán",
+//   "Vận chuyển",
+//   "Chờ giao hàng",
+//   "Hoàn thành",
+//   "Đã hủy",
+//   "Trả hàng/Hoàn tiền",
+// ];
+// export type TOrderHistoryStatus = "WAITING" | "DELIVERING" | "WAIT_RECEIVED" | "DELIVERED" | "CANCELED" | "RETURN";
+
+enum Tabs {
+  ALL = "Tất cả",
+  WAITING = "Chờ thanh toán",
+  DELIVERING = "Vận chuyển",
+  WAIT_RECEIVED = "Chờ giao hàng",
+  DELIVERED = "Hoàn thành",
+  CANCELED = "Đã hủy",
+  RETURN = "Trả hàng/Hoàn tiền",
+}
 
 const OrderItem = ({ order }: { order: TOrderHisotry }) => {
   const { product } = order;
-
+  const navigate = useNavigate();
+  const price_before_discount = product.sale_price >= 0 ? product.price : 0;
+  const price = product.sale_price > 0 ? product.price * ((100 - product.sale_price) / 100) : product.price;
   return (
     <div className="mb-4 rounded-lg border bg-white p-4 shadow-md">
       <div className="flex items-center justify-between border-b pb-2">
-        <h5 className="text-2xl font-bold">{product.category.name}</h5>
-        <p className="text-xl font-bold uppercase text-orange-600">{tabs[order.status]}</p>
+        <span></span>
+        <p className="text-xl font-bold uppercase text-orange-600">{Tabs[order.status]}</p>
       </div>
 
       <div className="mt-3 flex items-center justify-between border-b pb-6 lg:pb-10">
         <div className="flex">
           <img
             className="h-40 w-32 rounded-lg object-cover"
-            src={product.image}
-            alt={product.name}
+            src={product.detailImage[0]}
+            alt={"product"}
           />
           <div className="space-y-6 p-2 text-[14px] text-gray-600   lg:text-[16px]">
             <p className="line-clamp-2 w-[155px] leading-snug lg:w-full">{product.name}</p>
@@ -37,8 +52,14 @@ const OrderItem = ({ order }: { order: TOrderHisotry }) => {
           </div>
         </div>
         <div className="text-right text-[14px] leading-snug lg:text-[16px]">
-          <span className="text-gray-500 line-through">₫{formatCurrency(product.price)}</span>
-          <span className="font-bold text-orange-600"> ₫{formatCurrency(product.price_before_discount)}</span>
+          {product.sale_price > 0 ? (
+            <>
+              <span className="text-gray-500 line-through">₫{formatCurrency(price_before_discount)}</span>
+              <span className="font-bold text-orange-600"> ₫{formatCurrency(price)}</span>
+            </>
+          ) : (
+            <span className="font-bold text-gray-600"> ₫{formatCurrency(price)}</span>
+          )}
         </div>
       </div>
       <div className="mt-2 flex justify-end text-[14px] lg:mt-4">
@@ -65,14 +86,19 @@ const OrderItem = ({ order }: { order: TOrderHisotry }) => {
             />
           </svg>
           <span className="ml-4 text-[14px] lg:text-[16px]">Thành tiền:</span>{" "}
-          <span className="ml-2  text-[16px] text-orange-600">₫{formatCurrency(product.price_before_discount)}</span>
+          <span className="ml-2  text-[16px] text-orange-600">₫{formatCurrency(order.price)}</span>
         </span>
       </div>
 
       <div className="mt-2 flex justify-end text-[14px] lg:mt-4">
-        <button className="mr-4 rounded-lg bg-orange-600 px-6 py-5 text-[14px] text-white lg:px-16 lg:text-[16px]">
-          Mua Lại
-        </button>
+        {(order.status === "DELIVERED" || order.status === "RETURN" || order.status === "CANCELED") && (
+          <button
+            className="mr-4 rounded-lg bg-orange-600 px-6 py-5 text-[14px] text-white lg:px-16 lg:text-[16px]"
+            onClick={() => navigate(`/productDetails/${product.id}`)}
+          >
+            Mua Lại
+          </button>
+        )}
         <button className="rounded-lg border bg-white px-4 py-2 text-[14px] text-gray-700 lg:text-[16px]">
           Liên Hệ Người Bán
         </button>
@@ -84,31 +110,34 @@ const OrderItem = ({ order }: { order: TOrderHisotry }) => {
 const OrderList: React.FC = () => {
   const { order } = useContext(OrderContext);
   const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(order);
-
-  const [activeTab, setActiveTab] = React.useState<string>(tabs[0]);
+  const [activeTab, setActiveTab] = React.useState<string>("ALL");
   const [onSearch, setOnSearch] = React.useState<boolean>(false);
+  if (order.length === 0) return <LoadingPage />;
   return (
     <div>
       <div className="flex justify-center">
-        <div className="grid w-full grid-cols-1 grid-cols-2 gap-2 lg:grid-cols-7">
-          {tabs.map((tab, index) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                if (index === 0) {
-                  setOrderFilter(order);
-                } else {
-                  setOrderFilter(order.filter((order) => order.status === index));
-                }
-              }}
-              className={`${
-                activeTab === tab ? "border-b border-b-orange-600 text-orange-600" : ""
-              } bg-white py-4 text-[16px]`}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className="grid w-full grid-cols-2 gap-2 lg:grid-cols-7">
+          {Object.keys(Tabs).map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  if (tab === "ALL") {
+                    setOrderFilter(order);
+                  } else {
+                    setOrderFilter(order.filter((order) => order.status === tab));
+                  }
+                }}
+                className={`${
+                  isActive ? "border-b border-b-orange-600 text-orange-600" : ""
+                } bg-white py-4 text-[16px]`}
+              >
+                {Tabs[tab as keyof typeof Tabs]}
+              </button>
+            );
+          })}
         </div>
       </div>
       <form

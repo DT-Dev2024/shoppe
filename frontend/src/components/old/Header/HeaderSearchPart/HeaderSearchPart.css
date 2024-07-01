@@ -126,10 +126,9 @@
 .header__cart:hover .header__cart-popup {
   display: block;
 }
-
 .header__cart-popup {
   width: 40.2rem;
-  min-height: 26.2rem;
+  max-height: 26.2rem;
   background-color: #fff;
   position: absolute;
   top: calc(100%);
@@ -142,6 +141,8 @@
   animation: growth ease-in 0.25s;
   will-change: opacity, transform;
   display: none;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
 }
 
 .header__cart-popup::before {
@@ -161,10 +162,11 @@
   position: absolute;
   top: -21px;
   right: 7px;
+  /* Adjust top/right as needed for correct positioning */
 }
 
 .header__cart-popup--no-goods {
-  padding: 60px 0;
+  padding: 10px 5px;
 }
 
 .header__cart-popup--no-goods div {
@@ -224,6 +226,4 @@
   .header__search-part {
     width: 100%;
   }
-
 }
-

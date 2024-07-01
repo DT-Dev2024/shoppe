@@ -143,7 +143,7 @@ export class OrderController {
     return ApiResponse.buildApiResponse(
       await this.orderService.getOrdersHistory(userId),
       200,
-      'Cart retrieved successfully',
+      'List order history retrieved successfully',
     );
   }
 }

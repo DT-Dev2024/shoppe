@@ -1,14 +1,14 @@
 import {
-  Slider,
-  GiftBanner,
-  Outstanding,
   Directory,
   FlashSale,
-  UnderFlashSale,
-  ShopeeMall,
+  GiftBanner,
+  Outstanding,
   SearchTrending,
-  TopSearch,
+  ShopeeMall,
+  Slider,
   TodaySuggestion,
+  TopSearch,
+  UnderFlashSale,
 } from "./containers";
 
 function Container() {

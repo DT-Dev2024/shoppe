@@ -1,21 +1,26 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./ProductDetails.css";
 // import { Helmet } from "react-helmet-async";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaCartArrowDown, FaMinus, FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import productApi from "src/apis/product.api";
-import { TProduct } from "src/types/product.type";
-import { formatCurrency } from "src/utils/formatNumber";
 import purchaseAPI, { AddCart } from "src/apis/purchase.api";
-import { TUser } from "src/types/user.types";
+import { TProduct } from "src/types/product.type";
 import { TExtendedPurchases } from "src/types/purchase.type";
-import reviews from "./DataReview.js"
+import { TUser } from "src/types/user.types";
+import { formatCurrency } from "src/utils/formatNumber";
+import reviews, { Review } from "./DataReview";
+import LoadingSmall from "../Loading/LoadingSmall";
+import { AuthContextInterface, CartContext } from "src/contexts/cart.context";
+// import reviews from "./DataReview.js";
 const ProductDetails = () => {
   const [currentImageState, setCurrentImageState] = useState<HTMLImageElement | null>(null);
   const [product, setProduct] = useState<TProduct>();
   const { id } = useParams();
   const [user, setUser] = useState<TUser>();
+  const { setExtendedPurchases } = useContext(CartContext) as AuthContextInterface;
+
   useEffect(() => {
     // fetchProductById(id);
     const getProduct = async () => {
@@ -29,6 +34,7 @@ const ProductDetails = () => {
     const user = localStorage.getItem("user");
     if (user) setUser(JSON.parse(user) as TUser);
   }, [id]);
+
   const handleEnterZoomMode = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     setCurrentImageState(e.currentTarget);
   };
@@ -58,8 +64,9 @@ const ProductDetails = () => {
 
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
+  const [loadingAddCart, setLoadingAddCart] = useState(false);
   const handleAddToCart = async () => {
-    console.log("Add to cart");
+    setLoadingAddCart(true);
     const data: AddCart = {
       userId: user?.id || "",
       cartItems: [
@@ -71,8 +78,12 @@ const ProductDetails = () => {
     };
     const rs = await purchaseAPI.addToCart(data);
     if (rs) {
-      await purchaseAPI.getCart(user?.id || "");
+      const cart = await purchaseAPI.getCart(user?.id || "");
+      if (cart.status === 200) {
+        setExtendedPurchases(cart.data.cart_items ?? []);
+      }
     }
+    setLoadingAddCart(false);
   };
 
   const handleBuyNow = () => {
@@ -80,19 +91,13 @@ const ProductDetails = () => {
     const data: TExtendedPurchases = {
       product: {
         ...product,
-        price:
-          product.sale_price > 0
-            ? product.product_types[0].price * ((100 - product.sale_price) / 100)
-            : product.product_types[0].price,
+        price: product.sale_price > 0 ? product.price * ((100 - product.sale_price) / 100) : product.price,
       },
       buy_count: quantity,
-      price:
-        product.sale_price > 0
-          ? product.product_types[0].price * ((100 - product.sale_price) / 100)
-          : product.product_types[0].price,
+      price: product.sale_price > 0 ? product.price * ((100 - product.sale_price) / 100) : product.price,
       checked: false,
       disabled: false,
-      price_before_discount: product.sale_price > 0 ? product.product_types[0].price : 0,
+      price_before_discount: product.sale_price > 0 ? product.price : 0,
       id: product.id,
       createdAt: "",
       status: "WAITING",
@@ -101,56 +106,58 @@ const ProductDetails = () => {
 
     navigate("/checkout", { state: [data] });
   };
- const ReviewComponent = () => {
-  const getRandomReviews = (array, count) => {
-  const shuffled = array.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-};
-  const randomReviews = getRandomReviews(reviews, 5);
+  const ReviewComponent = () => {
+    const getRandomReviews = (array: Review[], count: number) => {
+      const shuffled = array.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    };
+    const randomReviews = getRandomReviews(reviews, 5);
 
-  return (
-    <div>
-      {randomReviews.map((item) => (
-        <div key={item.id} className="p-4 mb-4 bg-white rounded-lg shadow-md">
-          <div className="flex items-center">
-            <img
-              className="w-16 h-16 rounded-full"
-              src={item.avatar}
-              alt="User Avatar"
-            />
-            <div className="ml-4 text-xl">
-              <div className="mb-1 font-bold">{item.username}</div>
-              <div className="text-gray-600">{`${item.date} `}</div>
+    return (
+      <div>
+        {randomReviews.map((item) => (
+          <div
+            key={item.id}
+            className="mb-4 rounded-lg bg-white p-4 shadow-md"
+          >
+            <div className="flex items-center">
+              <img
+                className="h-16 w-16 rounded-full"
+                src={item.avatar}
+                alt="User Avatar"
+              />
+              <div className="ml-4 text-xl">
+                <div className="mb-1 font-bold">{item.username}</div>
+                <div className="text-gray-600">{`${item.date} `}</div>
+              </div>
             </div>
+            <div className="mt-2">
+              <span className="text-xl text-red-500">
+                {"★".repeat(item.rating)}
+                {"☆".repeat(5 - item.rating)}
+              </span>
+            </div>
+            <p className="mt-2 text-xl">{item.comment}</p>
           </div>
-          <div className="mt-2">
-            <span className="text-xl text-red-500">{'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}</span>
-          </div>
-          <p className="mt-2 text-xl">{item.comment}</p>
-        </div>
-      ))}
-    </div>
-  );
-};
+        ))}
+      </div>
+    );
+  };
 
+  const [currentImage, setCurrentImage] = useState(product && product?.image ? product?.image : "");
 
-
- const [currentImage, setCurrentImage] = useState(product && product?.image ? product?.image : '');
-
-const handleImageClick = (image) => {
-  setCurrentImage(image);
-};
+  const handleImageClick = (image: string) => {
+    setCurrentImage(image);
+  };
 
   return (
-
-    <div className="py-6 pt-12   bg-gray-200 mt-[11rem]">
-      <div className="p-10 bg-white shadow">
+    <div className="mt-[11rem] bg-gray-200   py-6 pt-12">
+      {loadingAddCart && <LoadingSmall />}
+      <div className="bg-white p-10 shadow">
         <div className="container">
           <div className="lg:grid lg:grid-cols-12 lg:gap-4">
-
             <div className="block lg:col-span-5">
               <Swiper
-
                 spaceBetween={10}
                 grabCursor={true}
                 preventInteractionOnTransition={true}
@@ -163,13 +170,13 @@ const handleImageClick = (image) => {
                     onMouseLeave={handleRemoveZoom}
                   >
                     <img
-                     src={ currentImage || product?.image}
+                      src={currentImage || product?.image}
                       alt={product?.name}
                       onMouseMove={handleZoom}
                       onMouseLeave={handleRemoveZoom}
                       onMouseEnter={handleEnterZoomMode}
                       aria-hidden={true}
-                      className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-zoom-in"
+                      className="absolute left-0 top-0 h-full w-full cursor-zoom-in bg-white object-cover"
                     />
                   </div>
                 </SwiperSlide>
@@ -189,27 +196,27 @@ const handleImageClick = (image) => {
                   },
                 }}
               >
-               {product?.detailImage.map((image, index) => (
-          <SwiperSlide key={index}>
-            <div
-              className="relative w-full pt-[100%]"
-              onClick={() => handleImageClick(image)}
-            >
-              <img
-                src={image}
-                alt={product?.name}
-                className="absolute top-0 left-0 object-cover w-full h-full bg-white cursor-pointer"
-              />
-            </div>
-          </SwiperSlide>
-        ))}
+                {product?.detailImage.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <button
+                      className="relative w-full pt-[100%]"
+                      onClick={() => handleImageClick(image)}
+                    >
+                      <img
+                        src={image}
+                        alt={product?.name}
+                        className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
+                      />
+                    </button>
+                  </SwiperSlide>
+                ))}
               </Swiper>
             </div>
-            <div className="block mt-8 lg:mt-5 lg:col-span-7">
-              <h1 className="lg:text-[20px] text-[18px] font-medium uppercase">{product?.name}</h1>
-              <div className="flex items-center mt-4">
+            <div className="mt-8 block lg:col-span-7 lg:mt-5">
+              <h1 className="text-[18px] font-medium uppercase lg:text-[20px]">{product?.name}</h1>
+              <div className="mt-4 flex items-center">
                 <div className="flex items-center">
-                  <span className="mr-1 border-b lg:text-[16px] text-[14px] font-medium text-[rgb(238,77,45)]">
+                  <span className="mr-1 border-b text-[14px] font-medium text-[rgb(238,77,45)] lg:text-[16px]">
                     {product?.product_feeback.star} Sao
                   </span>
                 </div>
@@ -224,59 +231,61 @@ const handleImageClick = (image) => {
                   <span className="ml-1 text-[14px] font-medium text-gray-500">Đã bán</span>
                 </div>
               </div>
-              <div className="flex items-center p-5 mt-4 bg-gray-50">
-                <div className="lg:text-[32px] text-[24px] font-medium text-[rgb(238,77,45)]">
+              <div className="mt-4 flex items-center bg-gray-50 p-5">
+                <div className="text-[24px] font-medium text-[rgb(238,77,45)] lg:text-[32px]">
                   {formatCurrency(
-                    product?.sale_price > 0
-                      ? product?.product_types[0].price * ((100 - product?.sale_price) / 100)
-                      : product?.product_types[0].price,
+                    (product?.sale_price as number) > 0
+                      ? (product?.price as number) * ((100 - (product?.sale_price as number)) / 100)
+                      : (product?.price as number),
                   )}
-
                 </div>
                 <div className="ml-4">
-                  <span className="lg:text-[14px] text-[13px] font-medium text-gray-500 line-through">
-                     {formatCurrency(product?.product_types[0].price || 0)}đ
+                  <span className="text-[13px] font-medium text-gray-500 line-through lg:text-[14px]">
+                    {formatCurrency(product?.price || 0)}đ
                   </span>
                 </div>
               </div>
               <div className="mt-4">
-
-                <div className="flex items-center mt-6 ">
-                <div className="mr-5 max-w-[120px] lg:text-[15px] text-[14px] capitalize text-gray-500">Chính Sách Trả Hàng</div>
-
-                <div className="flex items-center mt-0 ">
-                  <div className="ml-4 flex gap-2 lg:text-[15px] text-[14px] text-gray-500">
-                    <img
-                      src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/b69402e4275f823f7d47.svg"
-                      alt=""
-                      width={20}
-                    />
-                    Trả hàng 15 ngày
+                <div className="mt-6 flex items-center ">
+                  <div className="mr-5 max-w-[120px] text-[14px] capitalize text-gray-500 lg:text-[15px]">
+                    Chính Sách Trả Hàng
                   </div>
-                  <div className="ml-4 flex gap-2 lg:text-[14px] text-[13px] text-gray-400">
-                    Đổi ý miễn phí
-                    <img
-                      src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/be6f27f93268c0f88ded.svg"
-                      alt=""
-                      width={14}
-                    />
+
+                  <div className="mt-0 flex items-center ">
+                    <div className="ml-4 flex gap-2 text-[14px] text-gray-500 lg:text-[15px]">
+                      <img
+                        src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/b69402e4275f823f7d47.svg"
+                        alt=""
+                        width={20}
+                      />
+                      Trả hàng 15 ngày
+                    </div>
+                    <div className="ml-4 flex gap-2 text-[13px] text-gray-400 lg:text-[14px]">
+                      Đổi ý miễn phí
+                      <img
+                        src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/be6f27f93268c0f88ded.svg"
+                        alt=""
+                        width={14}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center mt-6 ">
-                <div className="mr-5 max-w-[120px] lg:text-[15px] text-[14px] capitalize text-gray-500">Vận Chuyển</div>
-                <div className="flex items-center mt-0 ">
-                  <div className="ml-4 flex gap-2 lg:text-[15px] text-[14px] text-gray-500">
-                    <img
-                      src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/d9e992985b18d96aab90.png"
-                      alt=""
-                      width={20}
-                    />
-                    Miễn phí vận chuyển
+                <div className="mt-6 flex items-center ">
+                  <div className="mr-5 max-w-[120px] text-[14px] capitalize text-gray-500 lg:text-[15px]">
+                    Vận Chuyển
+                  </div>
+                  <div className="mt-0 flex items-center ">
+                    <div className="ml-4 flex gap-2 text-[14px] text-gray-500 lg:text-[15px]">
+                      <img
+                        src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/d9e992985b18d96aab90.png"
+                        alt=""
+                        width={20}
+                      />
+                      Miễn phí vận chuyển
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* <div className="flex items-center mt-6 ">
+                {/* <div className="flex items-center mt-6 ">
                 <div className="mr-5 max-w-[120px] text-[15px] capitalize text-gray-500">Màu Sắc</div>
                 <div className="flex items-center mt-0 ">
                   <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
@@ -287,39 +296,39 @@ const handleImageClick = (image) => {
                   </div>
                 </div>
               </div> */}
-              <div className="flex items-center mt-6 ">
-                <div className="mr-5 lg:text-[15px] text-[14px] capitalize text-gray-500">Số lượng</div>
-                <div className="text-2xl lg:text-3xl">
-                  <div className=" ml-2 lg:ml-16 flex mr-8  lg:mr-[180px]  ">
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center p-1 border border-gray-300 rounded shrink-0"
-                      onClick={() => {
-                        setQuantity((prevQuantity) => prevQuantity - 1);
-                      }}
-                    >
-                      <FaMinus />
-                    </button>
-                    <span className="w-10 mx-1 font-medium text-center text-gray-900 bg-transparent border shrink-0 focus:outline-none focus:ring-0">
-                      {quantity}
-                    </span>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center p-1 border border-gray-300 rounded shrink-0"
-                      onClick={() => {
-                        setQuantity((prevQuantity) => prevQuantity + 1);
-                      }}
-                    >
-                      <FaPlus />
-                    </button>
+                <div className="mt-6 flex items-center ">
+                  <div className="mr-5 text-[14px] capitalize text-gray-500 lg:text-[15px]">Số lượng</div>
+                  <div className="text-2xl lg:text-3xl">
+                    <div className=" ml-2 mr-8 flex lg:ml-16  lg:mr-[180px]  ">
+                      <button
+                        type="button"
+                        className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                        onClick={() => {
+                          setQuantity((prevQuantity) => prevQuantity - 1);
+                        }}
+                      >
+                        <FaMinus />
+                      </button>
+                      <span className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                        onClick={() => {
+                          setQuantity((prevQuantity) => prevQuantity + 1);
+                        }}
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                  </div>
+                  {/* <p className="text-2xl font-medium">20</p> */}
+                  <div className="ml-0 text-[14px] text-gray-500 lg:text-[15px]">
+                    {/* {product?.sale_price} sản phẩm có sẵn */}
+                    13 sản phẩm có sẵn
                   </div>
                 </div>
-                {/* <p className="text-2xl font-medium">20</p> */}
-                <div className="ml-0 lg:text-[15px] text-[14px] text-gray-500">
-                  {/* {product?.sale_price} sản phẩm có sẵn */}
-                  13 sản phẩm có sẵn
-                </div>
-              </div>
               </div>
               <div className="mt-10 sm:flex sm:items-center sm:gap-x-4">
                 <button
@@ -327,30 +336,33 @@ const handleImageClick = (image) => {
                   className="flex h-[40px] w-full  items-center justify-center rounded-sm border border-[rgb(238,77,45)] bg-[rgb(252,222,216)] px-5 capitalize text-[rgb(238,77,45)] shadow-sm hover:bg-[rgb(255,160,142)] sm:w-auto"
                 >
                   <FaCartArrowDown className="mr-4 text-xl" />
-                  <p className="lg:text-[16px] text-[14px]">Thêm vào giỏ hàng</p>
+                  <p className="text-[14px] lg:text-[16px]">Thêm vào giỏ hàng</p>
                 </button>
                 <button
                   onClick={handleBuyNow}
                   className="mt-5 flex h-[40px] w-full min-w-[5rem] items-center justify-center rounded-sm bg-[rgb(238,77,45)] px-5 capitalize text-white shadow-sm outline-none hover:bg-[rgb(255,117,89)] sm:mt-0 sm:w-auto"
                 >
-                  <p className="lg:text-[16px] text-[14px]">Mua ngay</p>
+                  <p className="text-[14px] lg:text-[16px]">Mua ngay</p>
                 </button>
               </div>
             </div>
-             <div className="flex flex-col p-6 mt-6 bg-gray-100 lg:gap-0 gap-y-3 lg:flex-row lg:col-span-12">
-              <div className="flex items-center mr-16">
-                <img src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn" alt="Shop Logo" className="rounded-full w-36 h-36" />
+            <div className="mt-6 flex flex-col gap-y-3 bg-gray-100 p-6 lg:col-span-12 lg:flex-row lg:gap-0">
+              <div className="mr-16 flex items-center">
+                <img
+                  src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn"
+                  alt="Shop Logo"
+                  className="h-36 w-36 rounded-full"
+                />
                 <div className="ml-4 ">
                   <div className="text-xl font-bold">The Garden Official</div>
                   <div className="mb-4 text-xl text-gray-500">Online 5 Phút Trước</div>
-                   <div className="flex items-center gap-4 ml-auto">
-                  <button className="px-6 py-3 text-white bg-red-500 rounded hover:bg-red-600">Chat Ngay</button>
-                  <button className="px-6 py-3 bg-gray-100 bg-gray-200 rounded hover:">Xem Shop</button>
+                  <div className="ml-auto flex items-center gap-4">
+                    <button className="rounded bg-red-500 px-6 py-3 text-white hover:bg-red-600">Chat Ngay</button>
+                    <button className="hover: rounded  bg-gray-200 px-6 py-3">Xem Shop</button>
+                  </div>
                 </div>
-                </div>
-
               </div>
-              <div className="grid lg:w-full w-[230px] lg:grid-cols-3 grid-cols-1 lg:grid-rows-2 gap-x-2 lg:gap-y-0 gap-y-4 mt-1 lg:mt-4 ml-10 gap-x-10 text-medium lg:text-xl text-[13px] text-[#999999] ">
+              <div className="text-medium ml-10 mt-1 grid w-[230px] grid-cols-1 gap-x-10  gap-y-4 text-[13px] text-[#999999] lg:mt-4 lg:w-full lg:grid-cols-3 lg:grid-rows-2 lg:gap-y-0 lg:text-xl ">
                 <div className="flex justify-between">
                   Đánh Giá <span className=" ml-10 text-[#D2295C]  ">13k</span>
                 </div>
@@ -361,77 +373,72 @@ const handleImageClick = (image) => {
                   Tham Gia <span className=" ml-4 text-[#D2295C] ">6 tháng trước</span>
                 </div>
                 <div className="flex justify-between">
-                   Sản Phẩm <span className="ml-10 text-[#D2295C] ">15</span>
+                  Sản Phẩm <span className="ml-10 text-[#D2295C] ">15</span>
                 </div>
-                 <div className="flex justify-between">
-                   Thời gian phản hồi <span className="ml-10 text-right text-[#D2295C] ">trong vài giờ</span>
+                <div className="flex justify-between">
+                  Thời gian phản hồi <span className="ml-10 text-right text-[#D2295C] ">trong vài giờ</span>
                 </div>
                 <div className="flex justify-between">
                   Người theo dõi <span className="ml-10 text-[#D2295C] ">12,3k</span>
                 </div>
-
               </div>
             </div>
             <div className="col-span-12 mt-4 ">
-              <div className="p-4 bg-gray-100">
+              <div className="bg-gray-100 p-4">
                 <h2 className="mb-0 text-2xl font-semibold">Mô tả sản phẩm</h2>
-                <p className="mb-2 text-2xl ">{product?.description}</p>
+                <div
+                  className="mb-2 text-2xl"
+                  dangerouslySetInnerHTML={{ __html: product?.description || "" }}
+                ></div>
               </div>
             </div>
             <div className="col-span-12 mt-4">
-              <div className="p-4 bg-gray-100">
+              <div className="bg-gray-100 p-4">
                 <h2 className="mb-2 text-2xl font-semibold">Thông số kỹ thuật</h2>
                 {/* <p>{product?.specifications}</p> */}
                 <p className="mb-2 text-2xl ">ssss</p>
-
               </div>
             </div>
             <div className="col-span-12 mt-4">
-              <div className="p-4 bg-gray-100">
-                 <h2 className="mb-2 text-2xl font-semibold">Hướng dẫn sử dụng</h2>
+              <div className="bg-gray-100 p-4">
+                <h2 className="mb-2 text-2xl font-semibold">Hướng dẫn sử dụng</h2>
                 {/* <p>{product?.usage_instructions}</p> */}
                 <p className="mb-2 text-2xl ">sss</p>
-
               </div>
             </div>
             <div className="col-span-12 mt-4">
-              <div className="p-4 bg-gray-100">
+              <div className="bg-gray-100 p-4">
                 <h2 className="mb-2 text-2xl font-semibold">Bảo hành</h2>
-               <p className="mb-2 text-2xl ">sss</p>
-
+                <p className="mb-2 text-2xl ">sss</p>
               </div>
             </div>
             <div className="col-span-12 mt-4">
-    <div className="p-4 bg-gray-100">
-        <div className="flex gap-6 mb-8 lg:gap-20 lg:flex-row flex-coljustify-between">
-         <div className="lg:w-[300px] w-[445px]">
-           <h2 className="mb-2 text-2xl font-semibold">Đánh giá sản phẩm</h2>
-        <div className="flex items-center">
-            <span className="text-3xl font-bold text-red-500">5.0 trên 5</span>
-        </div>
-        <div className="flex items-center mt-2">
-            <span className="text-2xl text-red-500">★ ★ ★ ★ ★</span>
-        </div>
-         </div>
-        <div className="mt-0">
-             <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">Tất Cả</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">5 Sao (94)</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">4 Sao (0)</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">3 Sao (1)</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">2 Sao (0)</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">1 Sao (0)</button>
-             <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">Có Bình Luận (63)</button>
-            <button className="px-6 py-4 mb-4 mr-4 text-xl bg-gray-200">Có Hình Ảnh / Video (25)</button>
-        </div>
-
-        </div>
-       <ReviewComponent></ReviewComponent>
-
-    </div>
-</div>
-
+              <div className="bg-gray-100 p-4">
+                <div className="flex-coljustify-between mb-8 flex gap-6 lg:flex-row lg:gap-20">
+                  <div className="w-[445px] lg:w-[300px]">
+                    <h2 className="mb-2 text-2xl font-semibold">Đánh giá sản phẩm</h2>
+                    <div className="flex items-center">
+                      <span className="text-3xl font-bold text-red-500">5.0 trên 5</span>
+                    </div>
+                    <div className="mt-2 flex items-center">
+                      <span className="text-2xl text-red-500">★ ★ ★ ★ ★</span>
+                    </div>
+                  </div>
+                  <div className="mt-0">
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">Tất Cả</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">5 Sao (94)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">4 Sao (0)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">3 Sao (1)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">2 Sao (0)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">1 Sao (0)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">Có Bình Luận (63)</button>
+                    <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">Có Hình Ảnh / Video (25)</button>
+                  </div>
+                </div>
+                <ReviewComponent></ReviewComponent>
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
     </div>
