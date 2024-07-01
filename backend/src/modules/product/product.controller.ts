@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiResponseService } from 'src/shared/providers/api-response/api-response.service';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
 import { AuthGuard } from '../auth/auth.guard';
+import { Public } from '../auth/decorators/public.decorator';
 @ApiTags('product')
 @Controller('product')
 @UseGuards(AuthGuard)
@@ -47,7 +48,8 @@ export class ProductController {
   @ApiOperation({
     summary: 'Lấy toàn bộ danh sách sản phẩm',
   })
-  @ApiBearerAuth('token')
+  // @ApiBearerAuth('token')
+  @Public()
   async findAll() {
     const result = await this.productService.findAll();
     if (!result) {
@@ -64,7 +66,8 @@ export class ProductController {
   @ApiOperation({
     summary: 'Lấy sản phẩm theo Id',
   })
-  @ApiBearerAuth('token')
+  // @ApiBearerAuth('token')
+  @Public()
   async findOne(@Param('id') id: string) {
     return await this.productService.findOne(id);
   }
