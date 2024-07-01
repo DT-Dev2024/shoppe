@@ -63,12 +63,12 @@ export const HeaderComponent = ({ toggle }: { toggle: any }) => {
   };
   const getUserInfo = async () => {
     try {
-      const res = await requestGetProfile();
-      if (res) {
-        reactotron.logImportant!(res);
-        setUserInfo(res.data);
-      }
-    } catch (error) {}
+      // const res = await requestGetProfile();
+      // if (res) {
+      // reactotron.logImportant!(res);
+      setUserInfo("");
+      // }
+    } catch (error) { }
   };
 
   const handleResetPassword = async () => {
@@ -253,7 +253,7 @@ export const HeaderComponent = ({ toggle }: { toggle: any }) => {
 const OptionTopComponent: React.FC<{ onToggle: () => any }> = () => {
   return (
     <div className={"option-top-component"}>
-      <div onClick={() => {}}>{Icon.COLLAPSED_MENU}</div>
+      <div onClick={() => { }}>{Icon.COLLAPSED_MENU}</div>
       <div className={"wrapper-icon-header"}></div>
     </div>
   );

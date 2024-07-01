@@ -137,7 +137,7 @@ const ProductScreen = () => {
         setListProduct(res.data);
         setTotalPage(res.total);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const beforeUpload = (file: any) => {
@@ -241,7 +241,8 @@ const ProductScreen = () => {
 
       if (showDetailImage) {
         reactotron.logImportant!("UPDATE1");
-        const imageBase64 = values.icon_url.fileList[0].originFileObj;
+        console.log("update 1")
+        const imageBase64 = values.icon_url.fileList[0].originFileObj ?? item.image;
         const name = values.icon_url.fileList[0].name;
         const res = await uploadImageToCloud(apiKey, imageBase64, name);
         if (res) {
@@ -258,20 +259,23 @@ const ProductScreen = () => {
           console.log(listUrlImageDetail);
           // Generate random feedback data
 
-          let payloadUpdate: TProduct = {
+          let payloadUpdate = {
             id: item.id,
-            name: values.name,
-            image: res,
-            description: description,
-            detailImage: listUrlImageDetail,
-            sale_price: +values.sale_price,
-            // feedback: {
-            //   star: feedbackStar, // Generates a float between 1.0 and 5.0
-            //   comment: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500, // Generates an integer between 2500 and 100000
-            //   sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
-            // },
-            price: +values.price,
+            body: {
+              name: values.name,
+              image: res,
+              description: description,
+              detailImage: listUrlImageDetail,
+              sale_price: +values.sale_price,
+              // feedback: {
+              //   star: feedbackStar, // Generates a float between 1.0 and 5.0
+              //   comment: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500, // Generates an integer between 2500 and 100000
+              //   sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
+              // },
+              price: +values.price,
+            }
           };
+          console.log(payloadUpdate);
           const response = await requestUpdateProduct(payloadUpdate);
           if (response) {
             showToast("Cập nhật sản phẩm thành công!");
@@ -284,15 +288,18 @@ const ProductScreen = () => {
           }
         }
         return;
-      }
-      if (!showDetailImage) {
+      } else {
+        console.log('update2')
         reactotron.logImportant!("UPDATE2");
+        const imageBase64 = values.icon_url.fileList[0].originFileObj;
+        const name = values.icon_url.fileList[0].name;
+        const res = await uploadImageToCloud(apiKey, imageBase64, name);
         let payloadUpdate = {
           id: item.id,
           body: {
             id: item.id,
             name: values.name || item.name,
-            image: values?.icon_url,
+            image: res,
             description: description || item.description,
             sale_price: +values.sale_price || item.sale_price,
             // category_id: listCategory[values.category]._id,
@@ -312,6 +319,7 @@ const ProductScreen = () => {
         return;
       }
     } catch (error) {
+      console.log(error)
       message.error("Đã có lỗi xảy ra!");
     }
   };
@@ -323,7 +331,7 @@ const ProductScreen = () => {
         showToast("Xoá sản phẩm thành công!");
         getData();
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const uploadButton = (
@@ -441,12 +449,9 @@ const ProductScreen = () => {
                           ...upload,
                           imageUrl: item.image,
                         });
-                        console.log(item);
                         setDetailImage(item.detailImage);
-                        console.log(detailImage);
                         setDescription(item.description);
                         setShowDetailImage(false);
-                        // setItemCategory(item.category);
                       }}
                       type="text"
                       size="large"
@@ -655,7 +660,7 @@ const ProductScreen = () => {
                 multiple
                 beforeUpload={beforeUpload}
               >
-                {detailImage.length >= 5 ? null : uploadButton}
+                {/* {detailImage.length >= 5 ? null : uploadButton}  */}
               </Upload>
             )}
           </Form.Item>
@@ -685,6 +690,9 @@ const ProductScreen = () => {
 
           <ButtonBottomModal
             isLoadingButton={false}
+            onClickconfirm={() => {
+
+            }}
             onCancel={() => {
               setVisible(0);
               form.setFieldsValue({});
