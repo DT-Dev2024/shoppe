@@ -1,0 +1,27 @@
+@media (min-width: 1341px) {
+  .input-search_account {
+    min-width: 400px;
+  }
+
+  .select-status_account {
+    min-width: 200px;
+  }
+
+  .select-type_account {
+    min-width: 200px;
+  }
+}
+
+@media (min-width: 1641px) {
+  .input-search_account {
+    min-width: 600px;
+  }
+
+  .select-status_account {
+    min-width: 250px;
+  }
+
+  .select-type_account {
+    min-width: 250px;
+  }
+}

@@ -1,26 +1,25 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import ProtectedRoute from '@/routes/ProtectedRoute'
-import NotFound from '@/components/NotFound'
-import Home from '@/pages/Home'
-import { UserCheck } from 'lucide-react'
-import { ProductPage } from './pages/ProductPage'
-import { DataTableDemo } from './pages/TableTest'
+import { Layout } from "antd";
+import "antd/dist/antd.css";
+import Sider from "antd/es/layout/Sider";
+import "firebase/database";
+import React, { useEffect, useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import "./App.css";
+import AppNavigator from "./navigator/AppNavigator";
+import { HeaderComponent } from "./component/Header";
+import MenuComponent from "./component/Menu";
+import { ToastContainer } from 'react-toastify';
 
-export default function App() {
+import 'react-toastify/dist/ReactToastify.css';
+
+function App() {
   return (
-    <React.Suspense >
-      <Routes>
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Home />}>
-            <Route path={'/'} element={<Home />} />
-          </Route>
-        </Route>
-        <Route path='/products' element={<ProductPage />} />
-        <Route path='/user' element={<UserCheck />} />
-        <Route path='/demo' element={<DataTableDemo />} />
-        <Route path={'*'} element={<NotFound />}></Route>
-      </Routes>
-    </React.Suspense>
-  )
+    <React.Fragment>
+      <AppNavigator />
+      <Outlet />
+      <ToastContainer/>
+    </React.Fragment>
+  );
 }
+
+export default App;
