@@ -82,7 +82,28 @@ const Checkout = () => {
     const dayReceive2 = day + 5;
     return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
   };
-
+  const CaculateDateShipTK = () => {
+    const date = new Date();
+    const day = date.getDate();
+    const dayReceive = day + 4;
+    const dayReceive2 = day + 6;
+    return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
+  };
+  const CaculateDateShipHT = () => {
+    const date = new Date();
+    const day = date.getDate();
+    const dayReceive = day + 1;
+    const dayReceive2 = day + 3;
+    return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
+  };
+  // Function to handle payment method selection
+  const paymentMethod = (e: React.MouseEvent<HTMLLIElement>) => {
+    const paymentItems = document.querySelectorAll("li");
+    paymentItems.forEach((item) => {
+      item.classList.remove("bg-main", "text-white");
+    });
+    e.currentTarget.classList.add("bg-main", "text-white");
+  };
   const handleAddressChange = (selectedId: string) => {
     const updatedAddresses = addresses?.map((item) => ({
       ...item,
@@ -175,6 +196,31 @@ const Checkout = () => {
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
 
   const ModalVoucher = () => {
+    const fixedVouchers = [
+      {
+        id: 1,
+        discount: 50000,
+        minium_price: 200000,
+        expire: "2024-07-31",
+        discount_type: "FIXED",
+      },
+      {
+        id: 2,
+        discount: 100000,
+        minium_price: 300000,
+        expire: "2024-08-15",
+        discount_type: "FIXED",
+      },
+      {
+        id: 3,
+        discount: 150000,
+        minium_price: 500000,
+        discount_type: "FIXED",
+
+        expire: "2024-09-01",
+      },
+    ];
+
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
@@ -216,7 +262,7 @@ const Checkout = () => {
                 grid-cols-1 gap-4 overflow-y-auto
               "
             >
-              {vouchers.map((voucher) => (
+              {fixedVouchers.map((voucher) => (
                 <li
                   key={voucher.id}
                   className={`border-b  border-gray-300 p-4 shadow-md`}
@@ -237,6 +283,42 @@ const Checkout = () => {
                           ? `₫${formatCurrency(voucher.discount)}`
                           : `${voucher.discount}%`}
                       </p>
+                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                    </div>
+                    <input
+                      type="radio"
+                      name="selectedVoucher"
+                      // checked={selectedVoucher?.id === voucher.id}
+                      // onChange={(e) => {
+                      //   e.preventDefault();
+                      //   setSelectedVoucher(voucher);
+                      // }}
+                      className="ml-4"
+                    />
+                  </div>
+                  <p className="mt-4 flex items-center text-[13px] text-main">
+                    <AiOutlineExclamationCircle className="mr-1 " />
+                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                  </p>
+                </li>
+              ))}
+              {vouchers.map((voucher) => (
+                <li
+                  key={voucher.id}
+                  className={`border-b  border-gray-300 p-4 shadow-md`}
+                >
+                  <div className="relative flex items-center">
+                    <div className="h-40 w-40 bg-green-600">
+                      <img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1 pl-3">
+                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
                       <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
                       <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
                     </div>
@@ -527,16 +609,16 @@ const Checkout = () => {
         voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShip()}`,
       },
       {
-        type: "Tiết kiệm",
-        fee: 25000,
-        deliveryDate: CaculateDateShip(),
-        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShip()}`,
-      },
-      {
         type: "Hỏa tốc",
         fee: 75000,
-        deliveryDate: CaculateDateShip(),
-        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShip()}`,
+        deliveryDate: CaculateDateShipHT(),
+        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShipHT()}`,
+      },
+      {
+        type: "Tiết kiệm",
+        fee: 25000,
+        deliveryDate: CaculateDateShipTK(),
+        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShipTK()}`,
       },
     ];
     return (
