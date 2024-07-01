@@ -78,6 +78,7 @@ const ProductScreen = () => {
   const [description, setDescription] = useState<string>("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [showDetailImage, setShowDetailImage] = useState<boolean>(false);
   // const [listCategory, setListCategory] = useState<any>([]);
   // const [itemCategory, setItemCategory] = useState<any>([]);
   const [loadMore, setLoadMore] = useState<any>(false);
@@ -136,7 +137,7 @@ const ProductScreen = () => {
         setListProduct(res.data);
         setTotalPage(res.total);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const beforeUpload = (file: any) => {
@@ -232,12 +233,14 @@ const ProductScreen = () => {
             setVisible(0);
             getData();
             setItem(undefined);
+            setShowDetailImage(false);
           }
         }
         return;
       }
 
-      if (values?.icon_url?.fileList && upload?.imageUrl) {
+      if (showDetailImage) {
+
         reactotron.logImportant!("UPDATE1");
         const imageBase64 = values.icon_url.fileList[0].originFileObj;
         const name = values.icon_url.fileList[0].name;
@@ -280,11 +283,12 @@ const ProductScreen = () => {
             setVisible(0);
             getData();
             setItem(undefined);
+            setShowDetailImage(false);
           }
         }
         return;
       }
-      if (upload?.imageUrl && !values?.icon_url?.fileList) {
+      if (!showDetailImage) {
         reactotron.logImportant!("UPDATE2");
         let payloadUpdate = {
           id: item._id,
@@ -301,6 +305,7 @@ const ProductScreen = () => {
           setVisible(0);
           getData();
           setItem(undefined);
+          setShowDetailImage(false);
         }
         return;
       }
@@ -316,7 +321,7 @@ const ProductScreen = () => {
         showToast("Xoá sản phẩm thành công!");
         getData();
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const uploadButton = (
@@ -382,6 +387,7 @@ const ProductScreen = () => {
                 ...upload,
                 imageUrl: "",
               });
+              setShowDetailImage(false);
             }}
           />,
         ]}
@@ -437,6 +443,7 @@ const ProductScreen = () => {
                         setDetailImage(item.detailImage);
                         console.log(detailImage);
                         setDescription(item.description);
+                        setShowDetailImage(false);
                         // setItemCategory(item.category);
                       }}
                       type="text"
@@ -483,7 +490,7 @@ const ProductScreen = () => {
                     </Col>
 
                     <Col flex={1}>
-                      <h4>Giá gốc: {(formatPrice(item.price) || 0) + UNIT}</h4>
+                      <h4>Giá gốc: {(formatPrice(item.price) || 0)}</h4>
                     </Col>
                     <Col flex={1}>
                       <h4>
@@ -503,6 +510,7 @@ const ProductScreen = () => {
         onCancel={() => {
           setVisible(0);
           setItem(undefined);
+          setShowDetailImage(false);
           form.resetFields();
         }}
         maskClosable={false}
@@ -610,16 +618,35 @@ const ProductScreen = () => {
             </Upload>
           </Form.Item>
           <Form.Item label="Ảnh chi tiết" name="detail_images">
-            <Upload
+            {!showDetailImage && <Button onClick={() => { setShowDetailImage(!showDetailImage); setDetailImage([]) }}>
+              {showDetailImage ? "Xem ảnh chi tiết" : "Cập nhật ảnh chi tiết"}
+            </Button>}
+            {showDetailImage ? (
+              <Upload
+                listType="picture-card"
+                fileList={detailImage}
+                onChange={handleDetailImagesChange}
+                onPreview={handlePreview}
+                multiple
+                beforeUpload={beforeUpload}
+              >
+                {detailImage.length >= 5 ? null : uploadButton}
+              </Upload>
+            ) : <Upload
               listType="picture-card"
-              fileList={detailImage}
+              fileList={detailImage.map((url: any, index: any) => ({
+                uid: index,
+                name: `image-${index}`,
+                status: 'done',
+                url: url,
+              }))}
               onChange={handleDetailImagesChange}
               onPreview={handlePreview}
               multiple
               beforeUpload={beforeUpload}
             >
               {detailImage.length >= 5 ? null : uploadButton}
-            </Upload>
+            </Upload>}
           </Form.Item>
           {previewImage && (
             <Image
@@ -652,6 +679,7 @@ const ProductScreen = () => {
               form.setFieldsValue({});
               setItem({});
               setUpload({});
+              setShowDetailImage(false);
             }}
             text={visible == 1 ? "Thêm sản phẩm" : "Cập nhật"}
           />
