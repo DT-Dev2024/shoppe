@@ -1,5 +1,5 @@
 import React from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaArrowCircleLeft, FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
@@ -9,23 +9,39 @@ type CartLayoutPropsType = {
 
 const CartLayout = ({ children }: CartLayoutPropsType) => {
   return (
-    <div className="w-full bg-neutral-100">
-      <div className="  bg-[#f94f2f] py-[1rem] pt-[1.3rem] lg:py-[0.8rem]  lg:pt-[1rem]">
+    <div className=" w-full bg-neutral-100">
+      <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
         <HeaderCommonInfo />
       </div>
-      <HeaderSearchPart />
-      <div className="mx-auto lg:w-[120rem]">{children}</div>
-      <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
+      <div className="hidden lg:block">
+        <HeaderSearchPart />
+      </div>
+      <div className="fixed block w-full lg:hidden">
+        <HeaderCart />
+      </div>
+      <div className="mx-auto pt-14 lg:w-[120rem] lg:pt-0">{children}</div>
+      {/* <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
       <div>
         <FooterLink bg="bg-neutral-100" />
         <FooterPolicyAndTerms />
-      </div>
+      </div> */}
     </div>
   );
 };
 
 export default CartLayout;
-
+function HeaderCart() {
+  return (
+    <div>
+      <div className="flex  items-center justify-start gap-8 bg-white px-6 py-4">
+        <a href="/">
+          <FaArrowLeft className="text-2xl text-primary"></FaArrowLeft>
+        </a>
+        <p className="text-2xl">Giỏ hàng</p>
+      </div>
+    </div>
+  );
+}
 function HeaderSearchPart() {
   const navigate = useNavigate();
   return (
