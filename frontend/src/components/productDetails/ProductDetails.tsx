@@ -392,33 +392,14 @@ const ProductDetails = () => {
                 ></div>
               </div>
             </div>
-            <div className="col-span-12 mt-4">
-              <div className="bg-gray-100 p-4">
-                <h2 className="mb-2 text-2xl font-semibold">Thông số kỹ thuật</h2>
-                {/* <p>{product?.specifications}</p> */}
-                <p className="mb-2 text-2xl ">ssss</p>
-              </div>
-            </div>
-            <div className="col-span-12 mt-4">
-              <div className="bg-gray-100 p-4">
-                <h2 className="mb-2 text-2xl font-semibold">Hướng dẫn sử dụng</h2>
-                {/* <p>{product?.usage_instructions}</p> */}
-                <p className="mb-2 text-2xl ">sss</p>
-              </div>
-            </div>
-            <div className="col-span-12 mt-4">
-              <div className="bg-gray-100 p-4">
-                <h2 className="mb-2 text-2xl font-semibold">Bảo hành</h2>
-                <p className="mb-2 text-2xl ">sss</p>
-              </div>
-            </div>
+
             <div className="col-span-12 mt-4">
               <div className="bg-gray-100 p-4">
                 <div className="flex-coljustify-between mb-8 flex gap-6 lg:flex-row lg:gap-20">
                   <div className="w-[445px] lg:w-[300px]">
                     <h2 className="mb-2 text-2xl font-semibold">Đánh giá sản phẩm</h2>
                     <div className="flex items-center">
-                      <span className="text-3xl font-bold text-red-500">5.0 trên 5</span>
+                      <span className="text-3xl font-bold text-red-500">4.7 trên 5</span>
                     </div>
                     <div className="mt-2 flex items-center">
                       <span className="text-2xl text-red-500">★ ★ ★ ★ ★</span>
