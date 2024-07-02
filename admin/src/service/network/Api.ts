@@ -1,5 +1,10 @@
 import { ApiClient, BASE_URL_DEV, URL_IMAGE } from "../ApiService";
 
+export const requestAddPayment = (payload: any) =>
+  ApiClient.post(`api/payment`, payload);
+
+export const requestGetPayment = () =>
+  ApiClient.get(`api/payment`);
 export const requestLogin = (payload: any) =>
   ApiClient.post(`api/auth/admin-login`, payload);
 export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
