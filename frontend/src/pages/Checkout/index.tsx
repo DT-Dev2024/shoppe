@@ -194,7 +194,27 @@ const Checkout = () => {
   }, [selectedVoucher, checkoutOrder]);
 
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
-
+  const fixedVouchers = [
+    {
+      id: 1,
+      discount: 15000,
+      minium_price: 0,
+      expire: "2025-07-31",
+    },
+    {
+      id: 2,
+      discount: 10000,
+      minium_price: 50000,
+      expire: "2025-08-15",
+    },
+    {
+      id: 3,
+      discount: 100000,
+      minium_price: 500000,
+      expire: "2025-09-01",
+    },
+  ];
+  const [selectedFixidVoucher, setSelectedFixidVoucher] = useState<any>(fixedVouchers);
   const ModalVoucher = () => {
     const fixedVouchers = [
       {
@@ -262,83 +282,82 @@ const Checkout = () => {
                 grid-cols-1 gap-4 overflow-y-auto
               "
             >
-              {fixedVouchers.map((voucher) => (
-                <li
-                  key={voucher.id}
-                  className={`border-b  border-gray-300 p-4 shadow-md`}
-                >
-                  <div className="relative flex items-center">
-                    <div className="h-40 w-40 bg-green-600">
-                      <img
-                        src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                        alt=""
-                        className="h-full w-full object-cover"
+              <>
+                {fixedVouchers.map((voucher) => (
+                  <li
+                    key={voucher.id}
+                    className={`border-b  border-gray-300 p-4 shadow-md`}
+                  >
+                    <div className="relative flex items-center">
+                      <div className="h-40 w-40 bg-green-600">
+                        <img
+                          src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+
+                      <div className="flex-1 pl-3">
+                        <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                        <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                        <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                      </div>
+                      <input
+                        type="radio"
+                        name="selectedFixidVoucher"
+                        checked={selectedFixidVoucher?.id === voucher.id}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          setSelectedFixidVoucher(voucher);
+                          setSelectedVoucher(null);
+                        }}
+                        className="ml-4"
                       />
                     </div>
+                    <p className="mt-4 flex items-center text-[13px] text-main">
+                      <AiOutlineExclamationCircle className="mr-1 " />
+                      Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                    </p>
+                  </li>
+                ))}
+                {vouchers.map((voucher) => (
+                  <li
+                    key={voucher.id}
+                    className={`border-b  border-gray-300 p-4 shadow-md`}
+                  >
+                    <div className="relative flex items-center">
+                      <div className="h-40 w-40 bg-green-600">
+                        <img
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
 
-                    <div className="flex-1 pl-3">
-                      <p className="text-xl">
-                        Giảm giá tối đa{" "}
-                        {voucher.discount_type === "FIXED"
-                          ? `₫${formatCurrency(voucher.discount)}`
-                          : `${voucher.discount}%`}
-                      </p>
-                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                    </div>
-                    <input
-                      type="radio"
-                      name="selectedVoucher"
-                      // checked={selectedVoucher?.id === voucher.id}
-                      // onChange={(e) => {
-                      //   e.preventDefault();
-                      //   setSelectedVoucher(voucher);
-                      // }}
-                      className="ml-4"
-                    />
-                  </div>
-                  <p className="mt-4 flex items-center text-[13px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1 " />
-                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                  </p>
-                </li>
-              ))}
-              {vouchers.map((voucher) => (
-                <li
-                  key={voucher.id}
-                  className={`border-b  border-gray-300 p-4 shadow-md`}
-                >
-                  <div className="relative flex items-center">
-                    <div className="h-40 w-40 bg-green-600">
-                      <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
-                        alt=""
-                        className="h-full w-full object-cover"
+                      <div className="flex-1 pl-3">
+                        <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                        <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                        <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                      </div>
+                      <input
+                        type="radio"
+                        name="selectedVoucher"
+                        checked={selectedVoucher?.id === voucher.id}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          setSelectedVoucher(voucher);
+                          setSelectedFixidVoucher(null);
+                        }}
+                        className="ml-4"
                       />
                     </div>
-
-                    <div className="flex-1 pl-3">
-                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
-                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                    </div>
-                    <input
-                      type="radio"
-                      name="selectedVoucher"
-                      checked={selectedVoucher?.id === voucher.id}
-                      onChange={(e) => {
-                        e.preventDefault(); // Prevent the default action
-                        setSelectedVoucher(voucher);
-                      }}
-                      className="ml-4"
-                    />
-                  </div>
-                  <p className="mt-4 flex items-center text-[13px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1 " />
-                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                  </p>
-                </li>
-              ))}
+                    <p className="mt-4 flex items-center text-[13px] text-main">
+                      <AiOutlineExclamationCircle className="mr-1 " />
+                      Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                    </p>
+                  </li>
+                ))}
+              </>
             </ul>
           </div>
 
@@ -703,7 +722,7 @@ const Checkout = () => {
       const total =
         checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
         checkoutOrder.length * shippingFee +
-        (selectedVoucher?.discount || 0);
+        (selectedFixidVoucher ? selectedFixidVoucher.discount : selectedVoucher ? selectedVoucher.discount : 0);
 
       const data: TCheckout = {
         totalPrice: total,
@@ -1046,18 +1065,40 @@ const Checkout = () => {
                 <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
-                <span className="col-span-1 mr-8 text-gray-400">Giảm giá phí vận chuyển</span>
-                <span className="text-right">- ₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
+                <span className="col-span-1 mr-8 text-gray-400">Giảm giá</span>
+                <span className="text-right">
+                  ₫
+                  {formatCurrency(
+                    (selectedFixidVoucher
+                      ? selectedFixidVoucher.discount
+                      : selectedVoucher
+                      ? selectedVoucher.discount
+                      : 0) || 0,
+                  )}
+                </span>
               </li>
-              {selectedVoucher && (
-                <li className="grid grid-cols-2 items-center text-[15px]">
-                  <span className="col-span-1 mr-8 text-gray-400">Tổng cộng voucher giảm giá</span>
-                  <span className="text-right">- ₫{formatCurrency(priceDiscount)}</span>
-                </li>
-              )}
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-                <span className="text-right text-3xl text-main lg:text-4xl">₫{formatCurrency(totalPrice)}</span>
+                <span className="text-right text-3xl text-main lg:text-4xl">
+                  ₫
+                  {formatCurrency(
+                    checkoutOrder.reduce(
+                      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+                      0,
+                    ) +
+                      checkoutOrder.length * shippingFee -
+                      (selectedFixidVoucher
+                        ? selectedFixidVoucher.discount
+                        : selectedVoucher
+                        ? selectedVoucher.discount
+                        : 0) ||
+                      checkoutOrder.reduce(
+                        (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+                        0,
+                      ) +
+                        checkoutOrder.length * shippingFee,
+                  )}
+                </span>
               </li>
             </ul>
           </div>
