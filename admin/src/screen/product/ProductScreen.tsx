@@ -137,7 +137,7 @@ const ProductScreen = () => {
         setListProduct(res.data);
         setTotalPage(res.total);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const beforeUpload = (file: any) => {
@@ -241,8 +241,9 @@ const ProductScreen = () => {
 
       if (showDetailImage) {
         reactotron.logImportant!("UPDATE1");
-        console.log("update 1")
-        const imageBase64 = values.icon_url.fileList[0].originFileObj ?? item.image;
+        console.log("update 1");
+        const imageBase64 =
+          values.icon_url.fileList[0].originFileObj ?? item.image;
         const name = values.icon_url.fileList[0].name;
         const res = await uploadImageToCloud(apiKey, imageBase64, name);
         if (res) {
@@ -262,6 +263,7 @@ const ProductScreen = () => {
           let payloadUpdate = {
             id: item.id,
             body: {
+              id: item.id,
               name: values.name,
               image: res,
               description: description,
@@ -273,7 +275,7 @@ const ProductScreen = () => {
               //   sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
               // },
               price: +values.price,
-            }
+            },
           };
           console.log(payloadUpdate);
           const response = await requestUpdateProduct(payloadUpdate);
@@ -289,7 +291,7 @@ const ProductScreen = () => {
         }
         return;
       } else {
-        console.log('update2')
+        console.log("update2");
         reactotron.logImportant!("UPDATE2");
         const imageBase64 = values.icon_url.fileList[0].originFileObj;
         const name = values.icon_url.fileList[0].name;
@@ -319,7 +321,7 @@ const ProductScreen = () => {
         return;
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error("Đã có lỗi xảy ra!");
     }
   };
@@ -331,7 +333,7 @@ const ProductScreen = () => {
         showToast("Xoá sản phẩm thành công!");
         getData();
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const uploadButton = (
@@ -690,9 +692,7 @@ const ProductScreen = () => {
 
           <ButtonBottomModal
             isLoadingButton={false}
-            onClickconfirm={() => {
-
-            }}
+            onClickconfirm={() => {}}
             onCancel={() => {
               setVisible(0);
               form.setFieldsValue({});

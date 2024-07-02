@@ -1,14 +1,22 @@
-import { DeleteFilled } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  DeleteFilled,
+  LoadingOutlined,
+  PlusOutlined,
+  EditFilled,
+} from "@ant-design/icons";
 import {
   Button,
   Card,
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   PageHeader,
   Popconfirm,
   Row,
+  Select,
   Spin,
   Table,
 } from "antd";
@@ -27,10 +35,12 @@ import {
   requestDeleteAccountAdmin,
   requestGetListAdmin,
   requestResetPassword,
+  requestUpdateVoucher,
 } from "../../service/network/Api";
 import DateUtil from "../../util/DateUtil";
-import { showToast } from "../../util/funcUtils";
+import { formatPrice, showToast } from "../../util/funcUtils";
 import { Header } from "../dashboard/component/Header";
+import { Option } from "antd/lib/mentions";
 
 export default function ListAdminScreen() {
   const navigate = useNavigate();
@@ -60,30 +70,12 @@ export default function ListAdminScreen() {
     } catch (error) {}
   };
 
-  const handleResetPassword = async (item: any) => {
-    const payload = {
-      id: item._id,
-      body: {
-        password: "123456",
-      },
-    };
-    try {
-      const res = await requestResetPassword(payload);
-      if (res) {
-        setVisible(0);
-        getData();
-        showToast("Đặt lại mật khẩu thành công!");
-      }
-    } catch (error) {
-      showToast("Đã có lỗi xảy ra! Vui lòng thử lại.");
-    }
-  };
   const handleDeleteAccount = async (item: any) => {
     try {
-      const res = await requestDeleteAccountAdmin(item._id);
+      const res = await requestDeleteAccountAdmin(item.id);
       if (res) {
         getData();
-        showToast(`Đã xoá tài khoản "${item.identifier}" ra khỏi hệ thống!`);
+        showToast(`Đã xoá thành công!`);
       }
     } catch (error) {
       message.warning("Đã có lỗi xảy ra! Vui lòng thử lại.");
@@ -91,20 +83,44 @@ export default function ListAdminScreen() {
   };
 
   const handleAddAccountadmin = async (values: any) => {
-    const { identifier, password } = values;
+    const { type, code, discount, discount_type, minium_price } = values;
+    const currentDate = new Date();
+    const nextYearDate = new Date(currentDate);
+    nextYearDate.setFullYear(currentDate.getFullYear() + 1);
     const payload = {
-      identifier,
-      password,
+      type,
+      code,
+      discount: Number(discount),
+      discount_type,
+      minium_price: Number(minium_price),
+      expire: nextYearDate.toISOString(),
     };
-    try {
-      const res = await requestAddNewAccount(payload);
-      if (res) {
-        setVisible(0);
-        getData();
-        showToast(`Thêm mới tài khoản thành công!`);
+    if (visile == 1) {
+      try {
+        const res = await requestAddNewAccount(payload);
+        if (res) {
+          setVisible(0);
+          getData();
+          showToast(`Thêm mới tài khoản thành công!`);
+        }
+      } catch (error) {
+        message.warning("Đã có lỗi xảy ra! Vui lòng thử lại.");
       }
-    } catch (error) {
-      message.warning("Đã có lỗi xảy ra! Vui lòng thử lại.");
+    } else {
+      try {
+        const payloadUpdate = {
+          id: item.id,
+          ...payload,
+        };
+        const res = await requestUpdateVoucher(payloadUpdate);
+        if (res) {
+          setVisible(0);
+          getData();
+          showToast(`Cập nhật thành công!`);
+        }
+      } catch (error) {
+        message.warning("Đã có lỗi xảy ra! Vui lòng thử lại.");
+      }
     }
   };
 
@@ -118,13 +134,14 @@ export default function ListAdminScreen() {
   return (
     <div style={{ marginTop: 10 }}>
       <PageHeader
-        title="Quản trị viên"
+        title="Mã giảm giá"
         style={{ backgroundColor: "white", margin: "5px 10px 10px" }}
         extra={[
           <Header
             showButton={true}
             onClick={() => {
               setVisible(1);
+              form.resetFields();
             }}
           />,
         ]}
@@ -185,17 +202,15 @@ export default function ListAdminScreen() {
                         onClick={() => {
                           setVisible(2);
                           setItem(item);
+                          form.setFieldsValue({
+                            ...item,
+                          });
                         }}
                         type="text"
                         size="large"
-                        icon={
-                          <img
-                            src={R.images.img_reset_password}
-                            style={{ width: 20, height: 20, marginRight: 10 }}
-                          />
-                        }
+                        icon={<EditFilled />}
                       >
-                        Đặt lại mật khẩu
+                        Chỉnh sửa
                       </Button>,
                       <Popconfirm
                         title={"Bạn chắc chắn muốn xoá yêu cầu này không?"}
@@ -223,19 +238,23 @@ export default function ListAdminScreen() {
                       style={{
                         color: "#007aff",
                       }}
-                      children={"Thông tin tài khoản"}
+                      children={"Thông tin giảm giá"}
                     />
                     <Row style={{ marginTop: 20 }}>
                       <Col flex={1}>
-                        <h4>id: {item._id}</h4>
-                      </Col>
-                      <Col flex={1}>
-                        <h4>Tên: {item.identifier}</h4>
-                      </Col>
-                      <Col flex={1}>
                         <h4>
-                          Ngày tạo:{" "}
-                          {DateUtil.formatTimeDateReview(item.created_at)}
+                          Mã giảm giá sẽ giảm{" "}
+                          <span style={{ color: "blue" }}>
+                            {item.discount_type == "FIXED"
+                              ? formatPrice(item.discount)
+                              : item.discount}{" "}
+                            {item.discount_type == "FIXED" ? "VND" : "%"}{" "}
+                          </span>
+                          được áp dụng cho đơn hàng có giá trị{" "}
+                          <span style={{ color: "red" }}>
+                            {formatPrice(item.minium_price)}
+                          </span>
+                          .
                         </h4>
                       </Col>
                     </Row>
@@ -253,13 +272,13 @@ export default function ListAdminScreen() {
       )}
       <ModalForm
         visible={visile}
-        title={"Thêm mới tài khoản quản trị viên"}
+        title={visile == 1 ? "Thêm mã giảm giá mới" : "Chỉnh sửa mã giảm giá"}
         onCancel={() => {
           setVisible(0);
         }}
         children={
           <>
-            {visile == 1 && (
+            {true && (
               <Form
                 {...FORM_ITEM_LAYOUT_STAFF}
                 form={form}
@@ -271,40 +290,86 @@ export default function ListAdminScreen() {
                 children={
                   <>
                     <Form.Item
-                      label={"Tên tài khoản"}
-                      name="identifier"
+                      label={"Code"}
+                      name="code"
                       rules={[
                         {
                           required: true,
-                          message: "Vui lòng nhập tên tài khoản!",
+                          message: "Vui lòng nhập mã code!",
+                        },
+                        {
+                          min: 4,
+                          message: "Mã giảm giá tối thiểu 4 kí tự ",
+                        },
+                        {
+                          max: 8,
+                          message: "Mã giảm giá tối đa là 8 kí tự",
                         },
                       ]}
                     >
-                      <Input placeholder={"Nhập tên tài khoản"} />
+                      <Input placeholder={"Vui lòng nhập mã code"} />
                     </Form.Item>
                     <Form.Item
-                      label={"Mật khẩu"}
-                      name="password"
+                      label={"Giảm giá theo"}
+                      name={"discount_type"}
                       rules={[
                         {
                           required: true,
-                          message: "Vui lòng nhập mật khẩu!",
+                          message: "Vui lòng chọn giá trị",
                         },
                       ]}
                     >
-                      <Input placeholder={"Nhập mật khẩu"} />
+                      <Select>
+                        <Option value="FIXED">Giá tiền</Option>
+                        <Option value="PERCENTAGE">Phần trăm</Option>
+                      </Select>
                     </Form.Item>
                     <Form.Item
-                      label={"Xác nhận mật khẩu"}
-                      name="re-password"
+                      label={"Giá trị giảm"}
+                      name="discount"
                       rules={[
                         {
                           required: true,
-                          message: "Vui lòng nhập lại mật khẩu!",
+                          message: "Vui lòng nhập giá trị giảm!",
+                        },
+                        {
+                          pattern: new RegExp(/^[0-9]*$/g),
+                          message: "Vui lòng chỉ nhập số",
                         },
                       ]}
                     >
-                      <Input placeholder={"Nhập lại mật khẩu"} />
+                      <Input placeholder={"Nhập giá trị giảm giá "} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"Đơn hàng tối thiểu"}
+                      name="minium_price"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập giá trị",
+                        },
+                        {
+                          pattern: new RegExp(/^[0-9]*$/g),
+                          message: "Vui lòng chỉ nhập số",
+                        },
+                      ]}
+                    >
+                      <Input placeholder={"Nhập giá trị đơn hàng tối thiểu "} />
+                    </Form.Item>
+                    <Form.Item
+                      label={"Loại mã giảm giá"}
+                      name={"type"}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn loại mã giảm giá",
+                        },
+                      ]}
+                    >
+                      <Select>
+                        <Option value="USER">Mã giảm của shop</Option>
+                        <Option value="SHOP">Mã giảm của shopee</Option>
+                      </Select>
                     </Form.Item>
 
                     <Row justify="end">
@@ -327,7 +392,7 @@ export default function ListAdminScreen() {
                           }}
                           type="primary"
                           htmlType="submit"
-                          children={"Xác nhận"}
+                          children={visile == 1 ? "Xác nhận" : "Cập nhật"}
                         />
                       </Form.Item>
                     </Row>
@@ -335,7 +400,7 @@ export default function ListAdminScreen() {
                 }
               />
             )}
-            {visile == 2 && (
+            {/* {visile == 2 && (
               <div>
                 <Row>
                   Mật khẩu của bạn sẽ được đặt về mặc định là:
@@ -353,7 +418,7 @@ export default function ListAdminScreen() {
                   children={"Đặt lại"}
                 />
               </div>
-            )}
+            )} */}
           </>
         }
       />

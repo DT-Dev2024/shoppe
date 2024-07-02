@@ -134,16 +134,40 @@ export const checkToken = async () => {
 
 export const COLUMNS_ADMIN = [
   {
-    title: "ID",
-    dataIndex: "_id",
-    key: "_id",
-    render: (_id: any) => <h4>{_id}</h4>,
+    title: "Code",
+    dataIndex: "code",
+    key: "code",
+    render: (code: any) => <h4>{code}</h4>,
   },
   {
-    title: "Tên",
-    dataIndex: "identifier",
-    key: "identifier",
-    render: (identifier: any) => <h4>{identifier}</h4>,
+    title: "Giảm giá",
+    dataIndex: "discount",
+    key: "discount",
+    render: (text: any, record: { discount: any; discount_type: any }) => {
+      const { discount, discount_type } = record;
+
+      if (discount_type === "PERCENTAGE") {
+        return <h4>{`${discount}%`}</h4>;
+      } else if (discount_type === "FIXED") {
+        return <h4>{formatPrice(discount)} VND</h4>;
+      } else {
+        return <h4>{discount} %</h4>; // Trường hợp mặc định nếu không xác định được type
+      }
+    },
+  },
+  {
+    title: "Loại mã giảm giá",
+    dataIndex: "type",
+    key: "type",
+    render: (type: any) => (
+      <h4>{type === "USER" ? "Mã giảm của shopee" : "Mã giảm của shop"} </h4>
+    ),
+  },
+  {
+    title: "Giá tối thiểu để áp dụng",
+    dataIndex: "minium_price",
+    key: "minium_price",
+    render: (minium_price: any) => <h4>{formatPrice(minium_price)} VND</h4>,
   },
   {
     title: "Ngày tạo",

@@ -3,8 +3,7 @@ import { ApiClient, BASE_URL_DEV, URL_IMAGE } from "../ApiService";
 export const requestAddPayment = (payload: any) =>
   ApiClient.post(`api/payment`, payload);
 
-export const requestGetPayment = () =>
-  ApiClient.get(`api/payment`);
+export const requestGetPayment = () => ApiClient.get(`api/payment`);
 export const requestLogin = (payload: any) =>
   ApiClient.post(`api/auth/admin-login`, payload);
 export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
@@ -21,11 +20,14 @@ export const requestChangePassword = (payload: any) =>
 export const requestResetPassword = (payload: any) =>
   ApiClient.put(`/api/v1/admin/${payload.id}/reset-password`, payload.body);
 export const requestGetListAdmin = (payload: any) =>
-  ApiClient.get(`${BASE_URL_DEV}/api/v1/admin/`, payload);
+  ApiClient.get(`${BASE_URL_DEV}/api/voucher`, payload);
 export const requestDeleteAccountAdmin = (id: any) =>
-  ApiClient.delete(`${BASE_URL_DEV}/api/v1/admin/${id}`);
+  ApiClient.delete(`/api/voucher/${id}`);
 export const requestAddNewAccount = (payload: any) =>
-  ApiClient.post(`${BASE_URL_DEV}/api/v1/admin/`, payload);
+  ApiClient.post(`/api/voucher`, payload);
+
+export const requestUpdateVoucher = (payload: any) =>
+  ApiClient.patch(`/api/voucher`, payload);
 export const requestGetListProduct = () => ApiClient.get(`api/product`);
 export const requestUploadImage = (payload: any) =>
   ApiClient.post(`${URL_IMAGE}/upload`, payload);
