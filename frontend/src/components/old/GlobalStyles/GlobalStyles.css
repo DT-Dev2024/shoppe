@@ -111,7 +111,7 @@ a {
 
 /* APP */
 #app {
-  position: absolute;
+  position: relative;
   inset: 0px;
 }
 
@@ -153,51 +153,59 @@ a {
     padding: 10px 0 0 0;
     width: 100%;
     background-color: transparent;
-
+    position: relative;
 
   }
   #container {
   padding: 0;
-  top: 0;
+  top: -46px;
 }
 }
 @media screen and (min-width: 375px) and (max-width: 389.98px) {
-  #header {
-    width: 100%;
+ #header {
     padding: 12px 0 0 0;
     background-color: transparent;
+    position: relative;
+
   }
-   #container {
+  #container {
   padding: 0;
+  top: -47px;
 }
 }
 @media screen and (min-width: 390px) and (max-width: 411.98px) {
   #header {
-    width: 100%;
     padding: 12px 0 0 0;
     background-color: transparent;
+    position: relative;
+
   }
-   #container {
+  #container {
   padding: 0;
-  }
+  top: -48px;
+}
 }
 @media screen and (min-width: 412px) and (max-width: 413.98px) {
-  #header {
-    width: 100%;
+ #header {
     padding: 12px 0 0 0;
     background-color: transparent;
+    position: relative;
+
   }
-   #container {
+  #container {
   padding: 0;
-  }
+  top: -48px;
+}
 }
 @media screen and (min-width: 413.99px) and (max-width: 414px) {
-   #header {
-    width: 100%;
+  #header {
     padding: 12px 0 0 0;
     background-color: transparent;
+    position: relative;
+
   }
-   #container {
+  #container {
   padding: 0;
-  }
+  top: -48px;
+}
 }
