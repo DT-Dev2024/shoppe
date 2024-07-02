@@ -267,17 +267,17 @@ function HeaderCommonInfo() {
             //   localStorage.removeItem("user");
             //   window.location.reload();
             // }}
-            className="relative user-menu"
+            className="user-menu relative"
           >
-            <span className="flex h-10 items-center lg:text-[22px] text-[20px] text-white">
+            <span className="flex h-10 items-center text-[20px] text-white lg:text-[22px]">
               <FaUser />
             </span>
 
-            <ul className="absolute -left-4 top-10 z-20 mt-2 hidden lg:w-40 w-30 rounded border bg-white text-[14px] shadow-lg">
-              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
+            <ul className="w-30 absolute -left-4 top-10 z-20 mt-2 hidden rounded border bg-white text-[14px] shadow-lg lg:w-40">
+              <li className="cursor-pointer p-2 hover:bg-main hover:text-white">
                 <Link to={path.orderHistory}>Đơn mua</Link>
               </li>
-              <li className="p-2 cursor-pointer hover:bg-main hover:text-white">
+              <li className="cursor-pointer p-2 hover:bg-main hover:text-white">
                 <button
                   onClick={() => {
                     localStorage.removeItem("access_token");
