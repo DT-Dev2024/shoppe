@@ -3,41 +3,41 @@ import { FaArrowCircleLeft, FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
-type CheckoutLayoutPropsType = {
+type ProductListLayoutPropsType = {
   children?: React.ReactNode;
 };
 
-const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
+const CheckoutLayout = ({ children }: ProductListLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
-      <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
+      <div className="hidden bg-[#f94f2f] py-[1rem]  pt-[1.3rem] lg:block  lg:py-[0.8rem]  lg:pt-[0rem]">
         <HeaderCommonInfo />
       </div>
       <div className="hidden lg:block">
         <HeaderSearchPart />
       </div>
-      <div className="fixed block w-full lg:hidden">
-        <HeaderCheckout />
+      <div className="  block w-full lg:hidden">
+        <HeaderProductList />
       </div>
-      <div className="mx-auto pt-14 lg:w-[120rem] lg:pt-0">{children}</div>
-      {/* <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
+      <div className=" mx-auto pt-2 lg:w-[120rem] lg:pt-0 lg:pt-0">{children}</div>
+      <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
       <div>
         <FooterLink bg="bg-neutral-100" />
         <FooterPolicyAndTerms />
-      </div> */}
+      </div>
     </div>
   );
 };
 
 export default CheckoutLayout;
-function HeaderCheckout() {
+function HeaderProductList() {
   return (
     <div>
-      <div className="flex  items-center justify-start gap-20 bg-white px-6 py-4">
-        <a href="/cart">
+      <div className="flex  items-center justify-start gap-8 bg-white px-6 py-4">
+        <a href="/">
           <FaArrowLeft className="text-2xl text-primary"></FaArrowLeft>
         </a>
-        <p className="text-2xl">Thanh Toán</p>
+        <p className="text-2xl">GỢI Ý CHO BẠN</p>
       </div>
     </div>
   );
@@ -65,7 +65,7 @@ function HeaderSearchPart() {
         </button>
         <span className="mx-4 mt-[-10px] hidden h-16 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
         <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize  text-[#ee4d2d] lg:block">
-          Thanh Toán
+          Sản Phẩm
         </span>
       </div>
       <div className="flex items-center">

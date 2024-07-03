@@ -28,16 +28,16 @@ const ProductList = () => {
   };
 
   return (
-    <div className="bg-gray-200 py-6">
+    <div className="bg-gray-100 py-6">
       <Helmet>
-        <title>Trang chủ</title>
+        <title>Sản phẩm</title>
         <meta
           name="description"
           content="A shopee clone edition used for studying purposes"
           data-react-helmet="true"
         />
       </Helmet>
-      <div className="mx-auto mt-52 px-4 lg:w-[120rem] lg:px-0">
+      <div className="mx-auto  px-4 lg:w-[120rem] lg:px-0">
         {productsData && (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
             {productsData.map((product) => (

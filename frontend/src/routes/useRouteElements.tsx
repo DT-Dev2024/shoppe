@@ -9,6 +9,8 @@ import AuthenticationLayout from "src/layouts/AuthenticationLayout";
 import CartLayout from "src/layouts/CartLayout";
 import CheckoutLayout from "src/layouts/CheckoutLayout";
 import MainLayout from "src/layouts/MainLayout";
+import ProductDetailsLayout from "src/layouts/ProductDetailsLayout";
+import ProductListLayout from "src/layouts/ProductListLayout";
 import UserLayout from "src/layouts/UserLayout";
 import Home from "src/pages/Home";
 
@@ -64,22 +66,7 @@ export default function useRoutesElement() {
             </Suspense>
           ),
         },
-        {
-          path: `${path.productDetail}/:id`,
-          element: (
-            <Suspense>
-              <ProductDetails />
-            </Suspense>
-          ),
-        },
-        {
-          path: path.productList,
-          element: (
-            <Suspense>
-              <ProductList />
-            </Suspense>
-          ),
-        },
+
         {
           path: "*",
           element: (
@@ -95,6 +82,26 @@ export default function useRoutesElement() {
       path: "",
       element: <ProtectedRoute />,
       children: [
+        {
+          path: path.productList,
+          element: (
+            <ProductListLayout>
+              <Suspense>
+                <ProductList />
+              </Suspense>
+            </ProductListLayout>
+          ),
+        },
+        {
+          path: `${path.productDetail}/:id`,
+          element: (
+            <ProductDetailsLayout>
+              <Suspense>
+                <ProductDetails />
+              </Suspense>
+            </ProductDetailsLayout>
+          ),
+        },
         {
           path: path.cart,
           element: (

@@ -3,11 +3,12 @@ import { FaArrowCircleLeft, FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
-type CheckoutLayoutPropsType = {
+import ProductList from "src/pages/ProductList";
+type ProductDetailsLayoutPropsType = {
   children?: React.ReactNode;
 };
 
-const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
+const ProductDetailsLayout = ({ children }: ProductDetailsLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
       <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
@@ -16,28 +17,23 @@ const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
       <div className="hidden lg:block">
         <HeaderSearchPart />
       </div>
-      <div className="fixed block w-full lg:hidden">
-        <HeaderCheckout />
+      <div className=" block w-full lg:hidden">
+        <HeaderProductDetails />
       </div>
-      <div className="mx-auto pt-14 lg:w-[120rem] lg:pt-0">{children}</div>
-      {/* <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
-      <div>
-        <FooterLink bg="bg-neutral-100" />
-        <FooterPolicyAndTerms />
-      </div> */}
+      <div className="mx-0 pt-0 lg:mx-auto lg:w-[120rem] lg:pt-0">{children}</div>
     </div>
   );
 };
 
-export default CheckoutLayout;
-function HeaderCheckout() {
+export default ProductDetailsLayout;
+function HeaderProductDetails() {
   return (
     <div>
       <div className="flex  items-center justify-start gap-20 bg-white px-6 py-4">
         <a href="/cart">
           <FaArrowLeft className="text-2xl text-primary"></FaArrowLeft>
         </a>
-        <p className="text-2xl">Thanh Toán</p>
+        <p className="text-2xl">Chi tiết sản phẩm</p>
       </div>
     </div>
   );
@@ -65,7 +61,7 @@ function HeaderSearchPart() {
         </button>
         <span className="mx-4 mt-[-10px] hidden h-16 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
         <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize  text-[#ee4d2d] lg:block">
-          Thanh Toán
+          Chi tiết sản phẩm
         </span>
       </div>
       <div className="flex items-center">
