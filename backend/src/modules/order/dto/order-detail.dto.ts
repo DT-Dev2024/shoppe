@@ -3,6 +3,7 @@ import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export enum OrderStatus {
   WAITING = 'WAITING',
   DELIVERING = 'DELIVERING',
+  WAIT_RECEIVED = 'WAIT_RECEIVED',
   DELIVERED = 'DELIVERED',
   CANCELED = 'CANCELED',
   RETURN = 'RETURN',
@@ -29,7 +30,9 @@ export class CreateOrderDetailsDto {
       ' or ' +
       OrderStatus.CANCELED +
       ' or ' +
-      OrderStatus.RETURN,
+      OrderStatus.RETURN + 
+      ' or ' +
+      OrderStatus.WAIT_RECEIVED
   })
   @IsNotEmpty()
   @IsEnum(OrderStatus)

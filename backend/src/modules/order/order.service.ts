@@ -7,6 +7,7 @@ import { CreateCartDto } from './dto/cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { DeleteCartDto } from './dto/delete-cart.dto';
 import { OrderHistoryRes } from './dto/order-history.dto';
+import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -42,14 +43,62 @@ export class OrderService {
   }
 
   async findAll() {
-    return await this.prismaService.orders.findMany({
-      include: {
-        order_details: true,
-        order_discount: true,
-        user: true,
-      },
-    });
+    let orderHistories = [];
+    try {
+      const orders = await this.prismaService.orders.findMany({
+       
+        include: {
+          order_details: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      orderHistories = orders.map((order) => {
+        order.order_details = order.order_details.map((detail: any) => {
+          // Assuming product has `price` and `sale_price` attributes
+          if (
+            detail.product &&
+            detail.product.price &&
+            detail.product.sale_price
+          ) {
+            detail.price =
+              (detail.product.price -
+                (detail.product.sale_price * detail.product.price) / 100) *
+              detail.buy_count;
+            detail.price_before_discount =
+              detail.product.price * detail.buy_count;
+          } else {
+            detail.price_before_discount =
+              detail.product.price * detail.buy_count;
+          }
+
+          return detail;
+        });
+        return order;
+      });
+
+      // console.log('Order Histories:', orderHistories);
+      const combinedOrderDetailsArray = orderHistories.flatMap(
+        (order) => order.order_details,
+      );
+      const combinedOrderDetailsObject = combinedOrderDetailsArray.reduce(
+        (acc, detail) => {
+          acc[detail.id] = detail;
+          return acc;
+        },
+        {},
+      );
+
+      return combinedOrderDetailsObject;
+    } catch (error) {
+      console.error('Error fetching order history:', error);
+      throw error;
+    }
   }
+  
 
   async findOne(id: string) {
     const order = await this.prismaService.orders.findUnique({
@@ -122,6 +171,17 @@ export class OrderService {
         },
       });
     }
+  }
+
+  async updateStatusOrder(prams : UpdateStatusOrderDto) {
+    return await this.prismaService.order_details.update({
+      where: {
+        id : prams.id
+      },
+      data: {
+        status: prams.status,
+      },
+    });
   }
 
   async addToCart(cart: CreateCartDto) {

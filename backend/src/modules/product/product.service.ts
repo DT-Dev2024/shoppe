@@ -65,9 +65,9 @@ export class ProductService {
         //     data: updateProductDto.product_types,
         //   },
         // },
-        product_feeback: {
-          create: updateProductDto.feedback,
-        },
+        // product_feeback: {
+        //   create: updateProductDto.feedback,
+        // },
       },
     });
   }

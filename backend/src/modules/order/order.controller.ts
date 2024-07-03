@@ -16,6 +16,7 @@ import { CreatePaymentDto } from './dto/payment.dto';
 import { CreateCartDto } from './dto/cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { DeleteCartDto } from './dto/delete-cart.dto';
+import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
 
 @Controller('order')
 @ApiTags('order')
@@ -28,6 +29,16 @@ export class OrderController {
       await this.orderService.deleteCart(deleteCart),
       200,
       'Cart deleted successfully',
+    );
+  }
+
+  @Patch('update-status')
+  @ApiBearerAuth('token')
+  async updateStatus(@Body() updateStatus: UpdateStatusOrderDto) {
+    return ApiResponse.buildApiResponse(
+      await this.orderService.updateStatusOrder(updateStatus),
+      200,
+      'Status updated successfully',
     );
   }
 
