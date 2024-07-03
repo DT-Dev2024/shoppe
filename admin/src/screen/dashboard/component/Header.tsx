@@ -1,10 +1,10 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Col, DatePicker, Row, Select } from "antd";
-import React from "react";
-import styled from "styled-components";
-import "./css/Header.css";
-import moment from "moment";
-import TypingAutoSearch from "../../../component/TypingAutoSearch";
+import { PlusCircleOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Row, Select } from 'antd';
+import React from 'react';
+import styled from 'styled-components';
+import './css/Header.css';
+import moment from 'moment';
+import TypingAutoSearch from '../../../component/TypingAutoSearch';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -36,32 +36,32 @@ export const Header = ({
   dataDropdown2,
   onClear,
   placeholderSearch,
-  title
+  title,
 }: any) => {
   return (
     <Row
       style={{
         marginRight: 20,
-        justifyContent: "space-between",
+        justifyContent: 'space-between',
       }}
     >
       {onSearchSubmit ? (
-        <Col style={{ width: "250px", marginRight: 30 }}>
+        <Col style={{ width: '250px', marginRight: 30 }}>
           <TypingAutoSearch
             onSearchSubmit={(key: string) => {
               onSearchSubmit(key.trim());
             }}
             isSearchLoading={isSearchLoading}
-            placeholder={placeholderSearch || "Nhập tên hoặc mã sản phẩm ..."}
+            placeholder={placeholderSearch || 'Nhập tên hoặc mã sản phẩm ...'}
           />
         </Col>
       ) : null}
       {fromDaytoDay ? (
         <Col style={{}}>
           <RangePicker
-            style={{ width: "300px" }}
-            placeholder={["Từ ngày", "đến ngày"]}
-            className="rangerpicker-order"
+            style={{ width: '300px' }}
+            placeholder={['Từ ngày', 'đến ngày']}
+            className='rangerpicker-order'
             onChange={(value, dateString) => {
               dateOnSubmit(dateString[0], dateString[1]);
             }}
@@ -70,8 +70,8 @@ export const Header = ({
             <Select
               // allowClear
               onClear={onClear}
-              placeholder={placeholderDrop || "Trạng thái"}
-              style={{ minWidth: "150px", marginLeft: 30 }}
+              placeholder={placeholderDrop || 'Trạng thái'}
+              style={{ minWidth: '150px', marginLeft: 30 }}
               onChange={(value) => {
                 onStatusSubmit(value);
               }}
@@ -84,8 +84,8 @@ export const Header = ({
           {onStatusSubmit2 ? (
             <Select
               allowClear
-              placeholder={placeholderDrop2 || "Trạng thái"}
-              style={{ minWidth: "150px", marginLeft: 30 }}
+              placeholder={placeholderDrop2 || 'Trạng thái'}
+              style={{ minWidth: '150px', marginLeft: 30 }}
               onChange={(value) => {
                 onStatusSubmit2(value);
               }}
@@ -105,12 +105,12 @@ export const Header = ({
           onClick={onClick}
           style={{
             fontWeight: 800,
-            borderRadius: "3px",
+            borderRadius: '3px',
             marginLeft: 30,
           }}
-          type="primary"
-          htmlType="submit"
-          children={title||"Thêm mới"}
+          type='primary'
+          htmlType='submit'
+          children={title || 'Thêm mới'}
         />
       ) : null}
     </Row>

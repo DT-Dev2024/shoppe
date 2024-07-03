@@ -21,7 +21,6 @@ import firebaseServices from "../service/firebaseServices";
 import { showToast } from "../util/funcUtils";
 import {
   requestChangePassword,
-  requestGetProfile,
   requestResetPassword,
 } from "../service/network/Api";
 import reactotron from "../ReactotronConfig";
@@ -63,11 +62,7 @@ export const HeaderComponent = ({ toggle }: { toggle: any }) => {
   };
   const getUserInfo = async () => {
     try {
-      const res = await requestGetProfile();
-      if (res) {
-        reactotron.logImportant!(res);
-        setUserInfo(res.data);
-      }
+
     } catch (error) {}
   };
 

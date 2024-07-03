@@ -1,14 +1,18 @@
-import { ApiClient, BASE_URL_DEV, URL_IMAGE } from "../ApiService";
+import { ApiClient, BASE_URL_DEV, URL_IMAGE } from '../ApiService';
 
 export const requestLogin = (payload: any) =>
   ApiClient.post(`api/auth/admin-login`, payload);
-export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
-export const requestGetTransaction = (payload: any) =>
-  ApiClient.get(`api/v1/admin/transaction`, payload);
+// export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
+
+export const requestGetTransaction = (id: string) =>
+  ApiClient.get(`${BASE_URL_DEV}/api/order/order-history/${id}`);
+
 export const requestDeleteTransaction = (id: any) =>
   ApiClient.delete(`/api/v1/admin/transaction/${id}`);
+
 export const requestSuccessTransaction = (id: any) =>
   ApiClient.put(`/api/v1/admin/transaction/${id}/success`);
+
 export const requestRejectTransaction = (payload: any) =>
   ApiClient.put(`/api/v1/admin/transaction/${payload.id}/reject`, payload.body);
 export const requestChangePassword = (payload: any) =>
@@ -21,7 +25,8 @@ export const requestDeleteAccountAdmin = (id: any) =>
   ApiClient.delete(`${BASE_URL_DEV}/api/v1/admin/${id}`);
 export const requestAddNewAccount = (payload: any) =>
   ApiClient.post(`${BASE_URL_DEV}/api/v1/admin/`, payload);
-export const requestGetListProduct = () => ApiClient.get(`api/product`);
+export const requestGetListProduct = () =>
+  ApiClient.get(`${BASE_URL_DEV}/api/product`);
 export const requestUploadImage = (payload: any) =>
   ApiClient.post(`${URL_IMAGE}/upload`, payload);
 export const requestAddProduct = (payload: any) =>
@@ -49,22 +54,22 @@ export const updateCommissions = (key: string, payload: any) =>
 
 export const requestUpdateMethod = (payload: any) =>
   ApiClient.put(`api/v1/admin/methob/${payload.methobName}`, payload.body);
-export const requestGetListCustomer = (payload: any) =>
-  ApiClient.get(`api/v1/admin/customer`, payload);
+export const requestGetListCustomer = () =>
+  ApiClient.get(`${BASE_URL_DEV}/api/users`);
 export const requestAdjustmentBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/adjustment-balance`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-balance`,
+    payload.body,
   );
 export const requestResetPasswordCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.id}/reset-password`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.id}/reset-password`,
+    payload.body,
   );
 export const requestChangePasswordCashOutCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.id}/reset-tfa-password`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.id}/reset-tfa-password`,
+    payload.body,
   );
 export const requestGetListLevel = (payload: any) =>
   ApiClient.get(`api/v1/admin/level`, payload);
@@ -80,20 +85,20 @@ export const requestDeleteVip = (key: any) =>
 
 export const requestAddProductToVip = (payload: any) =>
   ApiClient.post(
-    `api/v1/admin/level/${payload.key}/product/${payload.productId}`
+    `api/v1/admin/level/${payload.key}/product/${payload.productId}`,
   );
 
 export const requestDeleteProductVip = (payload: any) =>
   ApiClient.delete(
-    `api/v1/admin/level/${payload.key}/product/${payload.productId}`
+    `api/v1/admin/level/${payload.key}/product/${payload.productId}`,
   );
 export const requestGetStatistic = (payload: any) =>
   ApiClient.get(
-    `api/v1/admin/statistic?status=${payload.status}&type=${payload.type}&from=${payload.from}&to=${payload.to}`
+    `api/v1/admin/statistic?status=${payload.status}&type=${payload.type}&from=${payload.from}&to=${payload.to}`,
   );
 export const requestSetVipCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/adjustment-level/${payload.levelKey}`
+    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-level/${payload.levelKey}`,
   );
 
 //category
@@ -112,24 +117,28 @@ export const requestUpdateCategory = (payload: any) =>
 // customer
 
 export const requestBlockCashOut = (id: any) =>
-  ApiClient.patch(`api/v1/admin/customer/${id}/block-cashout`);
+  ApiClient.patch(`${BASE_URL_DEV}/api/users/${id}/block-cashout`);
 
 export const requestBlockOrder = (id: any) =>
-  ApiClient.patch(`api/v1/admin/customer/${id}/block-create-order`);
+  ApiClient.patch(`${BASE_URL_DEV}/api/users/${id}/block-create-order`);
 
 export const requestFreezeBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/freeze-balance`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.userId}/freeze-balance`,
+    payload.body,
   );
 
 export const requestDefrostBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/defrost-balance`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.userId}/defrost-balance`,
+    payload.body,
   );
 
 //order
+
+export const requestAllOrder = () => ApiClient.get(`${BASE_URL_DEV}/api/order`);
+export const updateStatusOrder = (payload: any) =>
+  ApiClient.patch(`${BASE_URL_DEV}/api/order/update-status`, payload);
 
 export const requestFrozen = (id: any) =>
   ApiClient.put(`api/v2/admin/order/${id}/frozen`);
@@ -138,13 +147,13 @@ export const requestDefrost = (id: any) =>
   ApiClient.put(`api/v2/admin/order/${id}/defrost`);
 export const requestProductMustPurchase = (payload: any) =>
   ApiClient.put(
-    `api/v2/admin/order/${payload.userId}/product-must-purchase/${payload.productId}`
+    `api/v2/admin/order/${payload.userId}/product-must-purchase/${payload.productId}`,
   );
 
 export const requestUpdateLimitOrder = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-limit-order`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order`,
+    payload.body,
   );
 
 export const requestGetListProductVip = (key: any) =>
@@ -152,20 +161,17 @@ export const requestGetListProductVip = (key: any) =>
 
 export const requestUpdateLimitOrderAndProductMustPurchase = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-limit-order-product-must-purchase`,
-    payload.body
+    `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order-product-must-purchase`,
+    payload.body,
   );
 
 export const requestDeleteCus = (id: any) =>
-  ApiClient.delete(`api/v1/admin/customer/${id}`);
+  ApiClient.delete(`${BASE_URL_DEV}/api/users/${id}`);
 
 export const requestUpdateInfoCus = (payload: any) =>
-  ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-customer-info`,
-    payload.body
-  );
+  ApiClient.patch(`${BASE_URL_DEV}/api/users`, payload);
 export const requestDeleteListUser = (payload: any) =>
-  ApiClient.put(`api/v1/admin/customer/delete-customer`, payload);
+  ApiClient.put(`${BASE_URL_DEV}/api/users/delete-customer`, payload);
 
 export const requestDeleteListOrder = (payload: any) =>
   ApiClient.put(`api/v2/admin/order/delete-order`, payload);
