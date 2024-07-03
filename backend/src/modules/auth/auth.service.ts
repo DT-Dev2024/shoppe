@@ -58,10 +58,13 @@ export class AuthService {
 
   async adminLogin(params: SignInDto) {
     const user = await this.prismaService.users.findUnique({
-      where: { phone: params.phone },
+      where: { phone: params.phone, password: params.password },
       include: { address: true, orders: true },
     });
-
+    if (!user) {
+      return null;
+    }
+    
     if (user.roles == Roles.ADMIN) {
       const payload = { username: user.phone, sub: user.id };
       delete user.password;

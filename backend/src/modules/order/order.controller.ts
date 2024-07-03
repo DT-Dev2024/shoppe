@@ -22,6 +22,16 @@ import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
 @ApiTags('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
+  @Get('statictics')
+  @ApiBearerAuth('token')
+  async statictics() {
+    return ApiResponse.buildApiResponse(
+      await this.orderService.statictics(),
+      200,
+      'Statictics retrieved successfully',
+    );
+  }
+  
   @Delete('delete-cart')
   @ApiBearerAuth('token')
   async deleteCart(@Body() deleteCart: DeleteCartDto) {
@@ -157,4 +167,6 @@ export class OrderController {
       'List order history retrieved successfully',
     );
   }
+
+  
 }
