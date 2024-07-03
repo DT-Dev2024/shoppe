@@ -1,6 +1,12 @@
-import { Card, PageHeader, Table, Tabs } from 'antd';
+import { Button, Card, Col, PageHeader, Row, Table, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DisconnectOutlined,
+  DollarOutlined,
+  EditOutlined,
+  ShoppingCartOutlined,
+} from '@ant-design/icons';
 import {
   checkToken,
   COLUMNS_TRANSACTION,
@@ -15,6 +21,7 @@ import {
 import { showToast } from '../../util/funcUtils';
 import { Header } from '../dashboard/component/Header';
 import { toast } from 'react-toastify';
+import DateUtil from '../../util/DateUtil';
 const { TabPane } = Tabs;
 
 enum Status {
@@ -60,7 +67,6 @@ const OrderScreen = () => {
     });
 
     getUserId().then((res) => {
-      console.log('res', res);
       setUserId(res || '');
       if (res) getData(res);
     });
@@ -115,6 +121,7 @@ const OrderScreen = () => {
             expandedRowRender: (record) => {
               const data = transactionData[record.id];
 
+              const { address } = record;
               const localStatus = data.status;
               const updateStatus = async () => {
                 const dataUpdate = {
@@ -122,7 +129,6 @@ const OrderScreen = () => {
                   status: data.status,
                 };
 
-                //udpate status of listTransaction
                 const rs = await updateStatusOrder(dataUpdate);
                 if (rs.status === 200) {
                   const newListTransaction = listTransaction.map(
@@ -146,7 +152,7 @@ const OrderScreen = () => {
 
               return (
                 <Card
-                  title='Thay đổi trạng thái'
+                  title='Thông tin đơn hàng'
                   style={{ width: '100%' }}
                   actions={[
                     <button
@@ -166,6 +172,35 @@ const OrderScreen = () => {
                     </button>,
                   ]}
                 >
+                  <div>
+                    <Row style={{ marginTop: 20 }}>
+                      <Col flex={1}>
+                        <h4>Mã khách hàng: {address.usersId} </h4>
+                        <h4>Số điện thoại: {address.phone}</h4>
+                      </Col>
+
+                      <Col flex={1}>
+                        <h4>Tên khách hàng: {address.name}</h4>
+                        <h4>
+                          Ngày mua:{' '}
+                          {DateUtil.formatTimeDateReview(address.created_at)}
+                        </h4>
+                      </Col>
+                    </Row>
+                  </div>
+                  <Row style={{ alignItems: 'center' }}>
+                    <h4>Địa chỉ: {address.address} </h4>
+                  </Row>
+                  <Row style={{ alignItems: 'center', marginTop: '1rem' }}>
+                    <h3
+                      style={{
+                        color: '#007aff',
+                        flex: 1,
+                      }}
+                      children={'Cập nhật trạng thái của đơn hàng'}
+                    />
+                  </Row>
+
                   {Object.keys(Status).map((key) => (
                     <button
                       key={key}

@@ -61,33 +61,7 @@ export const COLUMNS_TRANSACTION = [
       );
     },
   },
-  {
-    title: 'Giá',
-    dataIndex: 'price',
-    key: 'price',
-    render: (item: any, record: any) => {
-      const product = record.product;
-      const price =
-        product.sale_price > 0
-          ? product.price * ((100 - product.sale_price) / 100)
-          : product.price;
-      return (
-        <>
-          {product.sale_price > 0 ? (
-            <>
-              <span className='font-bold text-orange-600'>
-                ₫{formatPrice(price)}
-              </span>
-            </>
-          ) : (
-            <span className='font-bold text-gray-600'>
-              ₫{formatPrice(price)}
-            </span>
-          )}
-        </>
-      );
-    },
-  },
+
   {
     title: 'Giá',
     dataIndex: 'price',
