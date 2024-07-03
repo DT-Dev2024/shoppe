@@ -3,11 +3,11 @@ import { FaArrowCircleLeft, FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
-type CartLayoutPropsType = {
+type UserLayoutPropsType = {
   children?: React.ReactNode;
 };
 
-const UserLayout = ({ children }: CartLayoutPropsType) => {
+const UserLayout = ({ children }: UserLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
       <div className="hidden bg-[#f94f2f] py-[1rem]  pt-[1.3rem] lg:block  lg:py-[0.8rem]  lg:pt-[0rem]">

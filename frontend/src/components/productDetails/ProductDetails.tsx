@@ -13,6 +13,7 @@ import { formatCurrency } from "src/utils/formatNumber";
 import reviews, { Review } from "./DataReview";
 import LoadingSmall from "../Loading/LoadingSmall";
 import { AuthContextInterface, CartContext } from "src/contexts/cart.context";
+import ProductList from "src/pages/ProductList";
 // import reviews from "./DataReview.js";
 const ProductDetails = () => {
   const [currentImageState, setCurrentImageState] = useState<HTMLImageElement | null>(null);
@@ -151,9 +152,9 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="mt-[11rem] bg-gray-200   py-6 pt-12">
+    <div className=" bg-gray-200   py-6 ">
       {loadingAddCart && <LoadingSmall />}
-      <div className="bg-white p-10 shadow">
+      <div className="bg-white p-1 shadow lg:p-10">
         <div className="container">
           <div className="lg:grid lg:grid-cols-12 lg:gap-4">
             <div className="block lg:col-span-5">
@@ -212,7 +213,7 @@ const ProductDetails = () => {
                 ))}
               </Swiper>
             </div>
-            <div className="mt-8 block lg:col-span-7 lg:mt-5">
+            <div className="mt-8 block p-8 lg:col-span-7 lg:mt-5 lg:p-0">
               <h1 className="text-[18px] font-medium uppercase lg:text-[20px]">{product?.name}</h1>
               <div className="mt-4 flex items-center">
                 <div className="flex items-center">
@@ -245,7 +246,7 @@ const ProductDetails = () => {
                   </span>
                 </div>
               </div>
-              <div className="mt-4">
+              <div className="mt-4 hidden lg:block">
                 <div className="mt-6 flex items-center ">
                   <div className="mr-5 max-w-[120px] text-[14px] capitalize text-gray-500 lg:text-[15px]">
                     Chính Sách Trả Hàng
@@ -330,7 +331,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-10 sm:flex sm:items-center sm:gap-x-4">
+              <div className="mt-10  sm:flex sm:items-center sm:gap-x-4">
                 <button
                   onClick={handleAddToCart}
                   className="flex h-[40px] w-full  items-center justify-center rounded-sm border border-[rgb(238,77,45)] bg-[rgb(252,222,216)] px-5 capitalize text-[rgb(238,77,45)] shadow-sm hover:bg-[rgb(255,160,142)] sm:w-auto"
@@ -346,7 +347,7 @@ const ProductDetails = () => {
                 </button>
               </div>
             </div>
-            <div className="mt-6 flex flex-col gap-y-3 bg-gray-100 p-6 lg:col-span-12 lg:flex-row lg:gap-0">
+            <div className="mt-[-10px] flex flex-col gap-y-3 p-0 lg:col-span-12 lg:mt-6 lg:flex-row lg:gap-0 lg:bg-gray-100">
               <div className="mr-16 flex items-center">
                 <img
                   src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn"
@@ -369,22 +370,22 @@ const ProductDetails = () => {
                 <div className="flex justify-between">
                   Tỉ lệ phản hồi <span className=" ml-10  text-[#D2295C] ">99%</span>
                 </div>
-                <div className="flex justify-between">
+                <div className=" hidden justify-between lg:flex  ">
                   Tham Gia <span className=" ml-4 text-[#D2295C] ">6 tháng trước</span>
                 </div>
                 <div className="flex justify-between">
                   Sản Phẩm <span className="ml-10 text-[#D2295C] ">15</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="hidden justify-between lg:flex">
                   Thời gian phản hồi <span className="ml-10 text-right text-[#D2295C] ">trong vài giờ</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="hidden justify-between lg:flex">
                   Người theo dõi <span className="ml-10 text-[#D2295C] ">12,3k</span>
                 </div>
               </div>
             </div>
             <div className="col-span-12 mt-4 ">
-              <div className="bg-gray-100 p-4">
+              <div className="p-3 lg:bg-gray-100">
                 <h2 className="mb-0 text-2xl font-semibold">Mô tả sản phẩm</h2>
                 <div
                   className="mb-2 text-2xl"
@@ -394,7 +395,7 @@ const ProductDetails = () => {
             </div>
 
             <div className="col-span-12 mt-4">
-              <div className="bg-gray-100 p-4">
+              <div className="p-1 lg:bg-gray-100">
                 <div className="flex-coljustify-between mb-8 flex gap-6 lg:flex-row lg:gap-20">
                   <div className="w-[445px] lg:w-[300px]">
                     <h2 className="mb-2 text-2xl font-semibold">Đánh giá sản phẩm</h2>
@@ -405,7 +406,7 @@ const ProductDetails = () => {
                       <span className="text-2xl text-red-500">★ ★ ★ ★ ★</span>
                     </div>
                   </div>
-                  <div className="mt-0">
+                  <div className="mt-0 hidden lg:block">
                     <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">Tất Cả</button>
                     <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">5 Sao (94)</button>
                     <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">4 Sao (0)</button>
@@ -416,11 +417,15 @@ const ProductDetails = () => {
                     <button className="mb-4 mr-4 bg-gray-200 px-6 py-4 text-xl">Có Hình Ảnh / Video (25)</button>
                   </div>
                 </div>
-                <ReviewComponent></ReviewComponent>
+                <ReviewComponent />
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <h1 className="mt-2 w-full bg-gray-100 px-1 pt-4 text-3xl uppercase">Gợi ý cho bạn</h1>
+        <ProductList />
       </div>
     </div>
   );

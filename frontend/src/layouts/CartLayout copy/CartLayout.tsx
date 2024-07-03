@@ -3,11 +3,11 @@ import { FaArrowCircleLeft, FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FooterLink, FooterPolicyAndTerms } from "src/components/old/Footer";
 import HeaderCommonInfo from "src/components/old/Header/HeaderCommonInfo";
-type CheckoutLayoutPropsType = {
+type CartLayoutPropsType = {
   children?: React.ReactNode;
 };
 
-const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
+const CartLayout = ({ children }: CartLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
       <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
@@ -17,7 +17,7 @@ const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
         <HeaderSearchPart />
       </div>
       <div className="fixed block w-full lg:hidden">
-        <HeaderCheckout />
+        <HeaderCart />
       </div>
       <div className="mx-auto pt-14 lg:w-[120rem] lg:pt-0">{children}</div>
       {/* <hr className="mt-6 h-2 w-full bg-[#f94f2f] lg:mt-20" />
@@ -29,15 +29,15 @@ const CheckoutLayout = ({ children }: CheckoutLayoutPropsType) => {
   );
 };
 
-export default CheckoutLayout;
-function HeaderCheckout() {
+export default CartLayout;
+function HeaderCart() {
   return (
     <div>
-      <div className="flex  items-center justify-start gap-20 bg-white px-6 py-4">
-        <a href="/cart">
+      <div className="flex  items-center justify-start gap-8 bg-white px-6 py-4">
+        <a href="/">
           <FaArrowLeft className="text-2xl text-primary"></FaArrowLeft>
         </a>
-        <p className="text-2xl">Thanh Toán</p>
+        <p className="text-2xl">Giỏ hàng</p>
       </div>
     </div>
   );
@@ -48,7 +48,7 @@ function HeaderSearchPart() {
     <div className="mb-10  flex items-center justify-start gap-6 bg-white px-8 py-10 lg:justify-between lg:gap-0 lg:px-[35rem] ">
       <div className="flex items-center ">
         <button
-          className="mt-[-10px] h-[50px] w-[90px] fill-current text-white lg:w-[150px]"
+          className="h-[50px] w-[90px] fill-current text-white lg:w-[150px]"
           onClick={() => navigate("/")}
         >
           <svg
@@ -63,9 +63,9 @@ function HeaderSearchPart() {
             </g>
           </svg>
         </button>
-        <span className="mx-4 mt-[-10px] hidden h-16 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
-        <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize  text-[#ee4d2d] lg:block">
-          Thanh Toán
+        <span className="mx-4 mt-6 hidden h-11 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
+        <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize leading-[1.875rem] text-[#ee4d2d] lg:block">
+          Giỏ hàng
         </span>
       </div>
       <div className="flex items-center">
