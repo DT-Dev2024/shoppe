@@ -30,7 +30,41 @@ enum PaymentMethod {
   BANK = "Chuyển khoản ngân hàng",
   PAY_OFFLINE = "Thanh toán tiền mặt khi nhận hàng",
 }
-
+const fixedVouchers: TVoucher[] = [
+  {
+    id: "10000",
+    discount: 50000,
+    minium_price: 200000,
+    expire: "2024-07-31",
+    discount_type: "FIXED",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+  {
+    id: "20000",
+    discount: 100000,
+    minium_price: 300000,
+    expire: "2024-08-15",
+    discount_type: "FIXED",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+  {
+    id: "30000",
+    discount: 150000,
+    minium_price: 500000,
+    discount_type: "FIXED",
+    expire: "2024-09-01",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+];
 const Checkout = () => {
   const [addresses, setAddresses] = useState<TAddress[]>();
   const [address, setAddress] = useState<TAddress>();
@@ -156,7 +190,7 @@ const Checkout = () => {
     const vouchers = async () => {
       try {
         const response = await getAllVouchers();
-        setVouchers(response.data);
+        setVouchers([...response.data, ...fixedVouchers]);
       } catch (error) {
         console.error("Error fetching vouchers:", error);
       }
@@ -172,14 +206,11 @@ const Checkout = () => {
     );
     if (selectedVoucher) {
       if (selectedVoucher.discount_type === "FIXED") {
-        // checkoutPrice - selectedVoucher.discount
         return {
           priceDiscount: selectedVoucher.discount,
           totalPrice: checkoutPrice - selectedVoucher.discount,
         };
       } else {
-        if (!selectedVoucher) return checkoutPrice;
-        // return checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100;
         return {
           priceDiscount: (checkoutPrice * selectedVoucher.discount) / 100,
           totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100,
@@ -194,53 +225,8 @@ const Checkout = () => {
   }, [selectedVoucher, checkoutOrder]);
 
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
-  const fixedVouchers = [
-    {
-      id: 1,
-      discount: 15000,
-      minium_price: 0,
-      expire: "2025-07-31",
-    },
-    {
-      id: 2,
-      discount: 10000,
-      minium_price: 50000,
-      expire: "2025-08-15",
-    },
-    {
-      id: 3,
-      discount: 100000,
-      minium_price: 500000,
-      expire: "2025-09-01",
-    },
-  ];
-  const [selectedFixidVoucher, setSelectedFixidVoucher] = useState<any>(fixedVouchers);
+
   const ModalVoucher = () => {
-    const fixedVouchers = [
-      {
-        id: 1,
-        discount: 50000,
-        minium_price: 200000,
-        expire: "2024-07-31",
-        discount_type: "FIXED",
-      },
-      {
-        id: 2,
-        discount: 100000,
-        minium_price: 300000,
-        expire: "2024-08-15",
-        discount_type: "FIXED",
-      },
-      {
-        id: 3,
-        discount: 150000,
-        minium_price: 500000,
-        discount_type: "FIXED",
-
-        expire: "2024-09-01",
-      },
-    ];
-
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
@@ -283,59 +269,33 @@ const Checkout = () => {
               "
             >
               <>
-                {fixedVouchers.map((voucher) => (
-                  <li
-                    key={voucher.id}
-                    className={`border-b  border-gray-300 p-4 shadow-md`}
-                  >
-                    <div className="relative flex items-center">
-                      <div className="h-40 w-40 bg-green-600">
-                        <img
-                          src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-
-                      <div className="flex-1 pl-3">
-                        <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
-                        <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                        <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                      </div>
-                      <input
-                        type="radio"
-                        name="selectedFixidVoucher"
-                        checked={selectedFixidVoucher?.id === voucher.id}
-                        onChange={(e) => {
-                          e.preventDefault();
-                          setSelectedFixidVoucher(voucher);
-                          setSelectedVoucher(null);
-                        }}
-                        className="ml-4"
-                      />
-                    </div>
-                    <p className="mt-4 flex items-center text-[13px] text-main">
-                      <AiOutlineExclamationCircle className="mr-1 " />
-                      Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                    </p>
-                  </li>
-                ))}
                 {vouchers.map((voucher) => (
                   <li
                     key={voucher.id}
-                    className={`border-b  border-gray-300 p-4 shadow-md`}
+                    className={`border-b  border-gray-300 p-4 shadow-md ${
+                      totalPrice < voucher.minium_price ? "opacity-50" : ""
+                    }`}
                   >
                     <div className="relative flex items-center">
                       <div className="h-40 w-40 bg-green-600">
                         <img
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                          src={
+                            voucher.type === "SYSTEM"
+                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                              : "https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                          }
                           alt=""
                           className="h-full w-full object-cover"
                         />
                       </div>
 
                       <div className="flex-1 pl-3">
-                        <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                        <p className="text-xl">
+                          Giảm giá tối đa{" "}
+                          {voucher.discount_type === "FIXED"
+                            ? `₫${formatCurrency(voucher.discount)}`
+                            : `${voucher.discount}%`}
+                        </p>
                         <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
                         <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
                       </div>
@@ -345,8 +305,8 @@ const Checkout = () => {
                         checked={selectedVoucher?.id === voucher.id}
                         onChange={(e) => {
                           e.preventDefault();
+                          if (totalPrice < voucher.minium_price) return;
                           setSelectedVoucher(voucher);
-                          setSelectedFixidVoucher(null);
                         }}
                         className="ml-4"
                       />
@@ -719,13 +679,8 @@ const Checkout = () => {
     }
 
     if (checkoutOrder) {
-      const total =
-        checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
-        checkoutOrder.length * shippingFee +
-        (selectedFixidVoucher ? selectedFixidVoucher.discount : selectedVoucher ? selectedVoucher.discount : 0);
-
       const data: TCheckout = {
-        totalPrice: total,
+        totalPrice: totalPrice,
         userId: user?.id || "",
         orderDetails: checkoutOrder.map((item) => ({
           productId: item.product.id,
@@ -1066,39 +1021,11 @@ const Checkout = () => {
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Giảm giá</span>
-                <span className="text-right">
-                  ₫
-                  {formatCurrency(
-                    (selectedFixidVoucher
-                      ? selectedFixidVoucher.discount
-                      : selectedVoucher
-                      ? selectedVoucher.discount
-                      : 0) || 0,
-                  )}
-                </span>
+                <span className="text-right">₫{formatCurrency(priceDiscount)}</span>
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-                <span className="text-right text-3xl text-main lg:text-4xl">
-                  ₫
-                  {formatCurrency(
-                    checkoutOrder.reduce(
-                      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
-                      0,
-                    ) +
-                      checkoutOrder.length * shippingFee -
-                      (selectedFixidVoucher
-                        ? selectedFixidVoucher.discount
-                        : selectedVoucher
-                        ? selectedVoucher.discount
-                        : 0) ||
-                      checkoutOrder.reduce(
-                        (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
-                        0,
-                      ) +
-                        checkoutOrder.length * shippingFee,
-                  )}
-                </span>
+                <span className="text-right text-3xl text-main lg:text-4xl">₫{formatCurrency(totalPrice)}</span>
               </li>
             </ul>
           </div>
