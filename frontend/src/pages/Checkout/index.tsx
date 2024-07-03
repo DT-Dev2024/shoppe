@@ -8,7 +8,7 @@ import Voucher from "src/assets/img/voucher.png";
 import { OrderContext } from "src/contexts/order.context";
 import { InputChange } from "src/helpers";
 import { TCheckout, TExtendedPurchases, TVoucher } from "src/types/purchase.type";
-import { TAddress, TUser } from "src/types/user.types";
+import { TAddress, TUser, ValidationResult } from "src/types/user.types";
 import { formatCurrency } from "src/utils/formatNumber";
 import "./checkout.css";
 import userApi from "src/apis/user.api";
@@ -17,6 +17,7 @@ import { useLocation } from "react-router-dom";
 import { getAllVouchers } from "src/apis/voucher";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import LoadingSmall from "src/components/Loading/LoadingSmall";
+import { validateAddressFields } from "src/utils/validate";
 
 let payments = {
   MOMO: "",
@@ -84,14 +85,6 @@ const Checkout = () => {
     return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
   };
 
-  // Function to handle payment method selection
-  const paymentMethod = (e: React.MouseEvent<HTMLLIElement>) => {
-    const paymentItems = document.querySelectorAll("li");
-    paymentItems.forEach((item) => {
-      item.classList.remove("bg-main", "text-white");
-    });
-    e.currentTarget.classList.add("bg-main", "text-white");
-  };
   const handleAddressChange = (selectedId: string) => {
     const updatedAddresses = addresses?.map((item) => ({
       ...item,
@@ -472,7 +465,15 @@ const Checkout = () => {
       </div>
     );
   };
-
+  const [errsFormAddress, setErrsFormAddress] = useState<ValidationResult>({});
+  const highlightError = (field: string) => {
+    return Object.keys(errsFormAddress).some((error) => error === field) ? "border-red-500" : "";
+  };
+  const renderSpanError = (field: string) => {
+    return Object.keys(errsFormAddress).some((error) => error === field) ? (
+      <span className="text-[12px] text-red-500">{errsFormAddress[field]}</span>
+    ) : null;
+  };
   const [tabActive, setTabActive] = useState<keyof typeof PaymentMethod | null>("PAY_OFFLINE");
   const [selectedPayment, setSelectedPayment] = useState<{ key: keyof typeof PaymentMethod; value: string } | null>({
     key: "PAY_OFFLINE",
@@ -485,6 +486,11 @@ const Checkout = () => {
 
   const handleOrder = async () => {
     setLoading(true);
+    if (!address) {
+      setLoading(false);
+      return;
+    }
+
     if (checkoutOrder) {
       const total =
         checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
@@ -571,7 +577,9 @@ const Checkout = () => {
                       <input
                         type="text"
                         id="name"
-                        className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                        className={`peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] ${highlightError(
+                          "name",
+                        )}`}
                         placeholder=" "
                         required
                         value={addressEdit?.name}
@@ -584,13 +592,16 @@ const Checkout = () => {
                       >
                         Họ và tên
                       </label>
+                      {renderSpanError("name")}
                     </div>
 
                     <div className="group relative z-0 mb-8 w-full">
                       <input
                         type="text"
                         id="phone"
-                        className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                        className={`peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] ${highlightError(
+                          "phone",
+                        )}`}
                         placeholder=" "
                         required
                         value={addressEdit?.phone}
@@ -603,13 +614,16 @@ const Checkout = () => {
                       >
                         Số điện thoại
                       </label>
+                      {renderSpanError("phone")}
                     </div>
                   </div>
                   <div className="group relative z-0 mb-6 w-full">
                     <input
                       type="text"
                       id="address"
-                      className="peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] "
+                      className={`peer block w-full border bg-transparent px-0 py-4 pl-4 text-[14px] text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0 lg:text-[15px] ${highlightError(
+                        "address",
+                      )}`}
                       placeholder=" "
                       required
                       value={addressEdit?.address}
@@ -622,6 +636,7 @@ const Checkout = () => {
                     >
                       Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã
                     </label>
+                    {renderSpanError("address")}
                   </div>
                 </form>
 
@@ -639,7 +654,13 @@ const Checkout = () => {
                   </button>
                   <button
                     onClick={async () => {
-                      setIsShowFormAddress(true);
+                      const validate = validateAddressFields(addressEdit);
+                      if (Object.keys(validate).length > 0) {
+                        setErrsFormAddress(validate);
+                        return;
+                      }
+                      setErrsFormAddress({});
+
                       if (modalAddAddress) {
                         const rs = await userApi.updateAddress({
                           ...addressEdit,
@@ -666,6 +687,7 @@ const Checkout = () => {
                           localStorage.setItem("user", JSON.stringify(rs.data));
                         }
                       }
+                      setIsShowFormAddress(true);
                     }}
                     className="mx-7 rounded border bg-main px-12 py-3 text-xl text-white"
                   >
@@ -811,9 +833,19 @@ const Checkout = () => {
                 </span>
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
-                <span className="col-span-1 mr-8 text-gray-400">Phí vận chuyển</span>
+                <span className="col-span-1 mr-8 text-gray-400">Tổng tiền phí vận chuyển</span>
                 <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
               </li>
+              <li className="grid grid-cols-2 items-center text-[15px]">
+                <span className="col-span-1 mr-8 text-gray-400">Giảm giá phí vận chuyển</span>
+                <span className="text-right">- ₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
+              </li>
+              {selectedVoucher && (
+                <li className="grid grid-cols-2 items-center text-[15px]">
+                  <span className="col-span-1 mr-8 text-gray-400">Tổng cộng voucher giảm giá</span>
+                  <span className="text-right">- ₫{formatCurrency(selectedVoucher.discount)}</span>
+                </li>
+              )}
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
                 <span className="text-right text-3xl text-main lg:text-4xl">
@@ -822,9 +854,7 @@ const Checkout = () => {
                     checkoutOrder.reduce(
                       (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
                       0,
-                    ) +
-                      checkoutOrder.length * shippingFee -
-                      (selectedVoucher?.discount || 0),
+                    ) - (selectedVoucher?.discount || 0),
                   )}
                 </span>
               </li>
@@ -835,12 +865,16 @@ const Checkout = () => {
               Nhấn &ldquo;Đặt hàng&ldquo; đồng nghĩa với việc bạn đồng ý tuân theo{" "}
               <span className="text-blue-600">Điều khoản Shopee</span>
             </span>
-            <button
-              onClick={handleOrder}
-              className="bg-main px-36 py-4 text-[14px] text-white lg:text-[16px]"
-            >
-              Đặt hàng
-            </button>
+            <div className="flex flex-col">
+              <button
+                onClick={handleOrder}
+                className="bg-main px-36 py-4 text-[14px] text-white lg:text-[16px]"
+              >
+                Đặt hàng
+              </button>
+              <br />
+              {!address && <span className="text-red-500">Vui lòng chọn địa chỉ nhận hàng</span>}
+            </div>
           </p>
         </div>
       </div>
