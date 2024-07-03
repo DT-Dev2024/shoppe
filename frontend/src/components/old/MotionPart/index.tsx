@@ -17,7 +17,12 @@ function MotionPart() {
         </a>
       </div>
 
-      <div className="motion-part__chat">
+      <div
+        className="motion-part__chat"
+        onClick={() => {
+          window.open("https://jivo.chat/glwMlKZ57u", "_blank");
+        }}
+      >
         <div className="motion-part__chat__main">
           <svg
             xmlns="http://www.w3.org/2000/svg"

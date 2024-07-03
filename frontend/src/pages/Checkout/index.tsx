@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { CiCircleQuestion } from "react-icons/ci";
 import { FaLocationDot } from "react-icons/fa6";
@@ -142,6 +142,35 @@ const Checkout = () => {
     vouchers();
   }, []);
   const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
+  const { priceDiscount, totalPrice } = useMemo(() => {
+    const checkoutPrice = checkoutOrder.reduce(
+      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+
+      0,
+    );
+    if (selectedVoucher) {
+      if (selectedVoucher.discount_type === "FIXED") {
+        // checkoutPrice - selectedVoucher.discount
+        return {
+          priceDiscount: selectedVoucher.discount,
+          totalPrice: checkoutPrice - selectedVoucher.discount,
+        };
+      } else {
+        if (!selectedVoucher) return checkoutPrice;
+        // return checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100;
+        return {
+          priceDiscount: (checkoutPrice * selectedVoucher.discount) / 100,
+          totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100,
+        };
+      }
+    } else {
+      return {
+        priceDiscount: 0,
+        totalPrice: checkoutPrice,
+      };
+    }
+  }, [selectedVoucher, checkoutOrder]);
+
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
 
   const ModalVoucher = () => {
@@ -201,7 +230,12 @@ const Checkout = () => {
                     </div>
 
                     <div className="flex-1 pl-3">
-                      <p className="text-xl">Giảm giá tối đa ₫{formatCurrency(voucher.discount)}</p>
+                      <p className="text-xl">
+                        Giảm giá tối đa{" "}
+                        {voucher.discount_type === "FIXED"
+                          ? `₫${formatCurrency(voucher.discount)}`
+                          : `${voucher.discount}%`}
+                      </p>
                       <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
                       <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
                     </div>
@@ -843,20 +877,12 @@ const Checkout = () => {
               {selectedVoucher && (
                 <li className="grid grid-cols-2 items-center text-[15px]">
                   <span className="col-span-1 mr-8 text-gray-400">Tổng cộng voucher giảm giá</span>
-                  <span className="text-right">- ₫{formatCurrency(selectedVoucher.discount)}</span>
+                  <span className="text-right">- ₫{formatCurrency(priceDiscount)}</span>
                 </li>
               )}
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
-                <span className="text-right text-3xl text-main lg:text-4xl">
-                  ₫
-                  {formatCurrency(
-                    checkoutOrder.reduce(
-                      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
-                      0,
-                    ) - (selectedVoucher?.discount || 0),
-                  )}
-                </span>
+                <span className="text-right text-3xl text-main lg:text-4xl">₫{formatCurrency(totalPrice)}</span>
               </li>
             </ul>
           </div>
