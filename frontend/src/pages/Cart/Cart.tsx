@@ -448,6 +448,13 @@ const Cart = () => {
       navigate(path.checkout, {
         state: data,
       });
+      setExtendedPurchases(
+        produce((draft) => {
+          draft.forEach((purchase) => {
+            purchase.checked = false;
+          });
+        }),
+      );
     }
   };
 

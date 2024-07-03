@@ -1,7 +1,6 @@
 export function formatCurrency(value: number) {
-  return new Intl.NumberFormat("de-DE").format(value);
+  return new Intl.NumberFormat("de-DE", { maximumFractionDigits: 0 }).format(value);
 }
-
 export function formatNumberToSocialStyle(value: number) {
   return new Intl.NumberFormat("en", {
     notation: "compact",
