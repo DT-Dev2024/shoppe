@@ -7,6 +7,7 @@ import { AuthContext } from "src/contexts/auth.context";
 import { useDataSourceContext } from "src/hooks/hookHome";
 import AuthenticationLayout from "src/layouts/AuthenticationLayout";
 import CartLayout from "src/layouts/CartLayout";
+import CheckoutLayout from "src/layouts/CheckoutLayout";
 import MainLayout from "src/layouts/MainLayout";
 import UserLayout from "src/layouts/UserLayout";
 import Home from "src/pages/Home";
@@ -107,11 +108,11 @@ export default function useRoutesElement() {
         {
           path: path.checkout,
           element: (
-            <CartLayout>
+            <CheckoutLayout>
               <Suspense>
                 <Checkout />
               </Suspense>
-            </CartLayout>
+            </CheckoutLayout>
           ),
         },
         {

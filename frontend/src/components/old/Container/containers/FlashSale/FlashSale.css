@@ -230,7 +230,6 @@
   }
   .flash-sale__main__link {
     width: 100%;
-    margin-left: 1px;
   }
 }
 @media screen and (min-width: 375px) and (max-width: 389.98px) {
@@ -247,13 +246,12 @@
   }
   .flash-sale__main__list {
     display: grid;
-    width: 360px;
+    width: 375px;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   .flash-sale__main__link {
     width: 100%;
-    margin-left: 8px;
   }
 }
 @media screen and (min-width: 390px) and (max-width: 411.98px) {
@@ -270,13 +268,11 @@
   }
   .flash-sale__main__list {
     display: grid;
-    width: 360px;
+    width: 390px;
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
   }
   .flash-sale__main__link {
     width: 100%;
-    margin-left: 18px;
   }
 }
 @media screen and (min-width: 412px) and (max-width: 413.98px) {
@@ -293,13 +289,11 @@
   }
   .flash-sale__main__list {
     display: grid;
-    width: 360px;
+    width: 412px;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
+    }
   .flash-sale__main__link {
     width: 100%;
-    margin-left: 28px;
   }
 }
 @media screen and (min-width: 413.99px) and (max-width: 414px) {
@@ -316,12 +310,11 @@
   }
   .flash-sale__main__list {
     display: grid;
-    width: 360px;
+    width: 414px;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   .flash-sale__main__link {
     width: 100%;
-    margin-left: 33px;
   }
 }

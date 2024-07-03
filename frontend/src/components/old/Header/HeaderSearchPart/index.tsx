@@ -154,14 +154,14 @@ function HeaderSearchPart() {
         </div>
       </div>
 
-      <div className="header__cart -mt-3">
+      <div className="header__cart">
         <a
           href={path.cart}
           className="header__cart__link relative"
         >
-          <FaShoppingCart className="text-5xl" />
+          <FaShoppingCart className="text-4xl lg:text-5xl" />
           {extendedPurchases.length > 0 && (
-            <span className="absolute -right-2 -top-0 flex h-10 w-10 items-center justify-center rounded-full border bg-main p-3  text-[14px]">
+            <span className="absolute -right-2 -top-0 flex h-4 w-4 items-center justify-center rounded-full border bg-main p-3 text-[14px] lg:h-10  lg:w-10">
               {extendedPurchases.length}
             </span>
           )}
