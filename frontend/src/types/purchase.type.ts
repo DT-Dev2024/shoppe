@@ -21,7 +21,7 @@ export type TExtendedPurchases = {
   checked: boolean;
 } & TPurchase;
 
-export type TVoucherType = "SHOP" | "USER";
+export type TVoucherType = "SHOP" | "USER" | "SYSTEM";
 export type TDiscountType = "PERCENTAGE" | "FIXED";
 
 export type TVoucher = {

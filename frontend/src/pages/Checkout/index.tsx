@@ -30,12 +30,45 @@ enum PaymentMethod {
   BANK = "Chuyển khoản ngân hàng",
   PAY_OFFLINE = "Thanh toán tiền mặt khi nhận hàng",
 }
-
+const fixedVouchers: TVoucher[] = [
+  {
+    id: "10000",
+    discount: 50000,
+    minium_price: 200000,
+    expire: "2024-07-31",
+    discount_type: "FIXED",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+  {
+    id: "20000",
+    discount: 100000,
+    minium_price: 300000,
+    expire: "2024-08-15",
+    discount_type: "FIXED",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+  {
+    id: "30000",
+    discount: 150000,
+    minium_price: 500000,
+    discount_type: "FIXED",
+    expire: "2024-09-01",
+    type: "SYSTEM",
+    code: "",
+    createdAt: "",
+    updatedAt: "",
+  },
+];
 const Checkout = () => {
   const [addresses, setAddresses] = useState<TAddress[]>();
   const [address, setAddress] = useState<TAddress>();
   const [user, setUser] = useState<TUser>();
-
   const initialAddress: TAddress = {
     id: "",
     name: "",
@@ -76,7 +109,6 @@ const Checkout = () => {
     getPayment();
   }, []);
   const [addressEdit, setAddressEdit] = useState<TAddress>(initialAddress);
-  const shippingFee = 32000;
   const CaculateDateShip = () => {
     const date = new Date();
     const day = date.getDate();
@@ -84,7 +116,28 @@ const Checkout = () => {
     const dayReceive2 = day + 5;
     return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
   };
-
+  const CaculateDateShipTK = () => {
+    const date = new Date();
+    const day = date.getDate();
+    const dayReceive = day + 4;
+    const dayReceive2 = day + 6;
+    return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
+  };
+  const CaculateDateShipHT = () => {
+    const date = new Date();
+    const day = date.getDate();
+    const dayReceive = day + 1;
+    const dayReceive2 = day + 3;
+    return ` ${dayReceive} Tháng ${date.getMonth() + 1} - ${dayReceive2} Tháng ${date.getMonth() + 1}`;
+  };
+  // Function to handle payment method selection
+  const paymentMethod = (e: React.MouseEvent<HTMLLIElement>) => {
+    const paymentItems = document.querySelectorAll("li");
+    paymentItems.forEach((item) => {
+      item.classList.remove("bg-main", "text-white");
+    });
+    e.currentTarget.classList.add("bg-main", "text-white");
+  };
   const handleAddressChange = (selectedId: string) => {
     const updatedAddresses = addresses?.map((item) => ({
       ...item,
@@ -99,6 +152,9 @@ const Checkout = () => {
   const [isShowFormAddress, setIsShowFormAddress] = useState(false);
   const [isShowEditFormAddress, setIsShowEditFormAddress] = useState(false);
   const [modalAddAddress, setModalAddAddress] = useState(false);
+  const [isShowFormShipping, setIsShowFormShipping] = useState(false);
+  const [modalChangeShipping, setModalChangeShipping] = useState(false);
+
   const handleChangeInput = (e: InputChange) => {
     const { value, name } = e.target;
     if (!addressEdit) return;
@@ -134,7 +190,7 @@ const Checkout = () => {
     const vouchers = async () => {
       try {
         const response = await getAllVouchers();
-        setVouchers(response.data);
+        setVouchers([...response.data, ...fixedVouchers]);
       } catch (error) {
         console.error("Error fetching vouchers:", error);
       }
@@ -150,14 +206,11 @@ const Checkout = () => {
     );
     if (selectedVoucher) {
       if (selectedVoucher.discount_type === "FIXED") {
-        // checkoutPrice - selectedVoucher.discount
         return {
           priceDiscount: selectedVoucher.discount,
           totalPrice: checkoutPrice - selectedVoucher.discount,
         };
       } else {
-        if (!selectedVoucher) return checkoutPrice;
-        // return checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100;
         return {
           priceDiscount: (checkoutPrice * selectedVoucher.discount) / 100,
           totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100,
@@ -215,47 +268,56 @@ const Checkout = () => {
                 grid-cols-1 gap-4 overflow-y-auto
               "
             >
-              {vouchers.map((voucher) => (
-                <li
-                  key={voucher.id}
-                  className={`border-b  border-gray-300 p-4 shadow-md`}
-                >
-                  <div className="relative flex items-center">
-                    <div className="h-40 w-40 bg-green-600">
-                      <img
-                        src="https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                        alt=""
-                        className="h-full w-full object-cover"
+              <>
+                {vouchers.map((voucher) => (
+                  <li
+                    key={voucher.id}
+                    className={`border-b  border-gray-300 p-4 shadow-md ${
+                      totalPrice < voucher.minium_price ? "opacity-50" : ""
+                    }`}
+                  >
+                    <div className="relative flex items-center">
+                      <div className="h-40 w-40 bg-green-600">
+                        <img
+                          src={
+                            voucher.type === "SYSTEM"
+                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                              : "https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                          }
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+
+                      <div className="flex-1 pl-3">
+                        <p className="text-xl">
+                          Giảm giá tối đa{" "}
+                          {voucher.discount_type === "FIXED"
+                            ? `₫${formatCurrency(voucher.discount)}`
+                            : `${voucher.discount}%`}
+                        </p>
+                        <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                        <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                      </div>
+                      <input
+                        type="radio"
+                        name="selectedVoucher"
+                        checked={selectedVoucher?.id === voucher.id}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          if (totalPrice < voucher.minium_price) return;
+                          setSelectedVoucher(voucher);
+                        }}
+                        className="ml-4"
                       />
                     </div>
-
-                    <div className="flex-1 pl-3">
-                      <p className="text-xl">
-                        Giảm giá tối đa{" "}
-                        {voucher.discount_type === "FIXED"
-                          ? `₫${formatCurrency(voucher.discount)}`
-                          : `${voucher.discount}%`}
-                      </p>
-                      <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                      <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                    </div>
-                    <input
-                      type="radio"
-                      name="selectedVoucher"
-                      checked={selectedVoucher?.id === voucher.id}
-                      onChange={(e) => {
-                        e.preventDefault(); // Prevent the default action
-                        setSelectedVoucher(voucher);
-                      }}
-                      className="ml-4"
-                    />
-                  </div>
-                  <p className="mt-4 flex items-center text-[13px] text-main">
-                    <AiOutlineExclamationCircle className="mr-1 " />
-                    Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                  </p>
-                </li>
-              ))}
+                    <p className="mt-4 flex items-center text-[13px] text-main">
+                      <AiOutlineExclamationCircle className="mr-1 " />
+                      Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                    </p>
+                  </li>
+                ))}
+              </>
             </ul>
           </div>
 
@@ -376,8 +438,13 @@ const Checkout = () => {
               <span className="w-[16rem] text-[14px] lg:text-[16px]">Đơn vị vận chuyển:</span>
               <div>
                 <p className="mb-3 mt-4 flex justify-between text-[14px] lg:mt-0 lg:text-[16px]">
-                  <span>Nhanh</span>
-                  <span className="text-blue-600">Thay đổi</span>
+                  <span>{selectedShippingType}</span>
+                  <button
+                    onClick={() => setIsShowFormShipping(true)}
+                    className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]"
+                  >
+                    Thay đổi
+                  </button>
                   <span className="">₫{formatCurrency(shippingFee)}</span>
                 </p>
                 <p className="mb-2 mt-4 text-[13px] text-[#26aa99]">
@@ -508,6 +575,92 @@ const Checkout = () => {
       <span className="text-[12px] text-red-500">{errsFormAddress[field]}</span>
     ) : null;
   };
+
+  const [shippingFee, setShippingFee] = useState(32000);
+  const [selectedShippingType, setSelectedShippingType] = useState("Nhanh");
+  const FormChangeShipping = () => {
+    const [selectedOption, setSelectedOption] = useState("Nhanh");
+    const shippingOptions = [
+      {
+        type: "Nhanh",
+        fee: 32000,
+        deliveryDate: CaculateDateShip(),
+        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShip()}`,
+      },
+      {
+        type: "Hỏa tốc",
+        fee: 75000,
+        deliveryDate: CaculateDateShipHT(),
+        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShipHT()}`,
+      },
+      {
+        type: "Tiết kiệm",
+        fee: 25000,
+        deliveryDate: CaculateDateShipTK(),
+        voucherInfo: `Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau  ${CaculateDateShipTK()}`,
+      },
+    ];
+    return (
+      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="w-[350px]  rounded-lg bg-white shadow-lg lg:max-h-[600px] lg:w-[500px]">
+          <h1 className="h-24 border-b py-9 pl-8 text-[16px]">Chọn đơn vị vận chuyển</h1>
+          <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4 max-h-[470px] gap-4 overflow-y-auto">
+            <p className="h-20 border-b py-2 pl-8 text-[13px] text-gray-500 ">
+              KÊNH VẬN CHUYỂN LIÊN KẾT VỚI SHOPEE Bạn có thể theo dõi đơn hàng trên ứng dụng Shopee khi chọn một trong
+              các đơn vị vận chuyển:
+            </p>
+            {shippingOptions.map((option) => (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+              <div
+                key={option.type}
+                className={`mx-6 mb-3 mt-4 border p-4 px-10 ${
+                  selectedOption === option.type ? "border-orange-500" : "border-gray-300"
+                } cursor-pointer rounded-lg hover:shadow-md`}
+                onClick={() => setSelectedOption(option.type)}
+              >
+                <div className="mb-3 flex justify-between ">
+                  <div className="flex gap-10">
+                    <span className="text-[15px] font-medium text-gray-800">{option.type}</span>
+                    <span className="text-[15px] text-orange-500">₫{option.fee.toLocaleString()}</span>
+                  </div>
+                  {selectedOption === option.type && (
+                    <div className="mt-2 text-right text-[20px]">
+                      <span className="text-orange-500">&#10003;</span>
+                    </div>
+                  )}
+                </div>
+                <p className="mt-3 text-[12px] text-green-600">{option.deliveryDate}</p>
+                <p className="mt-3 text-[10px] text-gray-500">{option.voucherInfo}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex h-[64px] items-center justify-end border-t">
+            <button
+              className="mr-2 rounded border border-main px-12 py-3 text-xl text-main "
+              onClick={() => {
+                setIsShowFormShipping(false);
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={async () => {
+                const selectedShipping = shippingOptions.find((option) => option.type === selectedOption);
+                if (!selectedShipping) return;
+                setShippingFee(selectedShipping.fee);
+                setSelectedShippingType(selectedShipping.type);
+                setIsShowFormShipping(false);
+              }}
+              className="mx-7 rounded border bg-main px-20 py-3 text-xl text-white"
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
   const [tabActive, setTabActive] = useState<keyof typeof PaymentMethod | null>("PAY_OFFLINE");
   const [selectedPayment, setSelectedPayment] = useState<{ key: keyof typeof PaymentMethod; value: string } | null>({
     key: "PAY_OFFLINE",
@@ -526,13 +679,8 @@ const Checkout = () => {
     }
 
     if (checkoutOrder) {
-      const total =
-        checkoutOrder.reduce((acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price, 0) +
-        checkoutOrder.length * shippingFee +
-        (selectedVoucher?.discount || 0);
-
       const data: TCheckout = {
-        totalPrice: total,
+        totalPrice: totalPrice,
         userId: user?.id || "",
         orderDetails: checkoutOrder.map((item) => ({
           productId: item.product.id,
@@ -600,6 +748,7 @@ const Checkout = () => {
           {isModalVoucherVisible && <ModalVoucher />}
           {loading && <LoadingSmall />}
           {isShowFormAddress && <FormAddress />}
+          {isShowFormShipping && <FormChangeShipping />}
           {(addressEdit || modalAddAddress) && isShowEditFormAddress && !isShowFormAddress && (
             <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
               <div className="max-h-[600px] w-[350px]  rounded-lg bg-white p-8 shadow-lg lg:w-[500px]">
@@ -871,15 +1020,9 @@ const Checkout = () => {
                 <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
-                <span className="col-span-1 mr-8 text-gray-400">Giảm giá phí vận chuyển</span>
-                <span className="text-right">- ₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
+                <span className="col-span-1 mr-8 text-gray-400">Giảm giá</span>
+                <span className="text-right">₫{formatCurrency(priceDiscount)}</span>
               </li>
-              {selectedVoucher && (
-                <li className="grid grid-cols-2 items-center text-[15px]">
-                  <span className="col-span-1 mr-8 text-gray-400">Tổng cộng voucher giảm giá</span>
-                  <span className="text-right">- ₫{formatCurrency(priceDiscount)}</span>
-                </li>
-              )}
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng thanh toán</span>
                 <span className="text-right text-3xl text-main lg:text-4xl">₫{formatCurrency(totalPrice)}</span>
