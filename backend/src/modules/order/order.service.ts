@@ -8,6 +8,7 @@ import { UpdateCartDto } from './dto/update-cart.dto';
 import { DeleteCartDto } from './dto/delete-cart.dto';
 import { OrderHistoryRes } from './dto/order-history.dto';
 import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
+import { OrderStatus } from './dto/order-detail.dto';
 
 @Injectable()
 export class OrderService {
@@ -46,13 +47,13 @@ export class OrderService {
     let orderHistories = [];
     try {
       const orders = await this.prismaService.orders.findMany({
-       
         include: {
           order_details: {
             include: {
               product: true,
             },
           },
+          address : true
         },
       });
 
@@ -70,6 +71,7 @@ export class OrderService {
               detail.buy_count;
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
+              detail.address = order.address
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
@@ -325,6 +327,7 @@ export class OrderService {
           userId,
         },
         include: {
+          address : true,
           order_details: {
             include: {
               product: true,
@@ -347,6 +350,7 @@ export class OrderService {
               detail.buy_count;
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
+            detail.address = order.address
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
@@ -374,5 +378,35 @@ export class OrderService {
       console.error('Error fetching order history:', error);
       throw error;
     }
+  }
+
+  async statictics() {
+   const total_products = await this.prismaService.products.count();
+   const total_customer = await this.prismaService.users.count(
+    {
+      where: {
+        roles: 'USER'
+      }
+    }
+   );
+   const total_orders = await this.prismaService.orders.count();
+   const orderComp = await this.prismaService.order_details.findMany({
+     where: {
+       status: OrderStatus.DELIVERED
+     }
+   })
+    let total_price = 0;
+    orderComp.forEach((order) => {
+      if(order.status == OrderStatus.DELIVERED){
+        total_price += order.price * order.buy_count
+      }
+    });
+   return {
+     total_products,
+     total_customer,
+     total_orders,
+     total_price 
+   }
+   
   }
 }

@@ -124,6 +124,7 @@ model addresses {
   updated_at DateTime? @updatedAt @db.Date
   users      users?    @relation(fields: [usersId], references: [id], onDelete: Cascade)
   usersId    String?   @db.ObjectId
+  orders     orders[]
 }
 
 model ui_home_data_source {
@@ -142,6 +143,7 @@ model orders {
   order_discount order_discounts?
   order_details  order_details[]
   address_id     String           @db.ObjectId
+  address        addresses?       @relation(fields: [address_id], references: [id], onDelete: Cascade)
   total_price    Float
   payment_method payment_method
   created_at     DateTime?        @default(now()) @db.Date
