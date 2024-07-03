@@ -41,21 +41,50 @@ export const DEFAULT_PASSWORD = "123456";
 
 export const COLUMNS_TRANSACTION = [
   {
-    title: "Số điện thoại",
-    dataIndex: "phone",
-    key: "phone",
-    render: (item: any, record: any, index: number) => (
-      <h4>{record.user.phone}</h4>
-    ),
+    title: "Sản phẩm",
+    dataIndex: "product",
+    key: "product",
+    render: (item: any, record: any, index: number) => {
+      const product = record.product;
+      return (
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <img width={60} src={product.detailImage[0]} alt="" />
+          <div>
+            <h4>{product.name}</h4>
+            <h4>x {record.buy_count}</h4>
+          </div>
+        </div>
+      );
+    },
   },
   {
-    title: "Ngân hàng",
-    dataIndex: "user",
-    key: "user",
-    render: (user: any) => {
+    title: "Giá",
+    dataIndex: "price",
+    key: "price",
+    render: (item: any, record: any) => {
+      const product = record.product;
+      const price =
+        product.sale_price > 0
+          ? product.price * ((100 - product.sale_price) / 100)
+          : product.price;
       return (
-        // <h4>{"test"}</h4>
-        <h4>{user?.bank?.bank_name || "(Trống)"}</h4>
+        <>
+          {product.sale_price > 0 ? (
+            <>
+              <span className="font-bold text-orange-600">
+                ₫{formatPrice(price)}
+              </span>
+            </>
+          ) : (
+            <span className="font-bold text-gray-600">
+              ₫{formatPrice(price)}
+            </span>
+          )}
+        </>
       );
     },
   },
@@ -66,9 +95,9 @@ export const COLUMNS_TRANSACTION = [
     render: (status: any) => (
       <Tag
         color={
-          status == "Pending"
+          status === "Pending"
             ? "blue"
-            : status == "Success"
+            : status === "Success"
             ? "green"
             : "volcano"
         }
@@ -77,26 +106,24 @@ export const COLUMNS_TRANSACTION = [
       </Tag>
     ),
   },
-  {
-    title: "Ngày yêu cầu",
-    dataIndex: "created_at",
-    key: "created_at",
-    render: (created_at: any) => (
-      <h4>{DateUtil.formatTimeDateReview(created_at)}</h4>
-    ),
-  },
 ];
 
 export const handleConvertKeyStatus = (status: any) => {
   switch (status) {
-    case "Pending":
-      return "Chờ phê duyệt";
-    case "Success":
-      return "Đã phê duyệt";
-    case "Reject":
-      return "Từ chối";
+    case "WAITING":
+      return "Chờ thanh toán";
+    case "DELIVERING":
+      return "Vận chuyển";
+    case "WAIT_RECEIVED":
+      return "Chờ giao hàng";
+    case "DELIVERED":
+      return "Hoàn thành";
+    case "CANCELED":
+      return "Đã hủy";
+    case "RETURN":
+      return "Trả hàng/Hoàn tiền";
     default:
-      break;
+      return "Không xác định";
   }
 };
 
@@ -130,6 +157,11 @@ export const handleConvertValueType = (type: any) => {
 export const checkToken = async () => {
   let cookie = Cookies.get(SESSION);
   return cookie;
+};
+
+export const getUserId = async () => {
+  let userId = Cookies.get("userId");
+  return userId;
 };
 
 export const COLUMNS_ADMIN = [
@@ -358,12 +390,35 @@ export const handleConvertValueQuerySortProduct = (status: any) => {
 
 const handleKey = (level: any) => {};
 
+// {
+//   "address": [
+//     {},
+//     {}
+//   ],
+//   "created_at": "2024-06-27T14:20:56.854Z",
+//   "email": null,
+//   "id": "667d754853fd690cc4b56a5f",
+//   "name": "user",
+//   "orders": [
+//     {
+//       "id": "667e4b027bbd5c28d04e6e9b",
+//       "userId": "667d754853fd690cc4b56a5f",
+//       "address_id": "667d7cf15e9670e807c06df1",
+//       "total_price": 2,
+//       "payment_method": "MOMO"
+//     }
+//   ],
+//   "password": "123456",
+//   "phone": "admin",
+//   "roles": "ADMIN",
+//   "updated_at": "2024-06-27T14:20:56.854Z"
+// }
 export const COLUMNS_CUSTOMER = [
   {
     title: "Mã khách hàng",
-    dataIndex: "_id",
-    key: "_id",
-    render: (_id: any) => <h4>{_id}</h4>,
+    dataIndex: "id",
+    key: "id",
+    render: (id: any) => <h4>{id}</h4>,
   },
   {
     title: "Số điện thoại",
@@ -377,36 +432,7 @@ export const COLUMNS_CUSTOMER = [
     key: "name",
     render: (name: any) => <h4>{name}</h4>,
   },
-  {
-    title: "Cấp độ",
-    dataIndex: "levelName",
-    key: "levelName",
-    render: (levelName: any) => <h4>{levelName || "Trống"}</h4>,
-  },
-  {
-    title: "Số dư tài khoản",
-    dataIndex: "balance",
-    key: "balance",
-    render: (balance: any) => (
-      <h4>{(formatPrice(balance.toFixed(2)) || 0) + UNIT}</h4>
-    ),
-  },
-  {
-    title: "Số tiền đóng băng",
-    dataIndex: "frozen_balance",
-    key: "frozen_balance",
-    render: (frozen_balance: any) => (
-      <h4>{(formatPrice(frozen_balance.toFixed(2)) || 0) + UNIT}</h4>
-    ),
-  },
-  {
-    title: "Số đơn bị khoá",
-    dataIndex: "limited_order",
-    key: "limited_order",
-    render: (limited_order: any) => (
-      <h4>{limited_order?.num || "Chưa cập nhật"}</h4>
-    ),
-  },
+
   {
     title: "Ngày tạo",
     dataIndex: "created_at",

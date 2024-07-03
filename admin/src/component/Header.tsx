@@ -21,7 +21,6 @@ import firebaseServices from "../service/firebaseServices";
 import { showToast } from "../util/funcUtils";
 import {
   requestChangePassword,
-  requestGetProfile,
   requestResetPassword,
 } from "../service/network/Api";
 import reactotron from "../ReactotronConfig";
@@ -68,7 +67,7 @@ export const HeaderComponent = ({ toggle }: { toggle: any }) => {
       // reactotron.logImportant!(res);
       setUserInfo("");
       // }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const handleResetPassword = async () => {
@@ -253,7 +252,7 @@ export const HeaderComponent = ({ toggle }: { toggle: any }) => {
 const OptionTopComponent: React.FC<{ onToggle: () => any }> = () => {
   return (
     <div className={"option-top-component"}>
-      <div onClick={() => { }}>{Icon.COLLAPSED_MENU}</div>
+      <div onClick={() => {}}>{Icon.COLLAPSED_MENU}</div>
       <div className={"wrapper-icon-header"}></div>
     </div>
   );

@@ -8,10 +8,10 @@ function testPriceMinMax(this: yup.TestContext<yup.AnyObject>) {
   }
   return price_min !== "" || price_max !== "";
 }
+const phonePattern = /^\d{10}$/;
 
 export const schema = yup.object({
-  phone: yup.string().required("Không được để trống số điện thoại"),
-
+  phone: yup.string().required("Không được để trống số điện thoại").matches(phonePattern, "Số điện thoại không hợp lệ"),
   price_min: yup.string().test({
     name: "price-not-allowed",
     message: "Khoảng giá không hợp lệ",

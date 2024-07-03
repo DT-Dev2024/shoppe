@@ -6,13 +6,17 @@ export const requestAddPayment = (payload: any) =>
 export const requestGetPayment = () => ApiClient.get(`api/payment`);
 export const requestLogin = (payload: any) =>
   ApiClient.post(`api/auth/admin-login`, payload);
-export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
-export const requestGetTransaction = (payload: any) =>
-  ApiClient.get(`api/v1/admin/transaction`, payload);
+// export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
+
+export const requestGetTransaction = (id: string) =>
+  ApiClient.get(`${BASE_URL_DEV}/api/order/order-history/${id}`);
+
 export const requestDeleteTransaction = (id: any) =>
   ApiClient.delete(`/api/v1/admin/transaction/${id}`);
+
 export const requestSuccessTransaction = (id: any) =>
   ApiClient.put(`/api/v1/admin/transaction/${id}/success`);
+
 export const requestRejectTransaction = (payload: any) =>
   ApiClient.put(`/api/v1/admin/transaction/${payload.id}/reject`, payload.body);
 export const requestChangePassword = (payload: any) =>
@@ -56,21 +60,21 @@ export const updateCommissions = (key: string, payload: any) =>
 
 export const requestUpdateMethod = (payload: any) =>
   ApiClient.put(`api/v1/admin/methob/${payload.methobName}`, payload.body);
-export const requestGetListCustomer = (payload: any) =>
-  ApiClient.get(`api/v1/admin/customer`, payload);
+export const requestGetListCustomer = () =>
+  ApiClient.get(`${BASE_URL_DEV}/api/users`);
 export const requestAdjustmentBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/adjustment-balance`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-balance`,
     payload.body
   );
 export const requestResetPasswordCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.id}/reset-password`,
+    `${BASE_URL_DEV}/api/users/${payload.id}/reset-password`,
     payload.body
   );
 export const requestChangePasswordCashOutCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.id}/reset-tfa-password`,
+    `${BASE_URL_DEV}/api/users/${payload.id}/reset-tfa-password`,
     payload.body
   );
 export const requestGetListLevel = (payload: any) =>
@@ -100,7 +104,7 @@ export const requestGetStatistic = (payload: any) =>
   );
 export const requestSetVipCustomer = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/adjustment-level/${payload.levelKey}`
+    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-level/${payload.levelKey}`
   );
 
 //category
@@ -119,24 +123,28 @@ export const requestUpdateCategory = (payload: any) =>
 // customer
 
 export const requestBlockCashOut = (id: any) =>
-  ApiClient.patch(`api/v1/admin/customer/${id}/block-cashout`);
+  ApiClient.patch(`${BASE_URL_DEV}/api/users/${id}/block-cashout`);
 
 export const requestBlockOrder = (id: any) =>
-  ApiClient.patch(`api/v1/admin/customer/${id}/block-create-order`);
+  ApiClient.patch(`${BASE_URL_DEV}/api/users/${id}/block-create-order`);
 
 export const requestFreezeBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/freeze-balance`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/freeze-balance`,
     payload.body
   );
 
 export const requestDefrostBalance = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/defrost-balance`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/defrost-balance`,
     payload.body
   );
 
 //order
+
+export const requestAllOrder = () => ApiClient.get(`${BASE_URL_DEV}/api/order`);
+export const updateStatusOrder = (payload: any) =>
+  ApiClient.patch(`${BASE_URL_DEV}/api/order/update-status`, payload);
 
 export const requestFrozen = (id: any) =>
   ApiClient.put(`api/v2/admin/order/${id}/frozen`);
@@ -150,7 +158,7 @@ export const requestProductMustPurchase = (payload: any) =>
 
 export const requestUpdateLimitOrder = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-limit-order`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order`,
     payload.body
   );
 
@@ -159,20 +167,17 @@ export const requestGetListProductVip = (key: any) =>
 
 export const requestUpdateLimitOrderAndProductMustPurchase = (payload: any) =>
   ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-limit-order-product-must-purchase`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order-product-must-purchase`,
     payload.body
   );
 
 export const requestDeleteCus = (id: any) =>
-  ApiClient.delete(`api/v1/admin/customer/${id}`);
+  ApiClient.delete(`${BASE_URL_DEV}/api/users/${id}`);
 
 export const requestUpdateInfoCus = (payload: any) =>
-  ApiClient.put(
-    `api/v1/admin/customer/${payload.userId}/update-customer-info`,
-    payload.body
-  );
+  ApiClient.patch(`${BASE_URL_DEV}/api/users`, payload);
 export const requestDeleteListUser = (payload: any) =>
-  ApiClient.put(`api/v1/admin/customer/delete-customer`, payload);
+  ApiClient.put(`${BASE_URL_DEV}/api/users/delete-customer`, payload);
 
 export const requestDeleteListOrder = (payload: any) =>
   ApiClient.put(`api/v2/admin/order/delete-order`, payload);

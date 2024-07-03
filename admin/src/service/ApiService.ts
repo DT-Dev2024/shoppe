@@ -1,11 +1,11 @@
-import Cookie from "js-cookie";
-import { create } from "apisauce";
-import queryString from "query-string";
-import swal from "sweetalert";
-import R from "../component/assets";
-import reactotron from "../ReactotronConfig";
-import Cookies from "js-cookie";
-import { SESSION } from "../config/constants";
+import Cookie from 'js-cookie';
+import { create } from 'apisauce';
+import queryString from 'query-string';
+import swal from 'sweetalert';
+import R from '../component/assets';
+import reactotron from '../ReactotronConfig';
+import Cookies from 'js-cookie';
+import { SESSION } from '../config/constants';
 
 export const BASE_URL_DEV = process.env.REACT_APP_BASE_API_URL as string;
 export const URL_IMAGE = process.env.REACT_APP_BASE_IMAGE_URL as string;
@@ -19,7 +19,7 @@ const createAPI = () => {
     baseURL: BASE_URL_DEV,
     timeout: 20000,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
   APIInstant.axiosInstance.interceptors.request.use(
@@ -28,7 +28,7 @@ const createAPI = () => {
       config.headers.Authorization = `Bearer ${Cookie.get(SESSION)}`;
       return config;
     },
-    (error) => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
   APIInstant.axiosInstance.interceptors.response.use(
     (response) => {
@@ -61,15 +61,15 @@ const createAPI = () => {
     // handle error
     async (error: any) => {
       const data = error?.response?.data;
-      reactotron.logImportant!("DATA", data);
-      swal({
-        title: R.strings().fail_request,
-        text: data?.message || R.strings().error_network,
-        icon: "error",
-      });
-      if (error?.response?.data?.code === 401) Cookies.set(SESSION, "");
+      reactotron.logImportant!('DATA', data);
+      // swal({
+      //   title: R.strings().fail_request,
+      //   text: data?.message || R.strings().error_network,
+      //   icon: "error",
+      // });
+      if (error?.response?.data?.code === 401) Cookies.set(SESSION, '');
       return error;
-    }
+    },
   );
   return APIInstant;
 };
@@ -79,11 +79,11 @@ const axiosInstance = createAPI();
 function handleResult(api: any) {
   return api.then((res: { data: { status: number; code: number } }) => {
     if (res?.data?.code == 401) {
-      swal({
-        title: R.strings().fail_request,
-        text: "Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.",
-        icon: "error",
-      });
+      // swal({
+      //   title: R.strings().fail_request,
+      //   text: 'Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.',
+      //   icon: 'error',
+      // });
       return Promise.reject(res?.data);
     }
     return Promise.resolve(res?.data);
