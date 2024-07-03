@@ -57,13 +57,13 @@ export default function MenuComponent() {
               onOpenChange={(e) => handleChangeMenu(e)}
               // selectedKeys={[handleGetCurrentRouter()]}
             >
-              <Menu.Item
+              {/* <Menu.Item
                 key={ADMIN_ROUTER_PATH.HOME}
                 icon={<IconMenu src={R.images.img_transaction} />}
                 children={"Giao dịch"}
-              />
+              /> */}
               <Menu.Item
-                key={ADMIN_ROUTER_PATH.PRODUCT}
+                key={ADMIN_ROUTER_PATH.HOME}
                 icon={<IconMenu src={R.images.img_product} />}
                 children={"Sản phẩm"}
               />
@@ -79,20 +79,20 @@ export default function MenuComponent() {
               />
               <Menu.Item
                 key={ADMIN_ROUTER_PATH.VIP}
-                icon={<IconMenu src={R.images.img_vip} />}
-                children={"Vip"}
+                icon={<IconMenu src={R.images.img_team} />}
+                children={"Thanh toán"}
               />
               <Menu.Item
                 key={ADMIN_ROUTER_PATH.LIST_ADMIN}
-                icon={<IconMenu src={R.images.img_team} />}
-                children={"Quản trị viên"}
+                icon={<IconMenu src={R.images.img_vip} />}
+                children={"Mã giảm giá"}
               />
               <Menu.Item
                 key={ADMIN_ROUTER_PATH.DASH_BOARD}
                 icon={<IconMenu src={R.images.img_monitor} />}
                 children={"Thông kê"}
               />
-              <Menu.Item
+              {/* <Menu.Item
                 key={ADMIN_ROUTER_PATH.CATEGORY}
                 icon={<IconMenu src={R.images.img_categories} />}
                 children={"Danh mục"}
@@ -106,14 +106,14 @@ export default function MenuComponent() {
                 key={ADMIN_ROUTER_PATH.LOG}
                 icon={<IconMenu src={R.images.img_history} />}
                 children={"Lịch sử"}
-              />
+              /> */}
             </Menu>
           }
         />
         <Content style={{ height: "100vh" }}>
           <Routes>
-            <Route path={"/"} element={<HomeScreen />} />
-            <Route path={ADMIN_ROUTER_PATH.HOME} element={<HomeScreen />} />
+            <Route path={"/"} element={<ProductScreen />} />
+            <Route path={ADMIN_ROUTER_PATH.HOME} element={<ProductScreen />} />
             <Route
               path={ADMIN_ROUTER_PATH.PRODUCT}
               element={<ProductScreen />}

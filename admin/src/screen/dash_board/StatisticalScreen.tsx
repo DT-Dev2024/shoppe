@@ -73,89 +73,59 @@ export default function StatisticalScreen() {
                 name: "Từ chối",
               },
             ]}
-            fromDaytoDay={fromDaytoDay}
-            dateOnSubmit={(x: string, y: string) => {
-              setFromDaytoDay([x, y]);
-            }}
+            // fromDaytoDay={fromDaytoDay}
+            // dateOnSubmit={(x: string, y: string) => {
+            //   setFromDaytoDay([x, y]);
+            // }}
           />,
         ]}
       />
-      <div>
-        <Col>
-          <Col>
-            <div
-              style={{
-                marginLeft: "1vh",
-                backgroundColor: "#3AB4F2",
-                height: 150,
-                width: "50vh",
-                borderRadius: 10,
-                boxShadow: "1px 3px 1px #DDD",
-                paddingTop: 5,
-              }}
-            >
-              <Row>
-                <h1 style={{ color: "white", marginLeft: 10 }}>
-                  Tổng yêu cầu nạp
-                </h1>
-                <h1 style={{ color: "white", marginLeft: 10 }}>
-                  {status == 1
-                    ? "- Chờ xác nhận"
-                    : status == 2
-                    ? "- Đã xác nhận"
-                    : "- Từ chối"}
-                </h1>
-              </Row>
-              <div style={{ paddingLeft: 30 }}>
-                <h1
-                  style={{ color: "white" }}
-                  children={`${formatPrice(totalTopUp) || 0} ${UNIT}`}
-                />
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <div
-              style={{
-                marginLeft: "1vh",
-                marginTop: "2vh",
-                backgroundColor: "#D61C4E",
-                height: 150,
-                width: "50vh",
-                borderRadius: 10,
-                boxShadow: "1px 3px 1px #DDD",
-                paddingTop: 5,
-              }}
-            >
-              <Row>
-                <h1 style={{ color: "white", marginLeft: 10 }}>
-                  Tổng yêu cầu rút
-                </h1>
-                <h1 style={{ color: "white", marginLeft: 10 }}>
-                  {status == 1
-                    ? "- Chờ xác nhận"
-                    : status == 2
-                    ? "- Đã xác nhận"
-                    : "- Từ chối"}
-                </h1>
-              </Row>
-              <div style={{ paddingLeft: 30 }}>
-                <h1
-                  style={{ color: "white" }}
-                  children={`${formatPrice(totalCashOut) || 0} ${UNIT}`}
-                />
-                {/* <NumberFormat
-                  value={totalCashOut}
-                  className="foo"
-                  displayType={"text"}
-                  thousandSeparator={true}
-                  prefix={"$"}
-                /> */}
-              </div>
-            </div>
-          </Col>
+      <Row style={{ marginLeft: 5, marginRight: 5 }} gutter={16}>
+        <Col span={6}>
+          <div
+            style={{
+              background: "white",
+              padding: "10px",
+              textAlign: "start",
+            }}
+          >
+            <h4>DOANH THU</h4>
+          </div>
         </Col>
-      </div>
+        <Col span={6}>
+          <div
+            style={{
+              background: "white",
+              padding: "10px",
+              textAlign: "start",
+            }}
+          >
+            <h4>KHÁCH HÀNG</h4>
+          </div>
+        </Col>
+        <Col span={6}>
+          <div
+            style={{
+              background: "white",
+              padding: "10px",
+              textAlign: "start",
+            }}
+          >
+            <h4>SẢN PHẨM</h4>
+          </div>
+        </Col>
+        <Col span={6}>
+          <div
+            style={{
+              background: "white",
+              padding: "10px",
+              textAlign: "start",
+            }}
+          >
+            <h4>ĐƠN HOÀN THÀNH</h4>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 }
