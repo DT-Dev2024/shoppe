@@ -1,4 +1,4 @@
-import { Card, PageHeader, Table } from 'antd';
+import { Card, Col, PageHeader, Row, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { COLUMNS_TRANSACTION } from '../../config/constants';
@@ -10,6 +10,7 @@ import {
 import { showToast } from '../../util/funcUtils';
 import { Header } from '../dashboard/component/Header';
 import { toast } from 'react-toastify';
+import DateUtil from '../../util/DateUtil';
 enum Status {
   ALL = 'Tất cả',
   WAITING = 'Chờ thanh toán',
@@ -96,7 +97,7 @@ const TransactionCustomerScreen = (props: any) => {
           expandable={{
             expandedRowRender: (record) => {
               const data = transactionData[record.id];
-
+              const { address } = record;
               const localStatus = data.status;
               const updateStatus = async () => {
                 const dataUpdate = {
@@ -128,7 +129,7 @@ const TransactionCustomerScreen = (props: any) => {
 
               return (
                 <Card
-                  title='Thay đổi trạng thái'
+                  title='Thông tin đơn hàng'
                   style={{ width: '100%' }}
                   actions={[
                     <button
@@ -148,6 +149,34 @@ const TransactionCustomerScreen = (props: any) => {
                     </button>,
                   ]}
                 >
+                  <div>
+                    <Row style={{ marginTop: 20 }}>
+                      <Col flex={1}>
+                        <h4>Mã khách hàng: {address.usersId} </h4>
+                        <h4>Số điện thoại: {address.phone}</h4>
+                      </Col>
+
+                      <Col flex={1}>
+                        <h4>Tên khách hàng: {address.name}</h4>
+                        <h4>
+                          Ngày mua:{' '}
+                          {DateUtil.formatTimeDateReview(address.created_at)}
+                        </h4>
+                      </Col>
+                    </Row>
+                  </div>
+                  <Row style={{ alignItems: 'center' }}>
+                    <h4>Địa chỉ: {address.address} </h4>
+                  </Row>
+                  <Row style={{ alignItems: 'center', marginTop: '1rem' }}>
+                    <h3
+                      style={{
+                        color: '#007aff',
+                        flex: 1,
+                      }}
+                      children={'Cập nhật trạng thái của đơn hàng'}
+                    />
+                  </Row>
                   {Object.keys(Status).map((key) => (
                     <button
                       key={key}
