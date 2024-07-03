@@ -197,13 +197,16 @@ const Checkout = () => {
     };
     vouchers();
   }, []);
+  const [shippingFee, setShippingFee] = useState(32000);
   const [selectedVoucher, setSelectedVoucher] = useState<TVoucher | null>(null);
   const { priceDiscount, totalPrice } = useMemo(() => {
-    const checkoutPrice = checkoutOrder.reduce(
-      (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
+    const checkoutPrice =
+      checkoutOrder.reduce(
+        (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
 
-      0,
-    );
+        0,
+      ) +
+      checkoutOrder.length * shippingFee;
     if (selectedVoucher) {
       if (selectedVoucher.discount_type === "FIXED") {
         return {
@@ -222,7 +225,7 @@ const Checkout = () => {
         totalPrice: checkoutPrice,
       };
     }
-  }, [selectedVoucher, checkoutOrder]);
+  }, [selectedVoucher, checkoutOrder, shippingFee]);
 
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
   const fixedVouchers = [
@@ -604,7 +607,6 @@ const Checkout = () => {
     ) : null;
   };
 
-  const [shippingFee, setShippingFee] = useState(32000);
   const [selectedShippingType, setSelectedShippingType] = useState("Nhanh");
   const FormChangeShipping = () => {
     const [selectedOption, setSelectedOption] = useState("Nhanh");
