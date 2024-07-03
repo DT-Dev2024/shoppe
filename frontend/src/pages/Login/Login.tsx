@@ -31,12 +31,12 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const handleLogin = handleSubmit(async (data) => {
     try {
-      // setIsLoading(true);
-      // const response = await loginAccount(data);
-      // localStorage.setItem("access_token", response.data.access_token);
-      // localStorage.setItem("user", JSON.stringify(response.data.user));
-      // setIsAuthenticated(true);
-      // navigate(path.home);
+      setIsLoading(true);
+      const response = await loginAccount(data);
+      localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setIsAuthenticated(true);
+      navigate(path.home);
     } catch (error) {
       if (
         isAxiosError<TErrorApiResponse<FormData>>(error) &&
