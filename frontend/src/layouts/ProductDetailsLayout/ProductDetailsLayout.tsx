@@ -61,7 +61,7 @@ function HeaderSearchPart() {
         </button>
         <span className="mx-4 mt-[-10px] hidden h-16 w-1 bg-[#ee4d2d] leading-9 lg:block"></span>
         <span className="h my-auto mb-2 hidden text-[2.25rem]  font-medium capitalize  text-[#ee4d2d] lg:block">
-          Thanh Toán
+          Chi tiết sản phẩm
         </span>
       </div>
       <div className="flex items-center">
