@@ -22,3 +22,7 @@ export type TAddress = {
   updated_at?: string;
   userId?: string;
 };
+
+export type ValidationResult = {
+  [key: string]: string;
+};

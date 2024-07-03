@@ -431,9 +431,18 @@ const Cart = () => {
     if (order) {
       const data = checkedPurchases.map((purchase) => {
         const quantity = quantities[purchase.product.id]?.quantity || purchase.buy_count;
+        const price =
+          purchase.product.sale_price > 0
+            ? purchase.product.price * ((100 - purchase.product.sale_price) / 100)
+            : purchase.product.price;
+        const price_before_discount = purchase.product.sale_price > 0 ? purchase.product.price : 0;
         return {
           ...purchase,
           buy_count: parseInt(quantity as string),
+          product: {
+            ...purchase.product,
+            price: price,
+          },
         };
       });
       navigate(path.checkout, {

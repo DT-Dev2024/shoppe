@@ -29,15 +29,14 @@ const Login = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-
   const handleLogin = handleSubmit(async (data) => {
     try {
-      setIsLoading(true);
-      const response = await loginAccount(data);
-      localStorage.setItem("access_token", response.data.access_token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      setIsAuthenticated(true);
-      navigate(path.home);
+      // setIsLoading(true);
+      // const response = await loginAccount(data);
+      // localStorage.setItem("access_token", response.data.access_token);
+      // localStorage.setItem("user", JSON.stringify(response.data.user));
+      // setIsAuthenticated(true);
+      // navigate(path.home);
     } catch (error) {
       if (
         isAxiosError<TErrorApiResponse<FormData>>(error) &&
@@ -79,7 +78,6 @@ const Login = () => {
             placeholder="Số điện thoại"
             containerClassName="mt-6"
           ></Input>
-
           <div className="mt-3">
             <Button
               type="button"
