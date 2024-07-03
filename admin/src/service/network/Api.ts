@@ -1,4 +1,4 @@
-import { ApiClient, BASE_URL_DEV, URL_IMAGE } from '../ApiService';
+import { ApiClient, BASE_URL_DEV, URL_IMAGE } from "../ApiService";
 
 export const requestAddPayment = (payload: any) =>
   ApiClient.post(`api/payment`, payload);
@@ -7,7 +7,7 @@ export const requestGetPayment = () => ApiClient.get(`api/payment`);
 export const requestLogin = (payload: any) =>
   ApiClient.post(`api/auth/admin-login`, payload);
 // export const requestGetProfile = () => ApiClient.get(`/api/v1/admin/profile`);
-
+export const requestStatistic = () => ApiClient.get("/api/order/statictics");
 export const requestGetTransaction = (id: string) =>
   ApiClient.get(`${BASE_URL_DEV}/api/order/order-history/${id}`);
 
@@ -65,17 +65,17 @@ export const requestGetListCustomer = () =>
 export const requestAdjustmentBalance = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-balance`,
-    payload.body,
+    payload.body
   );
 export const requestResetPasswordCustomer = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.id}/reset-password`,
-    payload.body,
+    payload.body
   );
 export const requestChangePasswordCashOutCustomer = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.id}/reset-tfa-password`,
-    payload.body,
+    payload.body
   );
 export const requestGetListLevel = (payload: any) =>
   ApiClient.get(`api/v1/admin/level`, payload);
@@ -91,20 +91,20 @@ export const requestDeleteVip = (key: any) =>
 
 export const requestAddProductToVip = (payload: any) =>
   ApiClient.post(
-    `api/v1/admin/level/${payload.key}/product/${payload.productId}`,
+    `api/v1/admin/level/${payload.key}/product/${payload.productId}`
   );
 
 export const requestDeleteProductVip = (payload: any) =>
   ApiClient.delete(
-    `api/v1/admin/level/${payload.key}/product/${payload.productId}`,
+    `api/v1/admin/level/${payload.key}/product/${payload.productId}`
   );
 export const requestGetStatistic = (payload: any) =>
   ApiClient.get(
-    `api/v1/admin/statistic?status=${payload.status}&type=${payload.type}&from=${payload.from}&to=${payload.to}`,
+    `api/v1/admin/statistic?status=${payload.status}&type=${payload.type}&from=${payload.from}&to=${payload.to}`
   );
 export const requestSetVipCustomer = (payload: any) =>
   ApiClient.put(
-    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-level/${payload.levelKey}`,
+    `${BASE_URL_DEV}/api/users/${payload.userId}/adjustment-level/${payload.levelKey}`
   );
 
 //category
@@ -131,13 +131,13 @@ export const requestBlockOrder = (id: any) =>
 export const requestFreezeBalance = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.userId}/freeze-balance`,
-    payload.body,
+    payload.body
   );
 
 export const requestDefrostBalance = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.userId}/defrost-balance`,
-    payload.body,
+    payload.body
   );
 
 //order
@@ -153,13 +153,13 @@ export const requestDefrost = (id: any) =>
   ApiClient.put(`api/v2/admin/order/${id}/defrost`);
 export const requestProductMustPurchase = (payload: any) =>
   ApiClient.put(
-    `api/v2/admin/order/${payload.userId}/product-must-purchase/${payload.productId}`,
+    `api/v2/admin/order/${payload.userId}/product-must-purchase/${payload.productId}`
   );
 
 export const requestUpdateLimitOrder = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order`,
-    payload.body,
+    payload.body
   );
 
 export const requestGetListProductVip = (key: any) =>
@@ -168,7 +168,7 @@ export const requestGetListProductVip = (key: any) =>
 export const requestUpdateLimitOrderAndProductMustPurchase = (payload: any) =>
   ApiClient.put(
     `${BASE_URL_DEV}/api/users/${payload.userId}/update-limit-order-product-must-purchase`,
-    payload.body,
+    payload.body
   );
 
 export const requestDeleteCus = (id: any) =>

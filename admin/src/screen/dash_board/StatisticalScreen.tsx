@@ -1,52 +1,26 @@
 import { Col, PageHeader, Row } from "antd";
 import { useEffect, useState } from "react";
-import NumberFormat from "react-number-format";
-import {
-  convertVndToDollar,
-  DOLLARS,
-  handleConvertValueStatus,
-  UNIT,
-} from "../../config/constants";
-import reactotron from "../../ReactotronConfig";
-import { requestGetStatistic } from "../../service/network/Api";
+import { requestStatistic } from "../../service/network/Api";
 import { formatPrice } from "../../util/funcUtils";
 import { Header } from "../dashboard/component/Header";
+import R from "../../component/assets";
 
 export default function StatisticalScreen() {
   const [status, setStatus] = useState<any>(1);
-  const [totalTopUp, setTotalTopUp] = useState<any>();
-  const [totalCashOut, setTotalCashOut] = useState<any>();
-  const [fromDaytoDay, setFromDaytoDay] = useState<any>([]);
+  const [data, setData] = useState<any>();
 
-  const getData = async (type: any) => {
-    let payload = {
-      from: fromDaytoDay[0] || "",
-      to: fromDaytoDay[1] || "",
-      user_id: "",
-      status: handleConvertValueStatus(status),
-      type: type,
-    };
-    try {
-      const res = await requestGetStatistic(payload);
-      if (res) {
-        if (type == "TopUp") {
-          setTotalTopUp(res.data.total);
-        }
-        if (type == "CashOut") {
-          setTotalCashOut(res.data.total);
-        }
-      }
-    } catch (error) {}
+  const getData = async () => {
+    const res = await requestStatistic();
+    setData(res.data);
   };
 
   useEffect(() => {
-    getData("TopUp");
-    getData("CashOut");
-  }, [status, fromDaytoDay]);
+    getData();
+  }, []);
   return (
     <div style={{ marginTop: 10 }}>
       <PageHeader
-        title="Thông kê"
+        title="Thống kê"
         style={{ backgroundColor: "white", margin: "5px 10px 10px" }}
         extra={[
           <Header
@@ -85,44 +59,164 @@ export default function StatisticalScreen() {
           <div
             style={{
               background: "white",
-              padding: "10px",
+              padding: "20px",
               textAlign: "start",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
             }}
           >
-            <h4>DOANH THU</h4>
+            <div>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                DOANH THU
+              </h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                {formatPrice(data?.total_price || 0)} VND
+              </h3>
+            </div>
+            <img
+              src={R.images.money}
+              style={{
+                width: "20%",
+                height: "auto",
+                // marginTop: "10px",
+                // marginBottom: "30px",
+              }}
+              alt=""
+            />
           </div>
         </Col>
         <Col span={6}>
           <div
             style={{
               background: "white",
-              padding: "10px",
+              padding: "20px",
               textAlign: "start",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
             }}
           >
-            <h4>KHÁCH HÀNG</h4>
+            <div>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                KHÁCH HÀNG
+              </h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                {data?.total_customer || 0}
+              </h3>
+            </div>
+            <img
+              src={R.images.customer}
+              style={{
+                width: "20%",
+                height: "auto",
+                // marginTop: "10px",
+                // marginBottom: "30px",
+              }}
+              alt=""
+            />
           </div>
         </Col>
         <Col span={6}>
           <div
             style={{
               background: "white",
-              padding: "10px",
+              padding: "20px",
               textAlign: "start",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
             }}
           >
-            <h4>SẢN PHẨM</h4>
+            <div>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                SẢN PHẨM
+              </h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                {data?.total_products || 0}
+              </h3>
+            </div>
+            <img
+              src={R.images.box}
+              style={{
+                width: "20%",
+                height: "auto",
+                // marginTop: "10px",
+                // marginBottom: "30px",
+              }}
+              alt=""
+            />
           </div>
         </Col>
         <Col span={6}>
           <div
             style={{
               background: "white",
-              padding: "10px",
+              padding: "20px",
               textAlign: "start",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
             }}
           >
-            <h4>ĐƠN HOÀN THÀNH</h4>
+            <div>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                TỔNG ĐƠN HÀNG
+              </h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                {data?.total_orders || 0}
+              </h3>
+            </div>
+            <img
+              src={R.images.check_list}
+              style={{
+                width: "20%",
+                height: "auto",
+                // marginTop: "10px",
+                // marginBottom: "30px",
+              }}
+              alt=""
+            />
           </div>
         </Col>
       </Row>
