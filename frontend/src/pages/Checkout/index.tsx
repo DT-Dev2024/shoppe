@@ -225,7 +225,27 @@ const Checkout = () => {
   }, [selectedVoucher, checkoutOrder]);
 
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
-
+  const fixedVouchers = [
+    {
+      id: 1,
+      discount: 15000,
+      minium_price: 0,
+      expire: "2025-07-31",
+    },
+    {
+      id: 2,
+      discount: 10000,
+      minium_price: 50000,
+      expire: "2025-08-15",
+    },
+    {
+      id: 3,
+      discount: 100000,
+      minium_price: 500000,
+      expire: "2025-09-01",
+    },
+  ];
+  const [selectedFixidVoucher, setSelectedFixidVoucher] = useState<any>(fixedVouchers);
   const ModalVoucher = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
@@ -251,7 +271,7 @@ const Checkout = () => {
               <input
                 id="voucher"
                 type="text"
-                placeholder="Mã Shoppe Voucher"
+                placeholder="Mã Shopee Voucher"
                 className="w-full border border-gray-300 p-4"
               />
               <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
@@ -358,7 +378,7 @@ const Checkout = () => {
         className="w-ful mb-6 rounded bg-white text-[15px]"
       >
         <p className="flex space-x-4 px-3 py-2 lg:px-8 lg:py-4">
-          <span className="mr-3 uppercase">name</span>
+          <span className="mr-3 uppercase">GIFT</span>
           <span className="cursor-pointer text-[#26aa99]">
             <svg
               viewBox="0 0 16 16"
@@ -376,42 +396,50 @@ const Checkout = () => {
             Chat ngay
           </span>
         </p>
-        <div className="grid grid-cols-12 p-2 py-8 lg:p-8 lg:py-10">
-          <div className="col-span-4 flex items-center gap-x-3 lg:col-span-7">
-            <div className="flex max-w-[12rem] flex-col gap-2 space-x-2 text-left lg:max-w-[40rem] lg:flex-row lg:gap-0">
+        <div className="grid grid-cols-12 p-2 py-2 lg:p-8 lg:py-10">
+          <div className="relative col-span-12 mb-2 flex items-center gap-x-3 lg:col-span-7">
+            <div className="flex max-w-[28rem] gap-2 space-x-2 text-left lg:max-w-[40rem]  lg:gap-0">
               <img
                 alt={item.product.name}
                 src={item.product.image}
-                className="h-24 w-24 object-cover sm:h-36 sm:w-36"
+                className="h-28 w-28 object-cover sm:h-36 sm:w-36"
               />
               <div>
-                <p className="mb-5 line-clamp-2 text-[14px] lg:line-clamp-5 lg:p-2 lg:text-[15px]">
+                <p className="mb-2 line-clamp-1 text-[13px] lg:mb-5 lg:line-clamp-5 lg:p-2 lg:text-[15px]">
                   {item.product.name}
                 </p>
-                <span className="border border-main p-2 text-base font-thin text-main">Đổi ý miễn phí 15 ngày</span>
+                <span className="border border-main p-1 text-base font-thin text-main lg:p-2">
+                  Đổi ý miễn phí 15 ngày
+                </span>
+              </div>
+              <div className="absolute bottom-0 right-0 flex flex-col ">
+                <span className="col-span-1  ml-24 text-[13px]   lg:hidden ">x{item.buy_count}</span>
+                <span className="col-span-1  ml-6  text-[13px]  lg:ml-0 lg:hidden ">
+                  ₫{formatCurrency(item.product.price)}
+                </span>
               </div>
             </div>
           </div>
 
-          <span className="col-span-3 my-auto ml-6 text-[13px] lg:col-span-2 lg:ml-0 lg:block lg:text-[15px]">
+          <span className="col-span-3 my-auto ml-6 hidden text-[13px] lg:col-span-2 lg:ml-0 lg:block lg:text-[15px]">
             ₫{formatCurrency(item.product.price)}
           </span>
-          <span className="m-auto   text-[13px] lg:text-[15px]">{item.buy_count}</span>
-          <span className="pr  col-span-4 my-auto pr-4 text-right text-[13px] lg:col-span-2 lg:pr-10 lg:text-[15px]">
+          <span className="m-auto hidden text-[13px]   lg:block lg:text-[15px]">{item.buy_count}</span>
+          <span className="pr col-span-4 my-auto hidden pr-4 text-right text-[13px] lg:col-span-2 lg:block lg:pr-10 lg:text-[15px]">
             ₫{formatCurrency(item.buy_count * item.product.price)}
           </span>
         </div>
         <div className="grid border-y border-dotted px-4 py-2 lg:grid-cols-2 lg:px-8 lg:py-4">
           <span></span>
           <div className="flex justify-between">
-            <div className="flex items-center text-[14px] lg:text-[16px]">
+            <div className="flex items-center text-[13px] lg:text-[16px]">
               <img
                 src={Voucher}
                 alt=""
               />
               <span>Shopee Voucher</span>
             </div>
-            <button className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[14px]  text-blue-600">
+            <button className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[13px]  text-blue-600">
               Chọn Voucher
             </button>
           </div>
@@ -420,13 +448,13 @@ const Checkout = () => {
           <div className="col-span-12 flex items-start p-1 py-4 lg:col-span-5 lg:p-3 lg:py-10">
             <label
               htmlFor="note"
-              className="ml-8 mt-4 w-[100px] text-[14px] lg:text-[16px]"
+              className="ml-8 mt-4 w-[100px] text-[13px] lg:text-[16px]"
             >
               Lời nhắn
             </label>
             <input
               id="note"
-              className="mr-10 w-full rounded border border-gray-300 p-3 text-[14px] text-xl lg:text-[16px]"
+              className="mr-10 w-full rounded border border-gray-300 p-2 text-[13px] text-xl lg:p-3 lg:text-[15px]"
               type="text"
               placeholder="Lưu ý cho Người bán..."
               value=""
@@ -435,7 +463,7 @@ const Checkout = () => {
           </div>
           <div className="col-span-12 border-l border-dotted lg:col-span-7">
             <div className="mr-2 flex flex-col border-b border-dotted p-6 lg:mr-10 lg:flex-row lg:p-10">
-              <span className="w-[16rem] text-[14px] lg:text-[16px]">Đơn vị vận chuyển:</span>
+              <span className="w-[16rem] text-[13px] lg:text-[16px]">Đơn vị vận chuyển:</span>
               <div>
                 <p className="mb-3 mt-4 flex justify-between text-[14px] lg:mt-0 lg:text-[16px]">
                   <span>{selectedShippingType}</span>
@@ -461,15 +489,15 @@ const Checkout = () => {
                 </p>
               </div>
             </div>
-            <p className="flex w-full items-center space-x-3 p-4 text-[14px] lg:p-10 lg:text-[16px]">
+            <p className="flex w-full items-center space-x-3 p-4 text-[13px] lg:p-10 lg:text-[16px]">
               Được đồng kiểm
               <CiCircleQuestion className="ml-2 text-[20px]" />
             </p>
           </div>
         </div>
-        <p className="flex items-center justify-between px-4 py-6 text-[14px] lg:justify-end lg:px-0 lg:py-10 lg:pr-12 lg:text-[16px]">
-          <span className="mr-20 text-[#9e9e9e]">Tổng tiền({item.buy_count} sản phẩm):</span>
-          <span className="text-[17px] text-main lg:text-[20px]">
+        <p className="flex items-center justify-between px-4 py-6 text-[13px] lg:justify-end lg:px-0 lg:py-10 lg:pr-12 lg:text-[16px]">
+          <span className="mr-20 text-[#9e9e9e]">Thành tiền({item.buy_count} sản phẩm):</span>
+          <span className="text-[15px] text-main lg:text-[20px]">
             ₫{formatCurrency(item.buy_count * item.product.price + shippingFee)}
           </span>
         </p>
@@ -481,7 +509,7 @@ const Checkout = () => {
     return (
       <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
         <div className="w-[350px]  rounded-lg bg-white shadow-lg lg:max-h-[600px] lg:w-[500px]">
-          <h1 className="h-24 border-b py-9 pl-8 text-[16px]">`Địa Chỉ `Của Tôi</h1>
+          <h1 className="h-24 border-b py-9 pl-8 text-[16px]">Địa Chỉ Của Tôi</h1>
           <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4 max-h-[470px] gap-4 overflow-y-auto">
             {addresses?.map((item) => (
               <div
@@ -880,23 +908,28 @@ const Checkout = () => {
               </div>
             </div>
           )}
-          <p className="letter"></p>
+
           <div className="p-5 text-[16px] lg:p-10">
-            <p className="mb-7 flex items-center space-x-1 text-2xl text-main lg:text-3xl">
+            <p className=" mb-2 flex items-center space-x-1 text-2xl text-main lg:mb-4 lg:text-3xl">
               <FaLocationDot />
               Địa Chỉ Nhận Hàng
             </p>
-            <div className="flex items-center gap-2 lg:gap-0">
-              <div className="w-[170px] lg:w-[290px]  lg:font-semibold ">
+            <div className="flex items-center justify-between gap-2 lg:gap-0">
+              <div className="w-[300px] lg:w-[290px]  lg:font-semibold ">
                 <p>
-                  <strong className="text-[14px] lg:text-[16px]">{address?.name}(+84)</strong>
+                  <strong className="text-[14px] lg:text-[16px]">{address?.name}</strong>
                 </p>
-                <p>
-                  <strong className="text-[14px] lg:text-[16px]">{address?.phone}</strong>
+
+                <strong className="text-[14px] lg:text-[16px]"> (+84) {address?.phone}</strong>
+
+                <p className="block w-full text-[14px] lg:hidden lg:w-full lg:flex-1 lg:text-[16px] ">
+                  {address?.address}
                 </p>
               </div>
-              <p className="w-[170px] text-[14px] lg:w-full lg:flex-1 lg:text-[16px] ">{address?.address}</p>
-              <span className="mx-10 h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
+              <p className="hidden w-[170px] text-[14px] lg:block lg:w-full lg:flex-1 lg:text-[16px] ">
+                {address?.address}
+              </p>
+              <span className="mx-10 hidden h-fit border border-main p-1 text-base text-main "> Mặc Định</span>
               <button
                 onClick={() => setIsShowFormAddress(true)}
                 className="pr-2 text-[14px] text-blue-500 lg:pr-10 lg:text-[16px]"
@@ -905,8 +938,9 @@ const Checkout = () => {
               </button>
             </div>
           </div>
+          <p className="letter mb-4 mt-0 lg:mb-0"></p>
         </div>
-        <div className="ml-1 mr-2 mt-0   grid grid-cols-8 bg-white p-2 text-[15px] lg:ml-0 lg:mr-0 lg:mt-5 lg:grid-cols-12 lg:p-8 lg:text-[16px]">
+        <div className="  ml-0  mr-0 mt-5 hidden grid-cols-12  bg-white p-8 text-[16px] lg:grid">
           <div className="col-span-3 lg:col-span-7">Sản phẩm</div>
           <div className="col-span-1 w-[90px] lg:col-span-2 lg:w-full">Đơn giá</div>
           <div className="col-span-2 ml-10 lg:col-span-1">Số lượng</div>
@@ -922,7 +956,7 @@ const Checkout = () => {
 
         <div className="mt-[-16px] rounded bg-white lg:mt-5">
           <div className="flex justify-between border-b p-4 py-4 lg:p-8 lg:py-10">
-            <div className="flex items-center text-[14px] lg:text-[16px]   ">
+            <div className="flex items-center text-[13px] lg:text-[16px]   ">
               <img
                 src={Voucher}
                 alt=""
@@ -930,14 +964,14 @@ const Checkout = () => {
               <span>Shopee Voucher</span>
             </div>
             <button
-              className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[14px]  text-blue-600"
+              className="mr-7 cursor-pointer whitespace-nowrap border-0 bg-none p-0 text-[13px]  text-blue-600"
               onClick={() => setIsModalVoucherVisible(true)}
             >
               Chọn Voucher
             </button>
           </div>
           <div className="flex items-center justify-between p-4 py-6 lg:p-8 lg:py-10">
-            <div className="flex items-center text-[14px] lg:text-[16px]">
+            <div className="flex items-center text-[13px] lg:text-[16px]">
               <img
                 src={Coin}
                 alt=""
@@ -956,12 +990,12 @@ const Checkout = () => {
         </div>
         <div className="mt-5 rounded bg-white text-[16px]">
           <div className="flex flex-col p-8 lg:flex-row">
-            <h1 className="mr-4 text-[15px] lg:text-[18px]">Phương thức thanh toán</h1>
+            <h1 className="mr-4 text-[14px] lg:text-[18px]">Phương thức thanh toán</h1>
             <ul className="mt-6 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:gap-0 lg:space-x-5 ">
-              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
+              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[13px] text-gray-400 lg:text-[15px]">
                 Số dư TK Shoppe ₫0
               </li>
-              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[14px] text-gray-400 lg:text-[15px]">
+              <li className="cursor-not-allowed border border-gray-400 px-5 py-2 text-[13px] text-gray-400 lg:text-[15px]">
                 Ví Shoppe
               </li>
 
@@ -970,11 +1004,14 @@ const Checkout = () => {
                 return (
                   <li
                     key={index}
-                    className={`cursor-pointer border px-5 py-2 text-[15px] ${
+                    className={`cursor-pointer border px-5 py-2 text-[15px] lg:text-[13px] ${
                       isActive ? "border-main text-main" : "border-gray-400 text-black"
                     }`}
                   >
-                    <button onClick={() => handlePaymentSelection(method as keyof typeof PaymentMethod)}>
+                    <button
+                      className="text-[13px] lg:text-[15px]"
+                      onClick={() => handlePaymentSelection(method as keyof typeof PaymentMethod)}
+                    >
                       {PaymentMethod[method as keyof typeof PaymentMethod]}
                     </button>
                   </li>
@@ -983,7 +1020,7 @@ const Checkout = () => {
             </ul>
           </div>
           {selectedPayment && (
-            <div className="p-8 pt-16">
+            <div className="p-4 pt-4 lg:p-8 lg:pt-16">
               {selectedPayment.value.startsWith("http") ? (
                 <div>
                   <p>Quét mã QR để thực hiện chuyển khoản:</p>
@@ -994,8 +1031,9 @@ const Checkout = () => {
                   />
                 </div>
               ) : (
-                <p className="space-x-16 text-[14px]">
+                <p className="space-y-7 text-[13px] lg:text-[14px]">
                   <span>Thanh toán khi nhận hàng</span>
+                  <br />
                   <span>Phí thu hộ: ₫0 VNĐ. Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với phí thu hộ.</span>
                 </p>
               )}
@@ -1003,7 +1041,7 @@ const Checkout = () => {
           )}
           <div className="flex justify-end p-2 pr-6 lg:p-8 lg:pr-14">
             <ul className="space-y-7">
-              <li className="grid grid-cols-2 items-center text-[15px]">
+              <li className="grid grid-cols-2 items-center  text-[15px] ">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng tiền hàng</span>
                 <span className="text-right">
                   ₫
