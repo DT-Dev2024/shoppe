@@ -9,10 +9,12 @@ import AuthenticationLayout from "src/layouts/AuthenticationLayout";
 import CartLayout from "src/layouts/CartLayout";
 import CheckoutLayout from "src/layouts/CheckoutLayout";
 import MainLayout from "src/layouts/MainLayout";
+import OrderHistoryDetailsLayout from "src/layouts/OrderHistoryDetailsLayout";
 import ProductDetailsLayout from "src/layouts/ProductDetailsLayout";
 import ProductListLayout from "src/layouts/ProductListLayout";
 import UserLayout from "src/layouts/UserLayout";
 import Home from "src/pages/Home";
+import OrderHistoryDetails from "src/pages/OrderHistoryDetails";
 
 const Login = lazy(() => import("src/pages/Login"));
 const Cart = lazy(() => import("src/pages/Cart"));
@@ -129,6 +131,16 @@ export default function useRoutesElement() {
                 <OrderHistory />
               </Suspense>
             </UserLayout>
+          ),
+        },
+        {
+          path: `${path.orderHistory}/:id`,
+          element: (
+            <OrderHistoryDetailsLayout>
+              <Suspense>
+                <OrderHistoryDetails />
+              </Suspense>
+            </OrderHistoryDetailsLayout>
           ),
         },
       ],

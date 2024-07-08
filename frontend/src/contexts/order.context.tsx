@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import purchaseAPI from "src/apis/purchase.api";
-import { ordersStatus, TOrderHisotry } from "src/types/order.type";
+import { TOrderHisotry } from "src/types/order.type";
 
 interface OrderContextInterface {
   order: TOrderHisotry[];

@@ -28,6 +28,8 @@ const purchaseAPI = {
     axiosClient.delete(`/order/delete-cart`, { data: { userId, productIds } }),
   checkout: (body: TCheckout) => axiosClient.post("/order/checkout", body),
   getPayment: () => axiosClient.get("/payment"),
+  getOrderDetail: (orderDetailId: string, userId: string) =>
+    axiosClient.get("/order/order-history-detail/" + orderDetailId + "/" + userId),
 };
 
 export default purchaseAPI;
