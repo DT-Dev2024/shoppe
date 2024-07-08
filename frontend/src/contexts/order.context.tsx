@@ -20,6 +20,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchExtendedPurchases = async () => {
       // fetch extended purchases
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.id === undefined) return;
       const response = await purchaseAPI.getHistory(user.id);
       if (response.status === 200) {
         setOrder(Object.values(response.data) ?? []);

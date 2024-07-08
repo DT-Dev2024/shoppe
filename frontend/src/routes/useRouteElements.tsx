@@ -66,22 +66,6 @@ export default function useRoutesElement() {
             </Suspense>
           ),
         },
-
-        {
-          path: "*",
-          element: (
-            <Suspense>
-              <NotFound />
-            </Suspense>
-          ),
-        },
-      ],
-    },
-
-    {
-      path: "",
-      element: <ProtectedRoute />,
-      children: [
         {
           path: path.productList,
           element: (
@@ -102,6 +86,21 @@ export default function useRoutesElement() {
             </ProductDetailsLayout>
           ),
         },
+        {
+          path: "*",
+          element: (
+            <Suspense>
+              <NotFound />
+            </Suspense>
+          ),
+        },
+      ],
+    },
+
+    {
+      path: "",
+      element: <ProtectedRoute />,
+      children: [
         {
           path: path.cart,
           element: (

@@ -1,22 +1,34 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { KeyboardEvent, RefObject, useContext, useRef } from "react";
+import { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "src/apis";
 import { HeaderCartImage, HeaderSearchVoucherHoanXuBanner } from "src/assets/img";
 import { path } from "src/constants/path.enum";
 import { IDataSource } from "src/contexts";
 import { AuthContextInterface, CartContext } from "src/contexts/cart.context";
 import useDataSourceContext from "src/hooks/hookHome/useDataSourceContext";
-import "./HeaderSearchPart.css";
 import { formatCurrency } from "src/utils/formatNumber";
+import "./HeaderSearchPart.css";
+import _ from "lodash";
+import productApi from "src/apis/product.api";
+import { TProduct } from "src/types/product.type";
 
 function HeaderSearchPart() {
   const historyRef = useRef<HTMLDivElement>(null);
+  const [nameList, setNameList] = useState<TProduct[]>([]);
 
   const frameInputRef = useRef<HTMLInputElement>(null);
   const frameBtnRef = useRef();
-
+  const debouncedSearch = useCallback(
+    _.debounce(async (keyword: string) => {
+      const rs = (await productApi.getProducts(keyword)) as any;
+      if (rs.status === 200) {
+        setNameList(rs.data);
+      }
+    }, 1500),
+    [],
+  );
   const { extendedPurchases } = useContext(CartContext) as AuthContextInterface;
   // const { order, setOrder } = useContext(OrderContext);
 
@@ -33,7 +45,7 @@ function HeaderSearchPart() {
       );
     });
 
-  const renderHistoryList = (datas: string[]) => (
+  const renderHistoryList = (datas: TProduct[]) => (
     <div>
       <li className="header__search-history-item header__search-history-item--default">
         <a
@@ -48,19 +60,29 @@ function HeaderSearchPart() {
         </a>
       </li>
 
-      {/* Nếu mảng dữ liệu có nhiều hơn 10 phần tử thì sẽ render 10 phần tử mới nhất được thêm vào */}
       {datas &&
         datas
           .slice(0)
           .reverse()
           .slice(0, 10)
-          .map((data: string, index: number) => {
+          .map((data: TProduct, index: number) => {
             return (
               <li
                 key={index}
                 className="header__search-history-item"
               >
-                <span className="header__search-history-item__link">{data}</span>
+                <Link
+                  to={`/productDetails/${data.id}`}
+                  onClick={() => {
+                    setNameList([]);
+                    setSearchQuery("");
+                    if (historyRef.current) {
+                      historyRef.current.style.display = "none";
+                    }
+                  }}
+                >
+                  <span className="header__search-history-item__link">{data.name}</span>
+                </Link>
               </li>
             );
           })}
@@ -68,19 +90,6 @@ function HeaderSearchPart() {
   );
   const navigate = useNavigate();
 
-  const handleClickFrameBtn = () => {
-    if (frameInputRef.current && frameInputRef.current.value !== "") {
-      const innerHTML = frameInputRef.current.value;
-      const href = `https://shopee.vn/search?keyword=${innerHTML}`;
-
-      // [POST]
-      const postData = { href, innerHTML };
-      api.post(postData);
-
-      // Navigate to search page
-      window.location.href = href;
-    }
-  };
   const handleClickFrameInput = () => {
     if (historyRef.current) {
       historyRef.current.style.display = "block";
@@ -94,7 +103,17 @@ function HeaderSearchPart() {
       }
     }, 200);
   };
-
+  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    if (searchQuery) {
+      debouncedSearch(searchQuery);
+    }
+    // Cleanup the debounce on component unmount or when searchQuery changes
+    return () => debouncedSearch.cancel();
+  }, [searchQuery, debouncedSearch]);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
   const handleKeyDownFrameInput = (event: KeyboardEvent<HTMLInputElement>) => {
     switch (event.code) {
       case "Enter": {
@@ -103,6 +122,22 @@ function HeaderSearchPart() {
       }
       default:
         break;
+    }
+  };
+
+  const location = useLocation();
+
+  const handleClickFrameBtn = () => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("keyword", searchQuery); // Set your search query parameter
+    const newSearch = searchParams.toString();
+    setNameList([]);
+    setSearchQuery("");
+
+    if (location.pathname === "/productList") {
+      navigate(`${location.pathname}?${newSearch}`, { replace: true });
+    } else {
+      navigate(`/productList?${newSearch}`);
     }
   };
 
@@ -125,6 +160,8 @@ function HeaderSearchPart() {
       <div className="header__main-search">
         <div className="header__search-frame">
           <input
+            onChange={handleInputChange}
+            value={searchQuery}
             ref={frameInputRef}
             onClick={handleClickFrameInput}
             onBlur={handleBlurFrameInput}
@@ -132,21 +169,17 @@ function HeaderSearchPart() {
             className="header__search-frame__input"
             placeholder="VOUCHER HOÀN 999K XU - SĂN NGAY"
           />
-          <a
-            ref={frameBtnRef as unknown as RefObject<HTMLAnchorElement>}
+          <button
             onClick={handleClickFrameBtn}
             className="header__search-frame__btn"
-            href="https://shopee.vn/m/khung-gio-san-sale"
           >
             <FaSearch className="text-2xl text-white" />
-          </a>
+          </button>
           <div
             ref={historyRef}
             className="header__search-history"
           >
-            <ul className="header__search-history-list">
-              {headerSearchHistoryListInfo && renderHistoryList(headerSearchHistoryListInfo)}
-            </ul>
+            <ul className="header__search-history-list">{nameList.length > 0 && renderHistoryList(nameList)}</ul>
           </div>
         </div>
         <div className="header__search-history-keywords-list">

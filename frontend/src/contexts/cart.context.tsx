@@ -23,6 +23,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchExtendedPurchases = async () => {
       // fetch extended purchases
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.id === undefined) return;
       const response = await purchaseAPI.getCart(user.id);
       if (response.status === 200) {
         setExtendedPurchases(response.data.cart_items ?? []);

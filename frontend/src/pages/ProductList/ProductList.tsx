@@ -7,26 +7,33 @@ import productApi from "src/apis/product.api";
 import useQueryConfig from "src/hooks/useQueryConfig";
 import { TProduct, TProductList, TProductListConfig } from "src/types/product.type";
 import Product from "./components/Product";
+import { useLocation } from "react-router-dom";
+import { LoadingPage } from "src/components/Loading/Loading";
 
 const ProductList = () => {
   const queryConfig = useQueryConfig();
+  const location = useLocation();
   const [productsData, setProductsData] = useState<TProduct[]>([]);
   const [categoriesData, setCategoriesData] = useState(null);
-
   useEffect(() => {
     fetchProducts();
     // fetchCategories();
-  }, []);
+  }, [location.search]);
+  const [loading, setLoading] = useState(false);
 
   const fetchProducts = async () => {
     try {
-      const response = await productApi.getProducts();
+      setLoading(true);
+      const key = location.search.split("=")[1];
+      const response = await productApi.getProducts(key);
       setProductsData(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
+  if (loading) return <LoadingPage />;
   return (
     <div className="bg-gray-100 py-6">
       <Helmet>

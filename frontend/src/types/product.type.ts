@@ -11,6 +11,7 @@ export type TProduct = {
   detailImage: string[];
   name: string;
   description: string;
+  keyword: string;
   product_feeback: TProductFeedback;
   category: {
     id: string;

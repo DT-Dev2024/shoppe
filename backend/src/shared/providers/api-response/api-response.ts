@@ -13,12 +13,14 @@ export class ApiResponse {
     data: any,
     status: HttpStatus,
     message: string,
+    nameList?: string[],
   ) {
     return {
       status,
       message,
       total: data.length,
       data,
+      nameList: nameList || [],
     };
   }
 }

@@ -1,21 +1,24 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiResponseService } from 'src/shared/providers/api-response/api-response.service';
 import { ApiResponse } from 'src/shared/providers/api-response/api-response';
+import { ApiResponseService } from 'src/shared/providers/api-response/api-response.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { CreateProductDto } from './dto/create-product.dto';
+import { QueryProductDto } from './dto/query.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductService } from './product.service';
 @ApiTags('product')
 @Controller('product')
 @UseGuards(AuthGuard)
@@ -32,7 +35,6 @@ export class ProductController {
   })
   @ApiBearerAuth('token')
   async create(@Body() createProductDto: CreateProductDto) {
-    console.log(createProductDto);
     const result = await this.productService.create(createProductDto);
     if (!result) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
@@ -50,8 +52,14 @@ export class ProductController {
   })
   // @ApiBearerAuth('token')
   @Public()
-  async findAll() {
-    const result = await this.productService.findAll();
+  async findAll(
+    @Query(new ValidationPipe({ transform: true })) query: QueryProductDto,
+  ) {
+    const result = await this.productService.findAll({
+      keyword: query.keyword,
+    });
+    const nameList = result.map((item) => item.name);
+
     if (!result) {
       return ApiResponse.buildApiResponse(null, 500, 'Internal server error');
     }
@@ -59,6 +67,7 @@ export class ProductController {
       result,
       200,
       'Products retrieved successfully',
+      nameList,
     );
   }
 
