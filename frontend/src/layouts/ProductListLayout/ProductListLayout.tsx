@@ -10,12 +10,12 @@ type ProductListLayoutPropsType = {
 const ProductListLayout = ({ children }: ProductListLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
-      {/* <div className="hidden bg-[#f94f2f] py-[1rem]  pt-[1.3rem] lg:block  lg:py-[0.8rem]  lg:pt-[0rem]">
+      <div className="hidden bg-[#f94f2f] py-[1rem]  pt-[1.3rem] lg:block  lg:py-[0.8rem]  lg:pt-[0rem]">
         <HeaderCommonInfo />
       </div>
       <div className="hidden lg:block">
         <HeaderSearchPart />
-      </div> */}
+      </div>
       <div className="  block w-full lg:hidden">
         <HeaderProductList />
       </div>
