@@ -11,9 +11,9 @@ type ProductDetailsLayoutPropsType = {
 const ProductDetailsLayout = ({ children }: ProductDetailsLayoutPropsType) => {
   return (
     <div className=" w-full bg-neutral-100">
-      <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
+      {/* <div className="hidden bg-[#f94f2f]  py-[1rem] pt-[1.3rem] lg:block lg:py-[0.8rem]  lg:pt-[1rem]">
         <HeaderCommonInfo />
-      </div>
+      </div> */}
       <div className="hidden lg:block">
         <HeaderSearchPart />
       </div>
@@ -30,7 +30,7 @@ function HeaderProductDetails() {
   return (
     <div>
       <div className="flex  items-center justify-start gap-20 bg-white px-6 py-4">
-        <a href="/cart">
+        <a href="/">
           <FaArrowLeft className="text-2xl text-primary"></FaArrowLeft>
         </a>
         <p className="text-2xl">Chi tiết sản phẩm</p>

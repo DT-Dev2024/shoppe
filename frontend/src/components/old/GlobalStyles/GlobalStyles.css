@@ -152,60 +152,57 @@ a {
   #header {
     padding: 10px 0 0 0;
     width: 100%;
-    background-color: transparent;
-    position: relative;
+    /* background-color: transparent;
+     */
+    background-color: #f94f2f;
 
+    position: relative;
   }
   #container {
-  padding: 0;
-  top: -46px;
-}
+    padding: 0;
+  }
 }
 @media screen and (min-width: 375px) and (max-width: 389.98px) {
- #header {
+  #header {
     padding: 12px 0 0 0;
-    background-color: transparent;
-    position: relative;
+    background-color: #f94f2f;
 
+    position: relative;
   }
   #container {
-  padding: 0;
-  top: -47px;
-}
+    padding: 0;
+  }
 }
 @media screen and (min-width: 390px) and (max-width: 411.98px) {
   #header {
     padding: 12px 0 0 0;
-    background-color: transparent;
-    position: relative;
+    background-color: #f94f2f;
 
+    position: relative;
   }
   #container {
-  padding: 0;
-  top: -48px;
-}
+    padding: 0;
+  }
 }
 @media screen and (min-width: 412px) and (max-width: 413.98px) {
- #header {
+  #header {
     padding: 12px 0 0 0;
-    background-color: transparent;
-    position: relative;
+    background-color: #f94f2f;
 
+    position: relative;
   }
   #container {
-  padding: 0;
-  top: -48px;
-}
+    padding: 0;
+  }
 }
 @media screen and (min-width: 413.99px) and (max-width: 414px) {
   #header {
     padding: 12px 0 0 0;
-    background-color: transparent;
-    position: relative;
+    background-color: #f94f2f;
 
+    position: relative;
   }
   #container {
-  padding: 0;
-  top: -48px;
-}
+    padding: 0;
+  }
 }
