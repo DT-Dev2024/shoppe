@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingPage } from "src/components/Loading/Loading";
@@ -112,6 +112,9 @@ const OrderList: React.FC = () => {
   const [orderFilter, setOrderFilter] = useState<TOrderHisotry[]>(order);
   const [activeTab, setActiveTab] = React.useState<string>("ALL");
   const [onSearch, setOnSearch] = React.useState<boolean>(false);
+  useEffect(() => {
+    setOrderFilter(order);
+  }, [order]);
   if (order.length === 0) return <LoadingPage />;
   return (
     <div>

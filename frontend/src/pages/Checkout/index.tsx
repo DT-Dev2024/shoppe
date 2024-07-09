@@ -228,151 +228,20 @@ const Checkout = () => {
   }, [selectedVoucher, checkoutOrder, shippingFee]);
 
   const [isModalVoucherVisible, setIsModalVoucherVisible] = useState(false);
-  const fixedVouchers = [
-    {
-      id: 1,
-      discount: 15000,
-      minium_price: 0,
-      expire: "2025-07-31",
-    },
-    {
-      id: 2,
-      discount: 10000,
-      minium_price: 50000,
-      expire: "2025-08-15",
-    },
-    {
-      id: 3,
-      discount: 100000,
-      minium_price: 500000,
-      expire: "2025-09-01",
-    },
-  ];
+
   const [selectedFixidVoucher, setSelectedFixidVoucher] = useState<any>(fixedVouchers);
-  const ModalVoucher = () => {
-    return (
-      <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
-        <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
-          <div className="p-3 lg:p-10 lg:pb-4">
-            <div className="flex justify-between">
-              <h1 className="text-2xl">Chọn Shopee Voucher</h1>
-              <p className="flex items-center text-xl text-gray-500">
-                Hỗ trợ
-                <CiCircleQuestion />
-              </p>
-            </div>
-            <form
-              action=""
-              className="mb-6 mt-5  flex items-center gap-3 bg-[#f8f8f8] p-4 text-xl"
-            >
-              <label
-                htmlFor="voucher"
-                className="w-60 text-2xl"
-              >
-                Mã Voucher
-              </label>
-              <input
-                id="voucher"
-                type="text"
-                placeholder="Mã Shopee Voucher"
-                className="w-full border border-gray-300 p-4"
-              />
-              <button className="w-60 border p-4 text-xl text-[#ccc] ">Áp dụng</button>
-            </form>
-            <p className="mb-2 text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
-            <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
-
-            <ul
-              ref={listRef}
-              className="
-                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
-                grid
-                max-h-[330px]
-                grid-cols-1 gap-4 overflow-y-auto
-              "
-            >
-              <>
-                {vouchers.map((voucher) => (
-                  <li
-                    key={voucher.id}
-                    className={`border-b  border-gray-300 p-4 shadow-md ${
-                      totalPrice < voucher.minium_price ? "opacity-50" : ""
-                    }`}
-                  >
-                    <div className="relative flex items-center">
-                      <div className="h-40 w-40 bg-green-600">
-                        <img
-                          src={
-                            voucher.type === "SYSTEM"
-                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
-                              : "https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                          }
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-
-                      <div className="flex-1 pl-3">
-                        <p className="text-xl">
-                          Giảm giá tối đa{" "}
-                          {voucher.discount_type === "FIXED"
-                            ? `₫${formatCurrency(voucher.discount)}`
-                            : `${voucher.discount}%`}
-                        </p>
-                        <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
-                        <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
-                      </div>
-                      <input
-                        type="radio"
-                        name="selectedVoucher"
-                        checked={selectedVoucher?.id === voucher.id}
-                        onChange={(e) => {
-                          e.preventDefault();
-                          if (totalPrice < voucher.minium_price) return;
-                          setSelectedVoucher(voucher);
-                        }}
-                        className="ml-4"
-                      />
-                    </div>
-                    <p className="mt-4 flex items-center text-[13px] text-main">
-                      <AiOutlineExclamationCircle className="mr-1 " />
-                      Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
-                    </p>
-                  </li>
-                ))}
-              </>
-            </ul>
-          </div>
-
-          <div className="flex h-[64px] items-center justify-end border-t">
-            {selectedVoucher && (
-              <button
-                onClick={() => {
-                  setSelectedVoucher(null);
-                  setIsModalVoucherVisible(false);
-                }}
-                className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
-              >
-                Hủy chọn
-              </button>
-            )}
-            <button
-              onClick={() => setIsModalVoucherVisible(false)}
-              className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
-            >
-              Trở lại
-            </button>
-            <button
-              onClick={() => setIsModalVoucherVisible(false)}
-              className="mx-7 rounded border bg-main px-10 py-3 text-xl text-white lg:px-20"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const [searchCodeVoucher, setSearchCodeVoucher] = useState("");
+  // useEffect(() => {
+  //   if (searchCodeVoucher === "") {
+  //     setVouchers([...vouchers, ...fixedVouchers]);
+  //   } else {
+  //     setVouchers(
+  //       vouchers.filter((voucher) => {
+  //         return voucher.code.toLowerCase().includes(searchCodeVoucher.toLowerCase());
+  //       }),
+  //     );
+  //   }
+  // }, [searchCodeVoucher]);
 
   const Item = ({ item }: { item: TExtendedPurchases }) => {
     return (
@@ -775,7 +644,149 @@ const Checkout = () => {
           />
         </Helmet>
         <div className="rounded bg-white">
-          {isModalVoucherVisible && <ModalVoucher />}
+          {isModalVoucherVisible && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="w-[316px] rounded-lg  bg-white text-black lg:max-h-[640px]  lg:w-[616px]">
+                <div className="p-3 lg:p-10 lg:pb-4">
+                  <div className="flex justify-between">
+                    <h1 className="text-2xl">Chọn Shopee Voucher</h1>
+                    <p className="flex items-center text-xl text-gray-500">
+                      Hỗ trợ
+                      <CiCircleQuestion />
+                    </p>
+                  </div>
+                  <form
+                    action=""
+                    className="mb-6 mt-5  flex items-center gap-3 bg-[#f8f8f8] p-4 text-xl"
+                  >
+                    <label
+                      htmlFor="voucher"
+                      className="w-60 text-2xl"
+                    >
+                      Mã Voucher
+                    </label>
+                    <input
+                      id="voucher"
+                      type="text"
+                      value={searchCodeVoucher}
+                      onChange={(e) => {
+                        setSearchCodeVoucher(e.target.value);
+                        const voucher = vouchers.find((item) => item.code === e.target.value);
+                        console.log(voucher);
+                        setSelectedFixidVoucher(voucher);
+                      }}
+                      placeholder="Mã Shopee Voucher"
+                      className="w-full border border-gray-300 p-4"
+                    />
+                    <button
+                      disabled={!selectedFixidVoucher}
+                      onClick={() => {
+                        if (selectedFixidVoucher) {
+                          setSelectedVoucher(selectedFixidVoucher);
+                          setIsModalVoucherVisible(false);
+                          setSearchCodeVoucher("");
+                        }
+                      }}
+                      className={`w-60 border p-4 text-xl ${
+                        selectedFixidVoucher && searchCodeVoucher !== "" ? "text-main" : "text-[#ccc]"
+                      }`}
+                    >
+                      Áp dụng
+                    </button>
+                  </form>
+                  <p className="mb-2 text-[13px] text-[#bbb]">Mã Miễn Phí Vận Chuyển</p>
+                  <p className="text-[13px] text-[#bbb]">Có thể chọn 1 Voucher</p>
+
+                  <ul
+                    ref={listRef}
+                    className="
+                scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 mt-4
+                grid
+                max-h-[330px]
+                grid-cols-1 gap-4 overflow-y-auto
+              "
+                  >
+                    <>
+                      {vouchers.map((voucher) => (
+                        <li
+                          key={voucher.id}
+                          className={`border-b  border-gray-300 p-4 shadow-md ${
+                            totalPrice < voucher.minium_price ? "opacity-50" : ""
+                          }`}
+                        >
+                          <div className="relative flex items-center">
+                            <div className="h-40 w-40 bg-green-600">
+                              <img
+                                src={
+                                  voucher.type === "SYSTEM"
+                                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
+                                    : "https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
+                                }
+                                alt=""
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+
+                            <div className="flex-1 pl-3">
+                              <p className="text-xl">
+                                Giảm giá tối đa{" "}
+                                {voucher.discount_type === "FIXED"
+                                  ? `₫${formatCurrency(voucher.discount)}`
+                                  : `${voucher.discount}%`}
+                              </p>
+                              <p className="mb-1 text-xl">Đơn tối thiểu ₫{formatCurrency(voucher.minium_price)}</p>
+                              <p className="text-xl">{transformAndCheckExpiry(voucher.expire)}</p>
+                            </div>
+                            <input
+                              type="radio"
+                              name="selectedVoucher"
+                              checked={selectedVoucher?.id === voucher.id}
+                              onChange={(e) => {
+                                e.preventDefault();
+                                if (totalPrice < voucher.minium_price) return;
+                                setSelectedVoucher(voucher);
+                              }}
+                              className="ml-4"
+                            />
+                          </div>
+                          <p className="mt-4 flex items-center text-[13px] text-main">
+                            <AiOutlineExclamationCircle className="mr-1 " />
+                            Vui lòng mua hàng trên ứng dụng Shopee để sử dụng ưu đãi.
+                          </p>
+                        </li>
+                      ))}
+                    </>
+                  </ul>
+                </div>
+
+                <div className="flex h-[64px] items-center justify-end border-t">
+                  {selectedVoucher && (
+                    <button
+                      onClick={() => {
+                        setSelectedVoucher(null);
+                        setIsModalVoucherVisible(false);
+                      }}
+                      className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
+                    >
+                      Hủy chọn
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsModalVoucherVisible(false)}
+                    className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
+                  >
+                    Trở lại
+                  </button>
+                  <button
+                    onClick={() => setIsModalVoucherVisible(false)}
+                    className="mx-7 rounded border bg-main px-10 py-3 text-xl text-white lg:px-20"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {loading && <LoadingSmall />}
           {isShowFormAddress && <FormAddress />}
           {isShowFormShipping && <FormChangeShipping />}

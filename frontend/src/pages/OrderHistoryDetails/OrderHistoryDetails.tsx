@@ -1,14 +1,14 @@
+import { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { FaTruck } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import "./orderHistoryDetails.css";
 import { useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { OrderContext } from "src/contexts/order.context";
-import { TOrderHisotry } from "src/types/order.type";
-import { formatCurrency } from "src/utils/formatNumber";
-import { Helmet } from "react-helmet-async";
 import purchaseAPI from "src/apis/purchase.api";
+
 import { LoadingPage } from "src/components/Loading/Loading";
+import { TOrderHisotry, TOrderHistoryStatus } from "src/types/order.type";
+import { formatCurrency } from "src/utils/formatNumber";
+import "./orderHistoryDetails.css";
 enum StatusOrder {
   ALL = "Tất cả",
   WAITING = "Chờ thanh toán",
@@ -18,12 +18,22 @@ enum StatusOrder {
   CANCELED = "Đã hủy",
   RETURN = "Trả hàng/Hoàn tiền",
 }
-enum PaymentMethod {
-  MOMO = "Momo",
-  BANK = "Chuyển khoản ngân hàng",
-  PAY_OFFLINE = "Thanh toán tiền mặt khi nhận hàng",
+
+interface AddressDetail {
+  address: string;
+  created_at: string;
+  status: TOrderHistoryStatus;
 }
 
+const formatTimeDateReview = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${hours}:${minutes} ${day}-${month}-${year}`;
+};
 const OrderHistoryDetails = () => {
   const { id } = useParams();
   const [orderDetai, setOrderDetail] = useState<TOrderHisotry | null>(null);
@@ -31,6 +41,7 @@ const OrderHistoryDetails = () => {
     price_before_discount: 0,
     price: 0,
   });
+  const [addressStatus, setAddressStatus] = useState<AddressDetail[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const getDetail = async () => {
@@ -50,6 +61,7 @@ const OrderHistoryDetails = () => {
           price_before_discount,
           price,
         });
+        setAddressStatus(response.data.list_address_status);
         setLoading(false);
       }
     };
@@ -79,7 +91,7 @@ const OrderHistoryDetails = () => {
             <span
               className={`text-[16px] font-semibold uppercase ${
                 orderDetai?.status === "DELIVERED"
-                  ? "text-mainer"
+                  ? "text-main"
                   : orderDetai?.status === "CANCELED" || orderDetai?.status === "RETURN"
                   ? "text-red-500"
                   : "text-black"
@@ -122,60 +134,37 @@ const OrderHistoryDetails = () => {
           </div>
 
           <div className="relative hidden w-1/2 border-l pl-6 lg:block">
-            <div className="absolute bottom-0 left-8 top-4 h-[180px] w-px bg-gray-300"></div>
-            <div className="relative mb-4 flex items-start">
-              <div className="flex-shrink-0">
-                <div className="rounded-full bg-green-500 p-2 text-white">
-                  <i className="fas fa-check"></i>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-xl text-gray-700">10:58 07-07-2024</p>
-                <p className="text-xl font-semibold text-green-600">Đã giao</p>
-                <p className="text-lg text-gray-500">Giao hàng thành công</p>
-                <p className="cursor-pointer text-lg text-blue-600">Xem hình ảnh giao hàng</p>
-              </div>
-            </div>
-            <div className="relative mb-4 flex items-start">
-              <div className="flex-shrink-0">
-                <div className="rounded-full bg-gray-300 p-2">
-                  <i className="fas fa-truck"></i>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-xl text-gray-700">08:42 07-07-2024</p>
-                <p className="text-lg text-gray-500">
-                  Đơn hàng đã đến trạm giao hàng tại khu vực của bạn Phường 14, Quận Gò Vấp, TP. Hồ Chí Minh và sẽ được
-                  giao trong vòng 24 giờ tiếp theo
-                </p>
-              </div>
-            </div>
-            <div className="relative mb-4 flex items-start">
-              <div className="flex-shrink-0">
-                <div className="rounded-full bg-gray-300 p-2">
-                  <i className="fas fa-truck-loading"></i>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-xl text-gray-700">04:19 07-07-2024</p>
-                <p className="text-lg text-gray-500">Đơn hàng đã rời kho phân loại</p>
-              </div>
-            </div>
-            <div className="relative mb-4 flex items-start">
-              <div className="flex-shrink-0">
-                <div className="rounded-full bg-gray-300 p-2">
-                  <i className="fas fa-warehouse"></i>
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-xl text-gray-700">02:57 07-07-2024</p>
-                <p className="text-lg text-gray-500">
-                  Đơn hàng đã rời kho phân loại Xã Tân Phú Trung, Huyện Củ Chi, TP. Hồ Chí Minh
-                </p>
-              </div>
-            </div>
-
-            <p className="ml-8 cursor-pointer text-lg text-blue-600">Xem thêm</p>
+            {addressStatus
+              .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+              .map((item, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="relative mb-4 flex items-start"
+                  >
+                    <div className="flex-shrink-0">
+                      <div
+                        className={`relative z-20 rounded-full p-2 ${
+                          item.status === orderDetai?.status ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        <i className="fas fa-check"></i>
+                      </div>
+                      {index !== addressStatus.length - 1 && (
+                        <div className="absolute bottom-0 left-2 top-4 h-full w-px bg-gray-300"></div>
+                      )}
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-xl text-gray-700">
+                        {formatTimeDateReview(item.created_at)}
+                        {/* {DateUtil.formatTimeDateReview(created_at)} */}
+                      </p>
+                      <p className="text-[20px] text-lg text-gray-500">{item.address}</p>
+                      {item?.status === "DELIVERED" && <p className="text-xl font-semibold text-main">ĐÃ GIAO</p>}
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </div>
         <div className="rounded-lg border bg-white p-4 shadow-md">
@@ -244,45 +233,10 @@ const OrderHistoryDetails = () => {
         <div className=" flex border-spacing-1 justify-end  rounded-lg border bg-white  shadow-md">
           <div className="    mb-4 max-w-[400px] bg-white p-4 py-4">
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-xl text-gray-500 lg:text-2xl">Tổng tiền hàng</p>
-              <p className="text-xl text-gray-700 lg:text-3xl">
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Thành tiền</p>
+              <p className="text-[20px] text-gray-700 lg:text-3xl">
                 ₫{formatCurrency((orderDetai?.buy_count || 1) * price.price)}
               </p>
-            </div>
-            <div className="mb-4 flex justify-between gap-36">
-              <p className="text-xl text-gray-500 lg:text-2xl">Phí vận chuyển</p>
-              <p className="text-xl text-gray-700 lg:text-3xl">₫19.600</p>
-            </div>
-            <div className="mb-4 flex justify-between gap-36">
-              <p className="text-xl text-gray-500 lg:text-2xl">
-                Giảm giá phí vận chuyển{" "}
-                <span
-                  className="cursor-pointer"
-                  title="Info"
-                >
-                  (i)
-                </span>
-              </p>
-              <p className="text-xl text-gray-700 lg:text-3xl">-₫19.600</p>
-            </div>
-            <div className="mb-4 flex justify-between gap-36">
-              <p className=" text-xl text-gray-500 lg:text-2xl lg:text-xl">Voucher từ Shopee</p>
-              <p className=" text-xl text-gray-700 lg:text-3xl">-₫9.180</p>
-            </div>
-            <div className="mb-4 flex justify-between gap-36">
-              <p className="text-xl text-gray-500 lg:text-2xl">Voucher từ Shop</p>
-              <p className="text-xl text-gray-700 lg:text-3xl">-₫3.000</p>
-            </div>
-            <div className="mb-4 flex justify-between gap-36">
-              <p className="text-xl text-gray-500  lg:text-2xl">Thành tiền</p>
-              <p className="text-xl text-red-500  lg:text-3xl">₫143.820</p>
-            </div>
-            <div className="mt-4 flex justify-between gap-36">
-              <p className="flex items-center text-xl text-orange-500 lg:text-2xl">
-                <i className="fas fa-shield-alt mr-2"></i>Phương thức Thanh toán
-              </p>
-              {/* {PaymentMethod[orderDetai?. as keyof typeof PaymentMethod]} */}
-              <p className="text-xl text-gray-700 lg:text-2xl">{}</p>
             </div>
           </div>
         </div>
