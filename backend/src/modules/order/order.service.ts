@@ -29,7 +29,8 @@ export class OrderService {
     });
 
     if (order) {
-      await this.prismaService.cart.update({
+      try {
+        await this.prismaService.cart.update({
         where: {
           userId: createOrderDto.userId,
         },
@@ -39,6 +40,9 @@ export class OrderService {
           },
         },
       });
+      } catch (error) {
+        console.log(error);
+      }
     }
     return order ? order : null;
   }
