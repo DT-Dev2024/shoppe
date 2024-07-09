@@ -187,19 +187,31 @@ model order_discounts {
 }
 
 model order_details {
-  id                    String       @id @default(auto()) @map("_id") @db.ObjectId
-  order                 orders       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId               String       @db.ObjectId
-  product               products?    @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId             String?      @db.ObjectId
+  id                    String                @id @default(auto()) @map("_id") @db.ObjectId
+  order                 orders                @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId               String                @db.ObjectId
+  product               products?             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId             String?               @db.ObjectId
   buy_count             Int
-  price                 Float        @default(0)
-  price_before_discount Float        @default(0)
-  status                order_status @default(WAITING)
-  created_at            DateTime?    @default(now()) @db.Date
-  updated_at            DateTime?    @updatedAt @db.Date
-  cart                  cart?        @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId                String?      @db.ObjectId
+  price                 Float                 @default(0)
+  price_before_discount Float                 @default(0)
+  status                order_status          @default(WAITING)
+  created_at            DateTime?             @default(now()) @db.Date
+  updated_at            DateTime?             @updatedAt @db.Date
+  cart                  cart?                 @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId                String?               @db.ObjectId
+  list_address_status   list_address_status[]
+}
+
+model list_address_status {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  status          order_status  @default(WAITING)
+  address         String
+  created_at      DateTime?     @default(now()) @db.Date
+  updated_at      DateTime?     @updatedAt @db.Date
+  deleted_at      DateTime?     @db.Date
+  order_details   order_details @relation(fields: [order_detailsId], references: [id])
+  order_detailsId String        @db.ObjectId
 }
 
 model payments {

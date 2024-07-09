@@ -22,6 +22,25 @@ import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
 @ApiTags('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
+  
+  @Get('order-history-detail/:orderDetailId/:userId')
+  @ApiBearerAuth('token')
+  async getOrdersHistoryDetail(
+    @Param('orderDetailId') orderDetailId: string,
+    @Param('userId') userId: string,
+  ) {
+    const order = Object.values(
+      await this.orderService.getOrdersHistory(userId),
+    );
+    const orderDetail = order.find((order: any) => order.id === orderDetailId);
+
+    return ApiResponse.buildApiResponse(
+      orderDetail,
+      200,
+      'List order history retrieved successfully',
+    );
+  }
+  
   @Get('statictics')
   @ApiBearerAuth('token')
   async statictics() {

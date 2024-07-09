@@ -31,15 +31,15 @@ export class OrderService {
     if (order) {
       try {
         await this.prismaService.cart.update({
-        where: {
-          userId: createOrderDto.userId,
-        },
-        data: {
-          cart_items: {
-            deleteMany: {},
+          where: {
+            userId: createOrderDto.userId,
           },
-        },
-      });
+          data: {
+            cart_items: {
+              deleteMany: {},
+            },
+          },
+        });
       } catch (error) {
         console.log(error);
       }
@@ -57,7 +57,7 @@ export class OrderService {
               product: true,
             },
           },
-          address : true
+          address: true,
         },
       });
 
@@ -75,7 +75,7 @@ export class OrderService {
               detail.buy_count;
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
-              detail.address = order.address
+            detail.address = order.address;
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
@@ -104,7 +104,6 @@ export class OrderService {
       throw error;
     }
   }
-  
 
   async findOne(id: string) {
     const order = await this.prismaService.orders.findUnique({
@@ -179,13 +178,141 @@ export class OrderService {
     }
   }
 
-  async updateStatusOrder(prams : UpdateStatusOrderDto) {
+  async updateStatusOrder(prams: UpdateStatusOrderDto) {
+    const address_bystatus = {
+      WAITING: [
+        {
+          status: 'WAITING',
+          address: 'Đặt hàng thành công',
+        },
+        {
+          status: 'WAITING',
+          address: 'Người bán đang chuẩn bị hàng',
+        },
+      ],
+      DELIVERING: [
+        {
+          status: 'DELIVERING',
+          address: 'Đơn vị vận chuyển lấy hàng thành công',
+        },
+        {
+          status: 'DELIVERING',
+          address:
+            'Đơn hàng rời khỏi bưu cục Xã Tân Phú Trung, Huyện Củ Chi, TP. Hồ Chí Minh',
+        },
+      ],
+      WAIT_RECEIVED: [
+        {
+          status: 'WAIT_RECEIVED',
+          address: 'Đơn hàng rời khỏi kho phân loại',
+        },
+        {
+          status: 'WAIT_RECEIVED',
+          address:
+            'Đơn hàng đang được vận chuyển và sẽ được giao trong vòng 24 giờ tiếp theo',
+        },
+      ],
+      DELIVERED: [
+        {
+          status: 'DELIVERED',
+          address: 'Đơn hàng đã được giao thành công',
+        },
+      ],
+      CANCELED: [
+        {
+          status: 'CANCELED',
+          address: 'Đơn hàng đã bị huỷ',
+        },
+      ],
+      RETURN: [
+        {
+          status: 'RETURN',
+          address: 'Đơn hàng đang đổi trả',
+        },
+      ],
+    };
+
+    const findListAddressByStatus = [];
+    let lastCreateAt = new Date();
+
+    // Hàm để tạo thời gian create_at ngẫu nhiên từ thời gian cuối cùng
+    function getRandomCreateAt() {
+      const randomHours = Math.floor(Math.random() * (5 - 2 + 1)) + 2; // 2 đến 5 tiếng
+      lastCreateAt = new Date(
+        lastCreateAt.getTime() + randomHours * 60 * 60 * 1000,
+      );
+      return lastCreateAt;
+    }
+
+    // Hàm để thêm các địa chỉ vào mảng với create_at
+    function addAddressesWithCreateAt(
+      addresses: { status: string; address: string }[],
+    ): void {
+      addresses.forEach((addressObj) => {
+        findListAddressByStatus.push({
+          status: addressObj.status,
+          address: addressObj.address,
+          created_at: getRandomCreateAt(),
+        });
+      });
+    }
+
+    switch (prams.status) {
+      case 'WAITING':
+        addAddressesWithCreateAt(address_bystatus.WAITING);
+        break;
+      case 'DELIVERING':
+        addAddressesWithCreateAt([
+          ...address_bystatus.WAITING,
+          ...address_bystatus.DELIVERING,
+        ]);
+        break;
+      case 'WAIT_RECEIVED':
+        addAddressesWithCreateAt([
+          ...address_bystatus.WAITING,
+          ...address_bystatus.DELIVERING,
+          ...address_bystatus.WAIT_RECEIVED,
+        ]);
+        break;
+      case 'DELIVERED':
+        addAddressesWithCreateAt([
+          ...address_bystatus.WAITING,
+          ...address_bystatus.DELIVERING,
+          ...address_bystatus.WAIT_RECEIVED,
+          ...address_bystatus.DELIVERED,
+        ]);
+        break;
+      case 'CANCELED':
+        addAddressesWithCreateAt(address_bystatus.CANCELED); // Chỉ bao gồm mục CANCELED
+        break;
+      case 'RETURN':
+        addAddressesWithCreateAt(address_bystatus.RETURN); // Chỉ bao gồm mục RETURN
+        break;
+    }
+
+    // delete old address
+    await this.prismaService.order_details.update({
+      where: {
+        id: prams.id,
+      },
+      data: {
+        list_address_status: {
+          deleteMany: {},
+        },
+      },
+    });
+
     return await this.prismaService.order_details.update({
       where: {
-        id : prams.id
+        id: prams.id,
       },
       data: {
         status: prams.status,
+        list_address_status: {
+          createMany: {
+            data: findListAddressByStatus,
+          },
+        },
       },
     });
   }
@@ -331,10 +458,11 @@ export class OrderService {
           userId,
         },
         include: {
-          address : true,
+          address: true,
           order_details: {
             include: {
               product: true,
+              list_address_status: true,
             },
           },
         },
@@ -354,7 +482,7 @@ export class OrderService {
               detail.buy_count;
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
-            detail.address = order.address
+            detail.address = order.address;
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
@@ -385,32 +513,29 @@ export class OrderService {
   }
 
   async statictics() {
-   const total_products = await this.prismaService.products.count();
-   const total_customer = await this.prismaService.users.count(
-    {
+    const total_products = await this.prismaService.products.count();
+    const total_customer = await this.prismaService.users.count({
       where: {
-        roles: 'USER'
-      }
-    }
-   );
-   const total_orders = await this.prismaService.orders.count();
-   const orderComp = await this.prismaService.order_details.findMany({
-     where: {
-       status: OrderStatus.DELIVERED
-     }
-   })
+        roles: 'USER',
+      },
+    });
+    const total_orders = await this.prismaService.orders.count();
+    const orderComp = await this.prismaService.order_details.findMany({
+      where: {
+        status: OrderStatus.DELIVERED,
+      },
+    });
     let total_price = 0;
     orderComp.forEach((order) => {
-      if(order.status == OrderStatus.DELIVERED){
-        total_price += order.price * order.buy_count
+      if (order.status == OrderStatus.DELIVERED) {
+        total_price += order.price * order.buy_count;
       }
     });
-   return {
-     total_products,
-     total_customer,
-     total_orders,
-     total_price 
-   }
-   
+    return {
+      total_products,
+      total_customer,
+      total_orders,
+      total_price,
+    };
   }
 }
