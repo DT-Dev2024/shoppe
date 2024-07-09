@@ -205,18 +205,17 @@ const Checkout = () => {
         (acc: any, item: TExtendedPurchases) => acc + item.buy_count * item.product.price,
 
         0,
-      ) +
-      checkoutOrder.length * shippingFee;
+      ) + shippingFee;
     if (selectedVoucher) {
       if (selectedVoucher.discount_type === "FIXED") {
         return {
           priceDiscount: selectedVoucher.discount,
-          totalPrice: checkoutPrice - selectedVoucher.discount,
+          totalPrice: checkoutPrice - selectedVoucher.discount - shippingFee,
         };
       } else {
         return {
           priceDiscount: (checkoutPrice * selectedVoucher.discount) / 100,
-          totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100,
+          totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100 - shippingFee,
         };
       }
     } else {
@@ -1068,8 +1067,14 @@ const Checkout = () => {
               </li>
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Tổng tiền phí vận chuyển</span>
-                <span className="text-right">₫{formatCurrency(checkoutOrder.length * shippingFee)}</span>
+                <span className="text-right">₫{formatCurrency(shippingFee)}</span>
               </li>
+              {selectedVoucher && (
+                <li className="grid grid-cols-2 items-center text-[15px]">
+                  <span className="col-span-1 mr-8 text-gray-400">Giảm giá phí vận chuyển</span>
+                  <span className="text-right">-₫{formatCurrency(shippingFee)}</span>
+                </li>
+              )}
               <li className="grid grid-cols-2 items-center text-[15px]">
                 <span className="col-span-1 mr-8 text-gray-400">Giảm giá</span>
                 <span className="text-right">₫{formatCurrency(priceDiscount)}</span>

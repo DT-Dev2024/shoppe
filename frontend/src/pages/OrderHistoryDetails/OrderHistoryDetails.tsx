@@ -18,6 +18,11 @@ enum StatusOrder {
   CANCELED = "Đã hủy",
   RETURN = "Trả hàng/Hoàn tiền",
 }
+enum PaymentMethod {
+  MOMO = "Momo",
+  BANK = "Chuyển khoản ngân hàng",
+  PAY_OFFLINE = "Thanh toán tiền mặt khi nhận hàng",
+}
 
 interface AddressDetail {
   address: string;
@@ -40,6 +45,7 @@ const OrderHistoryDetails = () => {
   const [price, setPrice] = useState({
     price_before_discount: 0,
     price: 0,
+    totalPrice: 0,
   });
   const [addressStatus, setAddressStatus] = useState<AddressDetail[]>([]);
   const [loading, setLoading] = useState(false);
@@ -56,10 +62,12 @@ const OrderHistoryDetails = () => {
         const product = response.data.product;
         const price_before_discount = product.sale_price >= 0 ? product.price : 0;
         const price = product.sale_price > 0 ? product.price * ((100 - product.sale_price) / 100) : product.price;
+        const totalPrice = (orderDetai?.buy_count || 1) * price - response.data.voucher.discount;
 
         setPrice({
           price_before_discount,
           price,
+          totalPrice,
         });
         setAddressStatus(response.data.list_address_status);
         setLoading(false);
@@ -231,11 +239,35 @@ const OrderHistoryDetails = () => {
           </div>
         </div>
         <div className=" flex border-spacing-1 justify-end  rounded-lg border bg-white  shadow-md">
-          <div className="    mb-4 max-w-[400px] bg-white p-4 py-4">
+          <div className="mb-4 max-w-[400px] bg-white p-4 py-4">
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Thành tiền</p>
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Tổng tiền hàng</p>
               <p className="text-[20px] text-gray-700 lg:text-3xl">
                 ₫{formatCurrency((orderDetai?.buy_count || 1) * price.price)}
+              </p>
+            </div>
+            <div className="mb-4 flex justify-between gap-36">
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Phí vận chuyển</p>
+              <p className="text-[20px] text-gray-700 lg:text-3xl">₫{formatCurrency(32000)}</p>
+            </div>
+            <div className="mb-4 flex justify-between gap-36">
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Giảm giá phí vận chuyển</p>
+              <p className="text-[20px] text-gray-700 lg:text-3xl">-₫{formatCurrency(32000)}</p>
+            </div>
+            {orderDetai?.voucher && (
+              <div className="mb-4 flex justify-between gap-36">
+                <p className="text-[20px] text-gray-500 lg:text-2xl">Voucher shoppe</p>
+                <p className="text-[20px] text-gray-700 lg:text-3xl">₫{formatCurrency(orderDetai.voucher.discount)}</p>
+              </div>
+            )}
+            <div className="mb-4 flex justify-between gap-36">
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Thành tiền</p>
+              <p className="text-[20px] text-main lg:text-3xl">₫{formatCurrency(price.totalPrice)}</p>
+            </div>
+            <div className="mb-4 flex justify-between gap-36">
+              <p className="text-[20px] text-gray-500 lg:text-2xl">Phương thức thanh toán</p>
+              <p className="text-right text-[20px] text-gray-700 lg:text-2xl">
+                {PaymentMethod[orderDetai?.payment_method as keyof typeof PaymentMethod]}
               </p>
             </div>
           </div>

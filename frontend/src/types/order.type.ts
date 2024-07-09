@@ -13,9 +13,11 @@ export type TOrderHisotry = {
   price: number;
   price_before_discount: number;
   status: TOrderHistoryStatus;
+  voucher?: TVoucher;
   product: TProduct;
   createdAt: string;
   updatedAt: string;
+  payment_method?: string;
 };
 
 export type TVoucherType = "SHOP" | "USER";

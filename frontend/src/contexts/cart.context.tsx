@@ -26,7 +26,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       if (user.id === undefined) return;
       const response = await purchaseAPI.getCart(user.id);
       if (response.status === 200) {
-        setExtendedPurchases(response.data.cart_items ?? []);
+        if (response.data) {
+          setExtendedPurchases(response.data.cart_items || []);
+        }
       }
     };
 
