@@ -47,4 +47,9 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsEnum(PaymentMethod)
   paymentMethod: PaymentMethod;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  voucherId: string;
 }

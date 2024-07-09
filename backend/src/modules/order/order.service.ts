@@ -6,7 +6,6 @@ import { CreatePaymentDto } from './dto/payment.dto';
 import { CreateCartDto } from './dto/cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { DeleteCartDto } from './dto/delete-cart.dto';
-import { OrderHistoryRes } from './dto/order-history.dto';
 import { UpdateStatusOrderDto } from './dto/update-status-order.dto';
 import { OrderStatus } from './dto/order-detail.dto';
 
@@ -25,6 +24,7 @@ export class OrderService {
             data: createOrderDto.orderDetails,
           },
         },
+        voucherId: createOrderDto.voucherId,
       },
     });
 
@@ -112,7 +112,6 @@ export class OrderService {
       },
       include: {
         order_details: true,
-        order_discount: true,
         user: true,
       },
     });
@@ -471,6 +470,8 @@ export class OrderService {
               list_address_status: true,
             },
           },
+          voucher: true,
+          // payment_method: true,
         },
       });
 
@@ -489,6 +490,8 @@ export class OrderService {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
             detail.address = order.address;
+            detail.payment_method = order.payment_method;
+            detail.voucher = order.voucher;
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;

@@ -11,7 +11,7 @@ export class UsersService {
       include: {
         address: true,
         orders: {
-          include: { order_details: true, order_discount: true },
+          include: { order_details: true },
         },
       },
     });
@@ -23,7 +23,7 @@ export class UsersService {
       include: {
         address: true,
         orders: {
-          include: { order_details: true, order_discount: true },
+          include: { order_details: true },
         },
       },
     });

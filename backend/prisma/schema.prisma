@@ -43,6 +43,7 @@ model vouchers {
   created_at DateTime? @default(now()) @db.Date
   updated_at DateTime? @updatedAt @db.Date
   deleted_at DateTime? @updatedAt @db.Date
+  orders     orders[]
 }
 
 enum voucher_type {
@@ -138,18 +139,20 @@ model ui_home_data_source {
 }
 
 model orders {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  user           users?           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String?          @db.ObjectId
-  order_discount order_discounts?
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  user           users?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?         @db.ObjectId
+  // order_discount order_discounts?
+  voucherId      String?         @db.ObjectId
+  voucher        vouchers?       @relation(fields: [voucherId], references: [id], onDelete: Cascade)
   order_details  order_details[]
-  address_id     String           @db.ObjectId
-  address        addresses?       @relation(fields: [address_id], references: [id], onDelete: Cascade)
+  address_id     String          @db.ObjectId
+  address        addresses?      @relation(fields: [address_id], references: [id], onDelete: Cascade)
   total_price    Float
   payment_method payment_method
-  created_at     DateTime?        @default(now()) @db.Date
-  updated_at     DateTime?        @updatedAt @db.Date
-  deleted_at     DateTime?        @db.Date
+  created_at     DateTime?       @default(now()) @db.Date
+  updated_at     DateTime?       @updatedAt @db.Date
+  deleted_at     DateTime?       @db.Date
 }
 
 model cart {
@@ -175,16 +178,16 @@ model cart_item {
   cartId     String?   @db.ObjectId
 }
 
-model order_discounts {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  vouchers       String[]
-  order          orders    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId        String    @unique @db.ObjectId
-  total_discount Float
-  created_at     DateTime? @default(now()) @db.Date
-  updated_at     DateTime? @updatedAt @db.Date
-  deleted_at     DateTime? @updatedAt @db.Date
-}
+// model order_discounts {
+//   id             String    @id @default(auto()) @map("_id") @db.ObjectId
+//   vouchers       String[]
+//   order          orders    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+//   orderId        String    @unique @db.ObjectId
+//   total_discount Float
+//   created_at     DateTime? @default(now()) @db.Date
+//   updated_at     DateTime? @updatedAt @db.Date
+//   deleted_at     DateTime? @updatedAt @db.Date
+// }
 
 model order_details {
   id                    String                @id @default(auto()) @map("_id") @db.ObjectId
