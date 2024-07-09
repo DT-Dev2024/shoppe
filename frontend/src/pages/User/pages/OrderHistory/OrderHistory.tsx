@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoadingPage } from "src/components/Loading/Loading";
 import { OrderContext } from "src/contexts/order.context";
 import { TOrderHisotry } from "src/types/order.type";
@@ -157,10 +157,13 @@ const OrderList: React.FC = () => {
       <div className="mt-4">
         {orderFilter.length > 0 ? (
           orderFilter.map((order) => (
-            <OrderItem
-              key={order.id}
-              order={order}
-            />
+            // eslint-disable-next-line react/jsx-key
+            <Link to={`/order-history/${order.id}`}>
+              <OrderItem
+                key={order.id}
+                order={order}
+              />
+            </Link>
           ))
         ) : (
           <div className="flex h-[600px] w-full flex-col items-center justify-center rounded bg-white">
