@@ -263,20 +263,20 @@ export class OrderService {
         break;
       case 'DELIVERING':
         addAddressesWithCreateAt([
-          ...address_bystatus.WAITING,
+          // ...address_bystatus.WAITING,
           ...address_bystatus.DELIVERING,
         ]);
         break;
       case 'WAIT_RECEIVED':
         addAddressesWithCreateAt([
-          ...address_bystatus.WAITING,
+          // ...address_bystatus.WAITING,
           ...address_bystatus.DELIVERING,
           ...address_bystatus.WAIT_RECEIVED,
         ]);
         break;
       case 'DELIVERED':
         addAddressesWithCreateAt([
-          ...address_bystatus.WAITING,
+          // ...address_bystatus.WAITING,
           ...address_bystatus.DELIVERING,
           ...address_bystatus.WAIT_RECEIVED,
           ...address_bystatus.DELIVERED,
@@ -291,16 +291,22 @@ export class OrderService {
     }
 
     // delete old address
-    await this.prismaService.order_details.update({
-      where: {
-        id: prams.id,
-      },
-      data: {
-        list_address_status: {
-          deleteMany: {},
+    if (prams.status === 'CANCELED' || prams.status === 'RETURN') {
+      await this.prismaService.order_details.update({
+        where: {
+          id: prams.id,
         },
-      },
-    });
+        data: {
+          list_address_status: {
+            deleteMany: {
+              status: {
+                notIn: ['WAITING'],
+              },
+            },
+          },
+        },
+      });
+    }
 
     return await this.prismaService.order_details.update({
       where: {
