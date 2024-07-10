@@ -110,24 +110,7 @@ const OrderHistoryDetails = () => {
           </div>
         </div>
         <p className="letter mb-4 mt-0  w-[100%] lg:mb-0 "></p>
-        <div className="mb-1 block bg-white p-4 lg:hidden">
-          <div className="flex gap-4">
-            <FaTruck className="text-3xl"></FaTruck>
-            <h1 className="text-2xl font-semibold">Thông tin vận chuyển</h1>
-          </div>
-          <span className="ml-12 text-xl text-gray-500">Standard Express - VN2444522313553U</span>
-          <div className="relative mb-4 ml-12 mt-4 flex items-start ">
-            <div className="flex-shrink-0">
-              <div className="rounded-full bg-green-500 p-2 text-white">
-                <i className="fas fa-check"></i>
-              </div>
-            </div>
-            <div className="ml-4">
-              <p className="text-xl text-gray-700">10:58 07-07-2024</p>
-              <p className="text-xl font-semibold text-green-600">Đã giao</p>
-            </div>
-          </div>
-        </div>
+
         <div className="mb-1  flex rounded-lg bg-white p-6 shadow-md">
           <div className="w-full pr-6 lg:w-1/2">
             <div className="flex gap-2">
@@ -141,10 +124,12 @@ const OrderHistoryDetails = () => {
             </div>
           </div>
 
-          <div className="relative hidden w-1/2 border-l pl-6 lg:block">
+          <div className="relative w-1/2 border-l pl-6 ">
             {addressStatus
               .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
               .map((item, index) => {
+                console.log(item.status);
+                console.log(orderDetai?.status);
                 return (
                   <div
                     key={index}

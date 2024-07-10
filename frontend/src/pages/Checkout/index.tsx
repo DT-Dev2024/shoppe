@@ -208,14 +208,16 @@ const Checkout = () => {
       ) + shippingFee;
     if (selectedVoucher) {
       if (selectedVoucher.discount_type === "FIXED") {
+        const price = checkoutPrice - selectedVoucher.discount - shippingFee;
         return {
           priceDiscount: selectedVoucher.discount,
-          totalPrice: checkoutPrice - selectedVoucher.discount - shippingFee,
+          totalPrice: price > 0 ? price : 0,
         };
       } else {
+        const price = checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100 - shippingFee;
         return {
           priceDiscount: (checkoutPrice * selectedVoucher.discount) / 100,
-          totalPrice: checkoutPrice - (checkoutPrice * selectedVoucher.discount) / 100 - shippingFee,
+          totalPrice: price > 0 ? price : 0,
         };
       }
     } else {
