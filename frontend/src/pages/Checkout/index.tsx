@@ -718,11 +718,7 @@ const Checkout = () => {
                           <div className="relative flex items-center">
                             <div className="h-40 w-40 bg-green-600">
                               <img
-                                src={
-                                  voucher.type === "SYSTEM"
-                                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIK3WiSbFDsXqBwIU38vgexE-GhDcXSGiVXQ&s"
-                                    : "https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"
-                                }
+                                src={"https://down-vn.img.susercontent.com/file/sg-11134004-22120-4cskiffs0olvc3"}
                                 alt=""
                                 className="h-full w-full object-cover"
                               />
