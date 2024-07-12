@@ -708,7 +708,7 @@ const Checkout = () => {
               "
                   >
                     <>
-                      {vouchers.map((voucher) => (
+                      {fixedVouchers.map((voucher) => (
                         <li
                           key={voucher.id}
                           className={`border-b  border-gray-300 p-4 shadow-md ${
@@ -766,6 +766,7 @@ const Checkout = () => {
                       onClick={() => {
                         setSelectedVoucher(null);
                         setIsModalVoucherVisible(false);
+                        setSearchCodeVoucher("");
                       }}
                       className="mr-2 rounded  border-2 px-8 py-3 text-xl text-[#b6b6b6] lg:px-12 "
                     >
