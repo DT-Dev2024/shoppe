@@ -189,11 +189,11 @@
   margin-top: 20px;
 }
 @media screen and (min-width: 360px) and (max-width: 374.98px) {
-  .header__main-search{
+  .header__main-search {
     margin: 0 16px;
   }
-  .header__search-frame__input{
-    padding:6px 10px;
+  .header__search-frame__input {
+    padding: 6px 10px;
     width: 100%;
     font-size: 11px;
   }
@@ -202,20 +202,20 @@
     padding: 0;
     margin: 0;
   }
-  .header__cart{
+  .header__cart {
     margin-bottom: 0;
     margin-top: -7px;
   }
-  .header__cart__link{
+  .header__cart__link {
     margin-right: 25px;
   }
 }
 @media screen and (min-width: 375px) and (max-width: 389.98px) {
- .header__main-search{
+  .header__main-search {
     margin: 0 16px;
   }
-  .header__search-frame__input{
-    padding:6px 10px;
+  .header__search-frame__input {
+    padding: 6px 10px;
     width: 100%;
   }
   .header__search-part {
@@ -223,20 +223,20 @@
     padding: 0;
     margin: 0;
   }
-  .header__cart{
+  .header__cart {
     margin-bottom: 0;
     margin-top: -10px;
   }
-  .header__cart__link{
+  .header__cart__link {
     margin-right: 25px;
   }
 }
 @media screen and (min-width: 390px) and (max-width: 411.98px) {
-  .header__main-search{
+  .header__main-search {
     margin: 0 16px;
   }
-  .header__search-frame__input{
-    padding:6px 10px;
+  .header__search-frame__input {
+    padding: 6px 10px;
     width: 100%;
     font-size: 11px;
   }
@@ -245,20 +245,20 @@
     padding: 0;
     margin: 0;
   }
-  .header__cart{
+  .header__cart {
     margin-bottom: 0;
     margin-top: -7px;
   }
-  .header__cart__link{
+  .header__cart__link {
     margin-right: 25px;
   }
 }
 @media screen and (min-width: 412px) and (max-width: 413.98px) {
- .header__main-search{
+  .header__main-search {
     margin: 0 16px;
   }
-  .header__search-frame__input{
-    padding:6px 10px;
+  .header__search-frame__input {
+    padding: 6px 10px;
     width: 100%;
     font-size: 11px;
   }
@@ -267,20 +267,20 @@
     padding: 0;
     margin: 0;
   }
-  .header__cart{
+  .header__cart {
     margin-bottom: 0;
     margin-top: -7px;
   }
-  .header__cart__link{
+  .header__cart__link {
     margin-right: 25px;
   }
 }
 @media screen and (min-width: 413.99px) and (max-width: 414px) {
- .header__main-search{
+  .header__main-search {
     margin: 0 16px;
   }
-  .header__search-frame__input{
-    padding:6px 10px;
+  .header__search-frame__input {
+    padding: 6px 10px;
     width: 100%;
     font-size: 11px;
   }
@@ -289,11 +289,11 @@
     padding: 0;
     margin: 0;
   }
-  .header__cart{
+  .header__cart {
     margin-bottom: 0;
     margin-top: -7px;
   }
-  .header__cart__link{
+  .header__cart__link {
     margin-right: 25px;
   }
 }

@@ -17,7 +17,7 @@ const Product = ({ product }: ProductProps) => {
           />
         </div>
         <div className="overflow-hidden p-2">
-          <div className="line-clamp-1 min-h-[2rem] text-[14px]">{product.name}</div>
+          <div className="line-clamp-1  text-[14px]">{product.name}</div>
           <div className="mt-3 flex items-center gap-x-1">
             {product.sale_price !== 0 ? (
               <>

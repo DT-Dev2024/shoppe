@@ -307,7 +307,10 @@ function HeaderCommonInfo() {
                 href="/login"
                 className="header__login__btn"
               >
-                <span>Đăng Nhập</span>
+                <span className="">Đăng Nhập</span>
+
+                {/* <span className="hidden lg:block">Đăng Nhập</span>
+                <span className="ml-[300px] block lg:ml-0 lg:hidden ">Login</span> */}
               </a>
             </div>
           </>
