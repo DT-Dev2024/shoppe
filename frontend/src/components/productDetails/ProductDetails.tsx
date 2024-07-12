@@ -425,6 +425,7 @@ const ProductDetails = () => {
       </div>
       <div>
         <h1 className="mt-2 w-full bg-gray-100 px-1 pt-4 text-3xl uppercase">Gợi ý cho bạn</h1>
+
         <ProductList />
       </div>
     </div>

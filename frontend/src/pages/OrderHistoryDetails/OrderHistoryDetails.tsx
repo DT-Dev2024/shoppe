@@ -106,15 +106,16 @@ const OrderHistoryDetails = () => {
       </Helmet>
       <div className="mx-auto max-w-[90%]  bg-gray-100  py-6">
         <div className="flex items-center justify-between rounded-lg bg-white p-6 shadow-md">
-          <div className="mb-6 ">
+          <div className="mb-0 ">
             <button className="text-xl text-gray-500">
               <a href="/">TRỞ LẠI</a>
             </button>
           </div>
-          <div className="mb-4 flex flex-col items-center justify-between gap-2  lg:flex-row lg:gap-8 ">
-            <h1 className="text-xl font-semibold">MÃ ĐƠN HÀNG: {orderDetai?.orderId.toUpperCase()}</h1>
+          <div className="mb- flex flex-col items-end  justify-items-end gap-1 lg:flex-row  lg:items-center lg:gap-8 ">
+            <h1 className="text-lg font-semibold lg:text-xl">MÃ ĐƠN HÀNG </h1>
+            <p className="text-[13px] lg:text-xl">{orderDetai?.orderId.toUpperCase()}</p>
             <span
-              className={`text-[16px] font-semibold uppercase ${
+              className={`text-[13px] font-semibold uppercase ${
                 orderDetai?.status === "DELIVERED"
                   ? "text-main"
                   : orderDetai?.status === "CANCELED" || orderDetai?.status === "RETURN"
@@ -122,12 +123,42 @@ const OrderHistoryDetails = () => {
                   : "text-black"
               }`}
             >
-              {StatusOrder[orderDetai?.status as keyof typeof StatusOrder]}
+              <p className="">{StatusOrder[orderDetai?.status as keyof typeof StatusOrder]}</p>
             </span>
           </div>
         </div>
         <p className="letter mb-4 mt-0  w-[100%] lg:mb-0 "></p>
-
+        <div className="mb-1 block bg-white p-4 lg:hidden">
+          <div className="flex gap-4">
+            <FaTruck className="text-3xl"></FaTruck>
+            <h1 className="text-2xl font-semibold">Thông tin vận chuyển</h1>
+          </div>
+          <span className="ml-12 text-xl text-gray-500">Standard Express - VN2444522313553U</span>
+          <div className="relative mb-4 ml-12 mt-4 flex items-start ">
+            <div className="flex-shrink-0">
+              <div className="rounded-full bg-green-500 p-2 text-white">
+                <i className="fas fa-check"></i>
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-xl text-gray-700">
+                {addressStatus[0]?.created_at ? formatTimeDateReview(addressStatus[0]?.created_at) : "Đang dự kiến"}
+              </p>
+              <span
+                className={`text-[13px] font-semibold  ${
+                  orderDetai?.status === "DELIVERED"
+                    ? "text-main"
+                    : orderDetai?.status === "CANCELED" || orderDetai?.status === "RETURN"
+                    ? "text-red-500"
+                    : "text-black"
+                }`}
+              >
+                <p className="">{StatusOrder[orderDetai?.status as keyof typeof StatusOrder]}</p>
+              </span>
+              {/* <p className="text-xl font-semibold text-green-600">Đã giao</p> */}
+            </div>
+          </div>
+        </div>
         <div className="mb-1  flex rounded-lg bg-white p-6 shadow-md">
           <div className="w-full pr-6 lg:w-1/2">
             <div className="flex gap-2">
@@ -141,7 +172,7 @@ const OrderHistoryDetails = () => {
             </div>
           </div>
 
-          <div className="relative w-1/2 border-l pl-6 ">
+          <div className="relative hidden w-1/2 pl-6  lg:block ">
             {addressStatus
               .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
               .map((item, index) => {
@@ -176,8 +207,17 @@ const OrderHistoryDetails = () => {
           </div>
         </div>
         <div className="rounded-lg border bg-white p-4 shadow-md">
-          <div className="mb-4 flex items-center gap-2">
-            <button className="mr-2 rounded bg-red-500 px-3 py-2 text-xl text-white">Yêu thích</button>
+          <div className="mb-4 flex items-center gap-4">
+            <div className="flex items-center">
+              <img
+                src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn"
+                alt=""
+                className="h-16 w-16 rounded-full lg:h-24 lg:w-24"
+              />
+              <p className="text-2xl font-semibold">The Garden Official</p>
+            </div>
+            <button className="mr-2 hidden rounded bg-red-500 px-3 py-2 text-xl text-white lg:block">Yêu thích</button>
+
             <button
               onClick={() => {
                 window.open("https://jivo.chat/glwMlKZ57u", "_blank");
@@ -241,32 +281,32 @@ const OrderHistoryDetails = () => {
         <div className=" flex border-spacing-1 justify-end  rounded-lg border bg-white  shadow-md">
           <div className="mb-4 max-w-[450px] bg-white p-4 py-4">
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Tổng tiền hàng</p>
-              <p className="text-[20px] text-gray-700 lg:text-3xl">
+              <p className="text-[16px] text-gray-500 lg:text-2xl">Tổng tiền hàng</p>
+              <p className="text-[15px] text-gray-700 lg:text-2xl">
                 ₫{formatCurrency((orderDetai?.buy_count || 1) * price.price)}
               </p>
             </div>
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Phí vận chuyển</p>
-              <p className="text-[20px] text-gray-700 lg:text-3xl">₫{formatCurrency(32000)}</p>
+              <p className="text-[16px] text-gray-500 lg:text-2xl">Phí vận chuyển</p>
+              <p className="text-[15px] text-gray-700 lg:text-2xl">₫{formatCurrency(32000)}</p>
             </div>
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Giảm giá phí vận chuyển</p>
-              <p className="text-[20px] text-gray-700 lg:text-3xl">-₫{formatCurrency(32000)}</p>
+              <p className="text-[16px] text-gray-500 lg:text-2xl">Giảm giá phí vận chuyển</p>
+              <p className="text-[15px] text-gray-700 lg:text-2xl">-₫{formatCurrency(32000)}</p>
             </div>
             {orderDetai?.voucher && (
               <div className="mb-4 flex justify-between gap-36">
-                <p className="text-[20px] text-gray-500 lg:text-2xl">Voucher shoppe</p>
-                <p className="text-[20px] text-gray-700 lg:text-3xl">₫{formatCurrency(price.voucherPrice)}</p>
+                <p className="text-[16px] text-gray-500 lg:text-2xl">Voucher shoppe</p>
+                <p className="text-[15px] text-gray-700 lg:text-2xl">₫{formatCurrency(price.voucherPrice)}</p>
               </div>
             )}
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Thành tiền</p>
-              <p className="text-[20px] text-main lg:text-3xl">₫{formatCurrency(price.totalPrice)}</p>
+              <p className="text-[16px] text-gray-500 lg:text-2xl">Thành tiền</p>
+              <p className="text-[15px] text-main lg:text-2xl">₫{formatCurrency(price.totalPrice)}</p>
             </div>
             <div className="mb-4 flex justify-between gap-36">
-              <p className="text-[20px] text-gray-500 lg:text-2xl">Phương thức thanh toán</p>
-              <p className="text-right text-[20px] text-gray-700 lg:text-2xl">
+              <p className="text-[16px] text-gray-500 lg:text-2xl">Phương thức thanh toán</p>
+              <p className="text-right text-[15px] text-gray-700 lg:text-2xl">
                 {PaymentMethod[orderDetai?.payment_method as keyof typeof PaymentMethod]}
               </p>
             </div>

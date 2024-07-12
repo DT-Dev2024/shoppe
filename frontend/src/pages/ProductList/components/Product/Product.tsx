@@ -2,10 +2,19 @@ import { Link } from "react-router-dom";
 import ProductRating from "src/components/ProductRating";
 import { TProduct } from "src/types/product.type";
 import { formatCurrency, formatNumberToSocialStyle } from "src/utils/formatNumber";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 type ProductProps = {
   product: TProduct;
 };
 const Product = ({ product }: ProductProps) => {
+  const useScrollToTop = () => {
+    const { pathname } = useLocation();
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+  };
+  useScrollToTop();
   return (
     <Link to={`/productDetails/${product.id}`}>
       <div className="overflow-hidden rounded-sm bg-white shadow transition-all duration-200 hover:translate-y-[-0.09rem] hover:shadow-md">
