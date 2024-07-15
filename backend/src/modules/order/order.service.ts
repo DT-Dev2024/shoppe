@@ -11,7 +11,7 @@ import { OrderStatus } from './dto/order-detail.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
   async create(createOrderDto: CreateOrderDto) {
     const order = await this.prismaService.orders.create({
       data: {
@@ -26,9 +26,30 @@ export class OrderService {
         },
         voucherId: createOrderDto.voucherId,
       },
+      include: {
+        order_details: true,
+      },
     });
 
     if (order) {
+      // tạo list address
+      for (const detail of order.order_details) {
+        await this.prismaService.list_address_status.create({
+          data: {
+            order_detailsId: detail.id,
+            status: 'WAITING',
+            address: 'Đặt hàng thành công',
+          },
+        });
+
+        await this.prismaService.list_address_status.create({
+          data: {
+            order_detailsId: detail.id,
+            status: 'WAITING',
+            address: 'Người bán đang chuẩn bị hàng',
+          },
+        });
+      }
       try {
         await this.prismaService.cart.update({
           where: {
@@ -58,6 +79,7 @@ export class OrderService {
             },
           },
           address: true,
+          user: true,
         },
       });
 
@@ -76,6 +98,7 @@ export class OrderService {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
             detail.address = order.address;
+            detail.phone = order.user.phone;
           } else {
             detail.price_before_discount =
               detail.product.price * detail.buy_count;
