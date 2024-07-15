@@ -184,6 +184,11 @@ const ProductScreen = () => {
   };
 
   const handleOnFinish = async (values: any) => {
+    const listColors = values.colors ? values.colors.split(",") : [];
+
+    const listCapacities = values.capacities
+      ? values.capacities.split(",")
+      : [];
     reactotron.logImportant!("values", values);
     // return;
     let formData = new FormData();
@@ -226,6 +231,8 @@ const ProductScreen = () => {
               sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
             },
             price: +values.price,
+            colors: listColors,
+            capacities: listCapacities,
           };
           const response = await requestAddProduct(payload);
           if (response) {
@@ -275,6 +282,8 @@ const ProductScreen = () => {
               //   sold: Math.floor(Math.random() * (100000 - 2500 + 1)) + 2500,
               // },
               price: +values.price,
+              colors: listColors,
+              capacities: listCapacities,
             },
           };
           console.log(payloadUpdate);
@@ -306,6 +315,8 @@ const ProductScreen = () => {
             sale_price: +values.sale_price || item.sale_price,
             // category_id: listCategory[values.category]._id,
             price: +values.price || item.price,
+            colors: listColors,
+            capacities: listCapacities,
           },
         };
         const response = await requestUpdateProduct(payloadUpdate);
@@ -542,6 +553,8 @@ const ProductScreen = () => {
             icon_url: null,
             detailImages: [],
             description: null,
+            colors: null,
+            capacities: null,
           }}
           scrollToFirstError
         >
@@ -625,6 +638,12 @@ const ProductScreen = () => {
                 uploadButton
               )}
             </Upload>
+          </Form.Item>
+          <Form.Item label="Dung lượng" name="capacities">
+            <Input.TextArea placeholder="Dung lượng sản phẩm, ví dụ: 64GB, 128GB" />
+          </Form.Item>
+          <Form.Item label="Màu sắc" name="colors">
+            <Input.TextArea placeholder="Màu sắc sản phẩm, ví dụ: Đen, Trắng, Đỏ" />
           </Form.Item>
           <Form.Item label="Ảnh chi tiết" name="detail_images">
             {!showDetailImage && (
