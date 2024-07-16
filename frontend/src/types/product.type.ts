@@ -11,6 +11,8 @@ export type TProduct = {
   detailImage: string[];
   name: string;
   description: string;
+  capacities: string[];
+  colors: string[];
   keyword: string;
   product_feeback: TProductFeedback;
   category: {
