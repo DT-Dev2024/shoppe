@@ -160,9 +160,9 @@ const ProductDetails = () => {
     <div className=" bg-gray-200   py-6 ">
       {loadingAddCart && <LoadingSmall />}
       <div className="bg-white p-1 shadow lg:p-10">
-        <div className="">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-4">
-            <div className="block lg:col-span-5">
+        <div className="container">
+          <div className=" lg:grid lg:grid-cols-12 lg:gap-4">
+            <div className="block lg:col-span-5 ">
               <Swiper
                 spaceBetween={10}
                 grabCursor={true}
@@ -218,7 +218,7 @@ const ProductDetails = () => {
                 ))}
               </Swiper>
             </div>
-            <div className="mt-8 block p-8 lg:col-span-7 lg:mt-5 lg:p-0">
+            <div className="mt-8 block p-8 lg:col-span-7 lg:ml-10 lg:mt-5 lg:p-0">
               <h1 className="text-[18px] font-medium uppercase lg:text-[20px]">{product?.name}</h1>
               <div className="mt-4 flex items-center">
                 <div className="flex items-center">
@@ -237,7 +237,7 @@ const ProductDetails = () => {
                   <span className="ml-1 text-[14px] font-medium text-gray-500">Đã bán</span>
                 </div>
               </div>
-              <div className="mt-4 flex items-center bg-gray-50 p-5">
+              <div className="mt-6 flex items-center bg-gray-50 p-0 lg:mt-4 lg:p-5">
                 <div className="text-[24px] font-medium text-[rgb(238,77,45)] lg:text-[32px]">
                   {formatCurrency(
                     (product?.sale_price as number) > 0
@@ -291,82 +291,85 @@ const ProductDetails = () => {
                     </div>
                   </div>
                 </div>
-                {product?.colors && product?.colors.length > 0 && (
-                  <div className="mt-6 flex items-center ">
-                    <div className="mr-5 w-[100px] max-w-[220px] text-[15px] capitalize text-gray-500">Màu sắc</div>
-                    <div className="mt-0 flex items-center ">
-                      <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
-                        <div className="flex gap-3">
-                          {product?.colors.map((color, index) => (
-                            <button
-                              key={index}
-                              className={`text-black" border border-[#adadad] p-2 ${
-                                selectColor === color ? "bg-main text-white" : ""
-                              }`}
-                              onClick={() => setSelectColor(color)}
-                            >
-                              {color}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {product?.capacities && product.capacities.length > 0 && (
-                  <div className="mt-6 flex items-center ">
-                    <div className="mr-5 w-[120px] max-w-[100px] text-[15px] capitalize text-gray-500">Size</div>
-                    <div className="mt-0 flex items-center ">
-                      <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
-                        <div className="flex gap-3">
-                          {product?.capacities.map((size, index) => (
-                            <button
-                              key={index}
-                              className={`border border-[#adadad] p-2 text-black ${
-                                selectSize === size ? "bg-main text-white" : ""
-                              }`}
-                              onClick={() => setSelectSize(size)}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+              </div>
+              {product?.colors && product?.colors.length > 0 && (
                 <div className="mt-6 flex items-center ">
-                  <div className="mr-5 text-[14px] capitalize text-gray-500 lg:text-[15px]">Số lượng</div>
-                  <div className="text-2xl lg:text-3xl">
-                    <div className=" ml-2 mr-8 flex lg:ml-16  lg:mr-[180px]  ">
-                      <button
-                        type="button"
-                        className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
-                        onClick={() => {
-                          setQuantity((prevQuantity) => prevQuantity - 1);
-                        }}
-                      >
-                        <FaMinus />
-                      </button>
-                      <span className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0">
-                        {quantity}
-                      </span>
-                      <button
-                        type="button"
-                        className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
-                        onClick={() => {
-                          setQuantity((prevQuantity) => prevQuantity + 1);
-                        }}
-                      >
-                        <FaPlus />
-                      </button>
+                  <div className="mr-5 w-[100px] max-w-[220px] text-[15px] capitalize text-gray-500">Màu sắc</div>
+                  <div className="mt-0 flex items-center ">
+                    <div className="ml-4 flex gap-2 text-[13px] text-[#333] lg:text-[15px]">
+                      <div className="flex gap-3">
+                        {product?.colors.map((color, index) => (
+                          <button
+                            key={index}
+                            className={`border px-2 py-2 lg:px-0 lg:py-2 ${
+                              selectColor === color ? "border-red-500 text-red-500" : ""
+                            }`}
+                            onClick={() => setSelectColor(color)}
+                          >
+                            {color}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  {/* <p className="text-2xl font-medium">20</p> */}
-                  <div className="ml-0 text-[14px] text-gray-500 lg:text-[15px]">
-                    {/* {product?.sale_price} sản phẩm có sẵn */}
-                    13 sản phẩm có sẵn
+                </div>
+              )}
+              {product?.capacities && product.capacities.length > 0 && (
+                <div className="mt-6 flex items-center ">
+                  <div className="mr-5 w-[75px]  max-w-[220px] text-[15px] capitalize text-gray-500 lg:w-[94px]">
+                    Size
                   </div>
+                  <div className="mt-0 flex items-center ">
+                    <div className="ml-0 flex gap-2 text-[13px] text-gray-500 lg:text-[15px]">
+                      <div className="flex gap-3">
+                        {product?.capacities.map((size, index) => (
+                          <button
+                            key={index}
+                            className={`border   p-2 text-black ${
+                              selectSize === size ? "border-red-500 text-red-500" : ""
+                            }`}
+                            onClick={() => setSelectSize(size)}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="mt-6 flex items-center ">
+                <div className="mr-9 text-[14px] capitalize text-gray-500 lg:text-[15px]">Số lượng</div>
+                <div className="text-2xl lg:text-3xl">
+                  <div className=" ml-2 mr-8 flex lg:ml-16  lg:mr-[180px]  ">
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                      onClick={() => {
+                        setQuantity((prevQuantity) => prevQuantity - 1);
+                      }}
+                    >
+                      <FaMinus />
+                    </button>
+                    <span className="mx-1 w-10 shrink-0 border bg-transparent text-center font-medium text-gray-900 focus:outline-none focus:ring-0">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center justify-center rounded border border-gray-300 p-1"
+                      onClick={() => {
+                        setQuantity((prevQuantity) => prevQuantity + 1);
+                      }}
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+                </div>
+
+                {/* <p className="text-2xl font-medium">20</p> */}
+                <div className="ml-0 text-[14px] text-gray-500 lg:text-[15px]">
+                  {/* {product?.sale_price} sản phẩm có sẵn */}
+                  13 sản phẩm có sẵn
                 </div>
               </div>
               <div className="mt-10  sm:flex sm:items-center sm:gap-x-4">
