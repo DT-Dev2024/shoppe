@@ -42,4 +42,14 @@ export class CreateProductDto {
   @Type(() => ProductFeedbackDTO)
   @IsOptional()
   feedback?: ProductFeedbackDTO;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  colors?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  capacities?: string[];
 }

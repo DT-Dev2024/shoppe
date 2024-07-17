@@ -69,6 +69,8 @@ model products {
   sale_price      Float
   updated_at      DateTime?          @updatedAt @db.Date
   keyword         String             @default("")
+  colors          String[]
+  capacities      String[]
   // product_types   products_type[]
   shop            shops?             @relation(fields: [shopId], references: [id])
   shopId          String?            @db.ObjectId

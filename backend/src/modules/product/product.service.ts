@@ -11,6 +11,12 @@ export class ProductService {
   async create(createProductDto: CreateProductDto) {
     // const product_type = createProductDto.type;
     // delete createProductDto.type;
+    createProductDto.colors = createProductDto.colors.map((color) =>
+      color.trim(),
+    );
+    createProductDto.capacities = createProductDto.capacities.map((capacity) =>
+      capacity.trim(),
+    );
     return await this.prismaService.products.create({
       data: {
         name: createProductDto.name,
@@ -20,6 +26,8 @@ export class ProductService {
         sale_price: createProductDto.sale_price,
         detailImage: createProductDto.detailImage,
         price: createProductDto.price,
+        colors: createProductDto.colors,
+        capacities: createProductDto.capacities,
         // product_types: {
         //   createMany: {
         //     data: createProductDto.product_types,
@@ -73,6 +81,8 @@ export class ProductService {
         sale_price: updateProductDto.sale_price,
         detailImage: updateProductDto.detailImage,
         price: updateProductDto.price,
+        colors: updateProductDto.colors,
+        capacities: updateProductDto.capacities,
         // product_types: {
         //   createMany: {
         //     data: updateProductDto.product_types,
