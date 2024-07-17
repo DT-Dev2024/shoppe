@@ -21,13 +21,18 @@ const ProductDetails = () => {
   const { id } = useParams();
   const [user, setUser] = useState<TUser>();
   const { setExtendedPurchases } = useContext(CartContext) as AuthContextInterface;
-
+  const [selectColor, setSelectColor] = useState("");
+  const [selectSize, setSelectSize] = useState("");
   useEffect(() => {
-    // fetchProductById(id);
     const getProduct = async () => {
       const response = (await productApi.getProductById(id || "")) as any;
 
-      if (response) setProduct(response as TProduct);
+      if (response) {
+        setProduct(response as TProduct);
+        if (response.colors.length > 0) setSelectColor(response.colors[0]);
+
+        if (response.capacities.length > 0) setSelectSize(response.capacities[0]);
+      }
     };
 
     getProduct();
@@ -155,7 +160,7 @@ const ProductDetails = () => {
     <div className=" bg-gray-200   py-6 ">
       {loadingAddCart && <LoadingSmall />}
       <div className="bg-white p-1 shadow lg:p-10">
-        <div className="container">
+        <div className="">
           <div className="lg:grid lg:grid-cols-12 lg:gap-4">
             <div className="block lg:col-span-5">
               <Swiper
@@ -286,17 +291,50 @@ const ProductDetails = () => {
                     </div>
                   </div>
                 </div>
-                {/* <div className="flex items-center mt-6 ">
-                <div className="mr-5 max-w-[120px] text-[15px] capitalize text-gray-500">Màu Sắc</div>
-                <div className="flex items-center mt-0 ">
-                  <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
-                    <div className="flex gap-3">
-                      <p className="border-[2px] border-[#adadad] p-2 text-black">Đen</p>
-                      <p className="border-[2px] border-[#adadad] p-2 text-black">Trắng</p>
+                {product?.colors && product?.colors.length > 0 && (
+                  <div className="mt-6 flex items-center ">
+                    <div className="mr-5 w-[100px] max-w-[220px] text-[15px] capitalize text-gray-500">Màu sắc</div>
+                    <div className="mt-0 flex items-center ">
+                      <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
+                        <div className="flex gap-3">
+                          {product?.colors.map((color, index) => (
+                            <button
+                              key={index}
+                              className={`text-black" border border-[#adadad] p-2 ${
+                                selectColor === color ? "bg-main text-white" : ""
+                              }`}
+                              onClick={() => setSelectColor(color)}
+                            >
+                              {color}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div> */}
+                )}
+                {product?.capacities && product.capacities.length > 0 && (
+                  <div className="mt-6 flex items-center ">
+                    <div className="mr-5 w-[120px] max-w-[100px] text-[15px] capitalize text-gray-500">Size</div>
+                    <div className="mt-0 flex items-center ">
+                      <div className="ml-4 flex gap-2 text-[15px] text-gray-500">
+                        <div className="flex gap-3">
+                          {product?.capacities.map((size, index) => (
+                            <button
+                              key={index}
+                              className={`border border-[#adadad] p-2 text-black ${
+                                selectSize === size ? "bg-main text-white" : ""
+                              }`}
+                              onClick={() => setSelectSize(size)}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="mt-6 flex items-center ">
                   <div className="mr-5 text-[14px] capitalize text-gray-500 lg:text-[15px]">Số lượng</div>
                   <div className="text-2xl lg:text-3xl">

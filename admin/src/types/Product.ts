@@ -8,6 +8,8 @@ export type TProduct = {
   sale_price: number;
   feedback?: TFeedback;
   created_at?: string;
+  colors?: string[];
+  capacities?: string[];
 };
 
 export type TFeedback = {
