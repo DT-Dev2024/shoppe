@@ -208,13 +208,13 @@ const OrderHistoryDetails = () => {
         </div>
         <div className="rounded-lg border bg-white p-4 shadow-md">
           <div className="mb-4 flex items-center gap-4">
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <img
-                src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn"
+                src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-llx8zp2z3dnj5b_tn"
                 alt=""
                 className="h-16 w-16 rounded-full lg:h-24 lg:w-24"
               />
-              <p className="text-2xl font-semibold">The Garden Official</p>
+              <p className="text-2xl font-semibold">ShopDuck Official Store</p>
             </div>
             <button className="mr-2 hidden rounded bg-red-500 px-3 py-2 text-xl text-white lg:block">Yêu thích</button>
 

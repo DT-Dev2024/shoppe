@@ -391,12 +391,12 @@ const ProductDetails = () => {
             <div className="mt-[-10px] flex flex-col gap-y-3 p-0 lg:col-span-12 lg:mt-6 lg:flex-row lg:gap-0 lg:bg-gray-100">
               <div className="mr-16 flex items-center">
                 <img
-                  src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-lsuyr1h6x1nd7b_tn"
+                  src="https://down-vn.img.susercontent.com/file/vn-11134216-7r98o-llx8zp2z3dnj5b_tn"
                   alt="Shop Logo"
-                  className="h-36 w-36 rounded-full"
+                  className="ml-4 h-28 w-28 rounded-full lg:ml-0 lg:h-36  lg:w-36"
                 />
                 <div className="ml-4 ">
-                  <div className="text-xl font-bold">The Garden Official</div>
+                  <div className="text-xl font-bold lg:w-[200px]">ShopDuck Official Store</div>
                   <div className="mb-4 text-xl text-gray-500">Online 5 Phút Trước</div>
                   <div className="ml-auto flex items-center gap-4">
                     <button className="rounded bg-red-500 px-6 py-3 text-white hover:bg-red-600">Chat Ngay</button>
