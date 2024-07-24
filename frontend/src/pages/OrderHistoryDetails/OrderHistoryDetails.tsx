@@ -214,7 +214,7 @@ const OrderHistoryDetails = () => {
                 alt=""
                 className="h-16 w-16 rounded-full lg:h-24 lg:w-24"
               />
-              <p className="text-2xl font-semibold">The Garden Official</p>
+              <p className="text-2xl font-semibold">ShopDuck Official Store</p>
             </div>
             <button className="mr-2 hidden rounded bg-red-500 px-3 py-2 text-xl text-white lg:block">Yêu thích</button>
 
