@@ -50,6 +50,5 @@ export class CreateOrderDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   voucherId: string;
 }

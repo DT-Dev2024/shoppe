@@ -11,7 +11,7 @@ import { OrderStatus } from './dto/order-detail.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
   async create(createOrderDto: CreateOrderDto) {
     const order = await this.prismaService.orders.create({
       data: {
@@ -24,7 +24,7 @@ export class OrderService {
             data: createOrderDto.orderDetails,
           },
         },
-        voucherId: createOrderDto.voucherId,
+        voucherId: createOrderDto.voucherId ? createOrderDto.voucherId : null,
       },
       include: {
         order_details: true,
